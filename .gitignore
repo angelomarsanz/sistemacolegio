@@ -1,0 +1,7 @@
+/vendor/*
+/config/app.php
+/tmp/*
+/logs/*
+/webroot/files/*
+/webroot/pdf/*
+/vendor.tar.gz

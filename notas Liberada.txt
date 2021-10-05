@@ -1,0 +1,248 @@
+REVISAR 41557 DIFERENCIAS CONVERSIÓN
+
+Después de terminar el proceso de migración eliminar BillsController los códigos de compensación en la acción "Invoice" y del template "Invoice", así como también en Turns.edit, Turns.reporte_cierre y Turns.excel_documentos
+
+
+
+El representante Marisol Benitez está duplicado
+
+alexg - alexg21
+cobranzas - cobranzas21
+
+Hacer seguimiento a function buscarMoneda(idPago) en createInvoice
+
+---
+
+Al iniciar la renovación de matrícula en junio:
+
+En relatedStudent de Students, Verificar como se cargan las variables: nivelEstudioActual, nivelEstudioPasado y nivelEstudioAntepasado considerando que se resetea el campo level_of_study de la tabla Students. Esas variables se usan en createInvoice para buscar la tarifa correspondiente a la cuota.
+
+Migración:
+Representantes con cédula duplicada: 
+V19777934 MAYRA MUÑOZ - MARTA MUÑOZ
+
+Mismo representante diferente cédula
+10163281	MARIA 	CHACON
+10163282	MARIA 	CHACON
+
+Alumnos con deuda mayores a la mensualidad del período 2020-2021
+
+CE10810179622, AMAYA EMANUEL, Primaria, mensualidad 2021-06, 16.5, deuda 17.8
+
+CE10810179622, AMAYA EMANUEL, Primaria, mensualidad 2021-07, 16.5, deuda 17.8
+
+CE10810179622, AMAYA EMANUEL, Primaria, mensualidad 2021-08, 16.5, deuda 17.8
+
+CE11010903622, ARIAS YOHANDRY, Primaria, mensualidad 2021-08, 16.5, deuda 23
+
+V31801129, GARCIA NADYA, Secundaria, mensualidad 2021-05, 16.91, deuda 17.8
+
+V31801129, GARCIA NADYA, Secundaria, mensualidad 2021-06, 16.91, deuda 17.8
+
+V31801129, GARCIA NADYA, Secundaria, mensualidad 2021-07, 16.91, deuda 17.8
+
+V31801129, GARCIA NADYA, Secundaria, mensualidad 2021-08, 16.91, deuda 17.8
+
+Matrículas pendientes mayores a la tarifa
+CE10911501269, ANDRADE MANUELLA, Secundaria, Matrícula 2021, 23, pago 30
+
+CE10913973531, CONTRERAS LUIS, Secundaria, Matrícula 2021, 23, pago 30
+
+CE10914041049, GONZALEZ VALERIA, Secundaria, Matrícula 2021, 23, pago 30
+
+CE10915502609, ZAMBRANO MANUEL, Secundaria, Matrícula 2021, 23, pago 30
+
+CE10916232982, HERNANDEZ HILARY, Secundaria, Matrícula 2021, 23, pago 30
+
+CE10918091322, CARRILLO JHAZIEL, Secundaria, Matrícula 2021, 23, pago 30
+
+CE10921002477, USECHE ABRAHAM, Secundaria, Matrícula 2021, 23, pago 30
+
+CE11010167684, PEREZ SOFIA, Primaria, Matrícula 2021, 23, pago 30
+
+CE11013562153, DIAZ GILBERTO, Primaria, Matrícula 2021, 23, pago 30
+
+CE11015683311, RODRIGUEZ MARIA, Primaria, Matrícula 2021, 23, pago 30
+
+CE11016420116, RONDON JANA, Primaria, Matrícula 2021, 23, pago 30
+
+CE11017205457, MEJIA LISMAR, Secundaria, Matrícula 2021, 23, pago 30
+
+CE11018790645, DELGADO SANTIAGO, Primaria, Matrícula 2021, 23, pago 27
+
+CE11116229786, VELASQUEZ SAMUEL, Primaria, Matrícula 2021, 23, pago 30
+
+CE11215547597, CARPIO MARIA, Primaria, Matrícula 2021, 23, pago 30
+
+CE11216125313, UMAÑA SAMUEL, Primaria, Matrícula 2021, 23, pago 30
+
+CE11227361664, AGUDELO FABIAN, Primaria, Matrícula 2021, 23, pago 30
+
+CE11311507389, PEREZ SARAH, Primaria, Matrícula 2021, 23, pago 30
+
+CE11313587408, RENGEL ISABELLA, Primaria, Matrícula 2021, 23, pago 30
+
+CE11314180402, NIETO ELIEL, Primaria, Matrícula 2021, 23, pago 30
+
+CE11315501250, RODRIGUEZ DUWEN, Primaria, Matrícula 2021, 23, pago 30
+
+CE11316232982, HERNANDEZ HANNA, Primaria, Matrícula 2021, 23, pago 28.5
+
+CE11317370926, VELASCO DANNA, Primaria, Matrícula 2021, 23, pago 30
+
+CE11318564495, ZAMBRANO LESLIE, Primaria, Matrícula 2021, 23, pago 30
+
+CE11318989914, GOMEZ ASHLY, Primaria, Matrícula 2021, 23, pago 30
+
+CE11412234450, CHINCHILLA NAHOMY, Primaria, Matrícula 2021, 23, pago 30
+
+CE11417206604, BUENO KURT, Primaria, Matrícula 2021, 23, pago 30
+
+CE11426924380, BONILLA JUVENAL, Primaria, Matrícula 2021, 23, pago 30
+
+CE11515370876, PRIMERA IANN, Primaria, Matrícula 2021, 23, pago 30
+
+CE11516983562, RODRIGUEZ THIAGO, Primaria, Matrícula 2021, 23, pago 30
+
+CE11518306435, MONTES LUIS, Primaria, Matrícula 2021, 23, pago 25
+
+CE11518880247, BAUTISTA KRISTOFF, Primaria, Matrícula 2021, 23, pago 30
+
+CE11519977406, VILLASANA ELISABETH, Primaria, Matrícula 2021, 23, pago 30
+
+CE11521420463, CARRILLO HANNAH, Primaria, Matrícula 2021, 23, pago 30
+
+CE11522522404, DUQUE ENGENIERTH, Primaria, Matrícula 2021, 23, pago 30
+
+CE11619777934, CARVAJAL ALYSON, Primaria, Matrícula 2021, 23, pago 30
+
+CE12118256204, PEREZ GISSEL, Primaria, Matrícula 2021, 23, pago 30
+
+V31217907, PEREZ ABBY, Secundaria, Matrícula 2021, 23, pago 30
+
+V31218369, FORERO EDUARDO, Secundaria, Matrícula 2021, 23, pago 30
+
+V31356934, LONDOÑO YOED, Secundaria, Matrícula 2021, 23, pago 30
+
+V31431955, LARGO YUXLEY, Secundaria, Matrícula 2021, 23, pago 30
+
+V31469882, CASTRO REYBERTH, Secundaria, Matrícula 2021, 23, pago 30
+
+V31714745, PAREDES MATEO, Secundaria, Matrícula 2021, 23, pago 30
+
+V31763460, BELLO ANA, Secundaria, Matrícula 2021, 23, pago 25.01
+
+V31800531, CASTRO BEYKER, Secundaria, Matrícula 2021, 23, pago 30
+
+V31800645, LAMUS JOSE, Secundaria, Matrícula 2021, 23, pago 30
+
+V31800768, IBARRA OLGA, Secundaria, Matrícula 2021, 23, pago 30
+
+V31976851, CARVAJAL ABRAHAM, Secundaria, Matrícula 2021, 23, pago 30
+
+V32036908, ROMERO GIULIANA, Secundaria, Matrícula 2021, 23, pago 30
+
+V32071627, SANCHEZ JIRETH, Secundaria, Matrícula 2021, 23, pago 30
+
+V32520714, CHACON KARIN, Secundaria, Matrícula 2021, 23, pago 30
+
+V32521065, BOCARANDA ANGEL, Secundaria, Matrícula 2021, 23, pago 30
+
+V32540721, CARDENAS MARIANGEL, Secundaria, Matrícula 2021, 23, pago 30
+
+V32610936, LOPEZ CAMILA, Secundaria, Matrícula 2021, 23, pago 30
+
+V32626194, FORERO JESUS, Secundaria, Matrícula 2021, 23, pago 30
+
+V32684033, ALFONSO MARIA, Secundaria, Matrícula 2021, 23, pago 30
+
+V32792218, PEREZ ANDRES, Secundaria, Matrícula 2021, 23, pago 30
+
+V32889444, JIMENEZ JOSE, Secundaria, Matrícula 2021, 23, pago 30
+
+V32932521, ZAPATA GENESIS, Secundaria, Matrícula 2021, 23, pago 30
+
+V33214355, GUERRERO MARIA, Secundaria, Matrícula 2021, 23, pago 30
+
+V33217254, GONZALEZ KEIMY, Secundaria, Matrícula 2021, 23, pago 30
+
+V33217287, AGUILAR SKARLETH, Secundaria, Matrícula 2021, 23, pago 30
+
+V33239077, URBINA DIEGO, Secundaria, Matrícula 2021, 23, pago 30
+
+V33239383, JIMENEZ JOHANGELY, Secundaria, Matrícula 2021, 23, pago 30
+
+V33254785, RIVAS KEYSIS, Secundaria, Matrícula 2021, 23, pago 30
+
+V33272420, NUÑEZ JOHAN, Secundaria, Matrícula 2021, 23, pago 30
+
+V33282592, CONTRERAS SANTIAGO, Secundaria, Matrícula 2021, 23, pago 30
+
+V33372120, VANEGAS GENESIS, Secundaria, Matrícula 2021, 23, pago 30
+
+V33439473, HERNANDEZ DANYURI, Secundaria, Matrícula 2021, 23, pago 30
+
+V33456417, GUTIERREZ JUAN, Primaria, Matrícula 2021, 23, pago 30
+
+V33456697, VILLANUEVA RAYMONDT, Secundaria, Matrícula 2021, 23, pago 30
+
+V33536329, VIVAS IVANNA, Secundaria, Matrícula 2021, 23, pago 30
+
+V34093005, FLORES MIGUEL, Secundaria, Matrícula 2021, 23, pago 30
+
+Mensualidades pendientes mayores a la tarifa
+CE10913973531, CONTRERAS LUIS, Secundaria, mensualidad 2021-09, 25, pago 30
+
+CE10916232982, HERNANDEZ HILARY, Secundaria, mensualidad 2021-09, 25, pago 30
+
+CE10921002477, USECHE ABRAHAM, Secundaria, mensualidad 2021-09, 25, pago 30
+
+CE11015683311, RODRIGUEZ MARIA, Primaria, mensualidad 2021-09, 10, pago 12
+
+CE11017205457, MEJIA LISMAR, Secundaria, mensualidad 2021-09, 25, pago 30
+
+CE11314180402, NIETO ELIEL, Primaria, mensualidad 2021-09, 25, pago 30
+
+CE11426924380, BONILLA JUVENAL, Primaria, mensualidad 2021-09, 25, pago 30
+
+V31217907, PEREZ ABBY, Secundaria, mensualidad 2021-09, 22.5, pago 27
+
+V31469882, CASTRO REYBERTH, Secundaria, mensualidad 2021-09, 25, pago 30
+
+V31800768, IBARRA OLGA, Secundaria, mensualidad 2021-09, 25, pago 30
+
+V32684033, ALFONSO MARIA, Secundaria, mensualidad 2021-09, 25, pago 30
+
+V33214355, GUERRERO MARIA, Secundaria, mensualidad 2021-09, 25, pago 30
+
+V33254785, RIVAS KEYSIS, Secundaria, mensualidad 2021-09, 10, pago 12
+
+V33372120, VANEGAS GENESIS, Secundaria, mensualidad 2021-09, 25, pago 30
+
+Becados que no pagaron matrícula pero si septiembre:
+id Estudiante 124 Cédula: CE10914974656, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 16 Cédula: CE11010687876, Nivel estudio: Primaria, Mensualidad a aplicar: 10,00, Monto abonado: 10,00
+×id Estudiante 171 Cédula: CE11016229763, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 98 Cédula: CE11114502366, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 109 Cédula: CE11414782831, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 157 Cédula: CE11415989185, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 261 Cédula: CE11419838599, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 20,00
+×id Estudiante 3 Cédula: CE11426862912, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 69 Cédula: CE11513549127, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 20,00
+×id Estudiante 79 Cédula: CE11513973531, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 23,75
+×id Estudiante 220 Cédula: CE11518325173, Nivel estudio: Primaria, Mensualidad a aplicar: 23,75, Monto abonado: 5,68
+×id Estudiante 127 Cédula: CE11518791904, Nivel estudio: Primaria, Mensualidad a aplicar: 22,50, Monto abonado: 20,00
+×ContadorTransaccionesMayorCero 12
+
+
+Mensualidades pendientes mayores a la tarifa (becados)
+CE11010687876, RIVAS KEYLI, Primaria10, pago 12, id del Representante 14
+
+CE11016229763, LARGO ADRIAN, Primaria23.75, pago 28.5, id del Representante 148
+
+CE11114502366, ALFONSO VICTORIA, Primaria23.75, pago 28.5, id del Representante 95
+
+CE11415989185, CASTRO ROSCYRETH, Primaria23.75, pago 28.5, id del Representante 138
+
+CE11513973531, NOVOA MATHIAS, Primaria23.75, pago 28.5, id del Representante 76
+

@@ -1,0 +1,1 @@
+<p>Descuento del 50%</p>

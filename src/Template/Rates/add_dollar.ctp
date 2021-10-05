@@ -1,0 +1,167 @@
+<?php
+    use Cake\I18n\Time;
+    use Cake\Routing\Router;
+?>
+
+<style>
+@media screen
+{
+    .volver 
+    {
+        display:scroll;
+        position:fixed;
+        top: 15%;
+        left: 50px;
+        opacity: 0.5;
+    }
+    .cerrar 
+    {
+        display:scroll;
+        position:fixed;
+        top: 15%;
+        left: 95px;
+        opacity: 0.5;
+    }
+    .menumenos
+    {
+        display:scroll;
+        position:fixed;
+        bottom: 5%;
+        right: 1%;
+        opacity: 0.5;
+        text-align: right;
+    }
+    .menumas 
+    {
+        display:scroll;
+        position:fixed;
+        bottom: 5%;
+        right: 1%;
+        opacity: 0.5;
+        text-align: right;
+    }
+    .noverScreen
+    {
+      display:none
+    }
+}
+@media print 
+{
+    .nover 
+    {
+      display:none
+    }
+    .saltopagina
+    {
+        display:block; 
+        page-break-before:always;
+    }
+}
+</style>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+    	<div class="page-header">
+    		<h2>Agregar tarifa</h2>
+    	</div>
+        <?= $this->Form->create() ?>
+        <fieldset>
+            <?php
+                echo $this->Form->input('concept', ['required' => 'required', 'label' => 'Tarifa', 'options' => 
+                    [null => '',
+                    'Matrícula primaria' => 'Matrícula primaria',
+					'Matrícula secundaria' => 'Matrícula secundaria',
+                    'Mensualidad primaria' => 'Mensualidad primaria',
+                    'Mensualidad secundaria' => 'Mensualidad secundaria']]); 
+                echo $this->Form->input('rate_month', ['label' => 'A partir del mes: ', 'options' => 
+                    [null => '',
+                    '01' => 'Enero',
+                    '02' => 'Febrero',
+                    '03' => 'Marzo',
+                    '04' => 'Abril',
+                    '05' => 'Mayo',
+                    '06' => 'Junio',
+                    '07' => 'Julio',
+                    '08' => 'Agosto',
+                    '09' => 'Septiembre',
+                    '10' => 'Octubre',
+                    '11' => 'Noviembre',
+                    '12' => 'Diciembre']]);
+               	echo $this->Form->input('rate_year', ['label' => 'Del año: ', 'options' => 
+                    [null => '',
+					'2019' => '2019',
+					'2020' => '2020',
+                    '2021' => '2021',
+					'2022' => '2022',
+                    '2023' => '2023',
+                    '2024' => '2024',
+					'2025' => '2025']]);
+                echo $this->Form->input('amount', ['label' => 'Monto']);
+					
+				setlocale(LC_TIME, 'es_VE', 'es_VE.utf-8', 'es_VE.utf8'); 
+                date_default_timezone_set('America/Caracas');			
+            ?>
+        </fieldset>
+		<br />
+        <?= $this->Form->button(__('Guardar'), ['id' => 'guardar', 'class' =>'btn btn-success']) ?>
+        <?= $this->Form->end() ?>
+    </div>
+</div>
+<script>
+    function enableInputs() 
+    {
+		alert('Estimado usuario antes de agregar una nueva tarifa por favor comunicarse con el personal de sistema para que haga un respaldo de la base de datos');
+
+        if ($("#concept").val().substring(0, 11) == "Mensualidad")
+        {
+            $("#rate-month").attr('disabled', false);
+			$("#rate-month").attr('required', true);
+            
+			$("#rate-year").attr('disabled', false);
+			$("#rate-year").attr('required', true);
+			
+			$("#amount").attr('disabled', false);
+			$("#amount").attr('required', true)			
+        }
+        else
+        {
+            $("#rate-month").attr('disabled', true);
+			
+			$("#rate-year").attr('disabled', false);
+			$("#rate-year").attr('required', true);
+			
+			$("#amount").attr('disabled', false);
+			$("#amount").attr('required', true);			
+		}
+    }
+	   
+    $(document).ready(function() 
+    {
+        $('#concept').change(enableInputs);
+					
+		$("#guardar").click(function(e)
+		{
+			if ($("#concept").val().substring(0, 11) == "Mensualidad")
+			{
+				dateFrom = $('#rate-month').val() + '/' +  $('#rate-year').val();
+
+				var rateUpdate = confirm('Por favor confirme que desea guardar la ' + $('#concept').val() + ' a ' + $('#amount').val() + ' a partir del ' + dateFrom);
+
+				if (rateUpdate == false)
+				{
+					e.preventDefault();
+                    $.redirect('<?php echo Router::url(["controller" => "Rates", "action" => "index"]); ?>'); 
+				}
+			}
+			else
+			{
+				var rateOther = confirm('Por favor confirme que desea guardar la tarifa de ' + $('#concept').val() + ' ' + $('#rate-year').val() + ' a ' + $('#amount').val());
+
+				if (rateOther == false)
+				{
+					e.preventDefault();
+					$.redirect('<?php echo Router::url(["controller" => "Rates", "action" => "index"]); ?>'); 
+				}			
+			}
+		}); 
+    });
+</script>

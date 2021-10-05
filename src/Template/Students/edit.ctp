@@ -55,6 +55,7 @@
 								echo $this->Form->input('type_of_identification', 
 									['options' => 
 									[null => " ",
+									 'CE' => 'Cédula escolar',
 									 'V' => 'Cédula venezolano',
 									 'E' => 'Cédula extranjero',
 									 'P' => 'Pasaporte',

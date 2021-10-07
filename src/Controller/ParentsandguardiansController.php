@@ -446,7 +446,7 @@ class ParentsandguardiansController extends AppController
             $this->autoRender = false;
             $name = trim($this->request->query['term']);
             $results = $this->Parentsandguardians->find('all', [
-                'conditions' => [['surname LIKE' => $name . '%'], ['guardian !=' => 1]]]);
+                'conditions' => ['surname LIKE' => $name . '%']]);
             $resultsArr = [];
             foreach ($results as $result) {
 				$resultsArr[] =['label' => $result['surname'] . ' ' . $result['first_name'] . ' (' . $result['type_of_identification'] . $result['identidy_card'] . ')', 'value' => $result['surname'] . ' ' . $result['first_name'] . ' (' . $result['type_of_identification'] . $result['identidy_card'] . ')', 'id' => $result['id']];

@@ -2819,30 +2819,37 @@ class StudentsController extends AppController
 		
 		$anoEscolarActual = $school->current_school_year;
 		$proximoAnoEscolar = $anoEscolarActual + 1;
+		$anoBusqueda = 0;
 
 		if ($filtersReport == "Nuevos")
 		{		
 			$concepto = 'Matrícula ' . $anoEscolarActual;
+			$anoBusqueda = $anoEscolarActual;
 		}
 		elseif ($filtersReport == "Nuevos próximo año escolar")
 		{
 			$concepto = 'Matrícula ' . $proximoAnoEscolar;
+			$anoBusqueda = $proximoAnoEscolar;
 		}
 		elseif ($filtersReport == "Regulares")
 		{
 			$concepto = 'Matrícula ' . $anoEscolarActual;
+			$anoBusqueda = $anoEscolarActual;
 		}
 		elseif ($filtersReport == "Regulares próximo año escolar")
 		{
 			$concepto = 'Matrícula ' . $proximoAnoEscolar;
+			$anoBusqueda = $proximoAnoEscolar;
 		}		
 		elseif ($filtersReport == "Nuevos y regulares")
 		{		
 			$concepto = 'Matrícula ' . $anoEscolarActual; 
+			$anoBusqueda = $anoEscolarActual;
 		}
 		elseif ($filtersReport == "Todos")
 		{
 			$concepto = 'Matrícula ' . $anoEscolarActual;
+			$anoBusqueda = $anoEscolarActual;
 		}
 			
 		$students = TableRegistry::get('Students');
@@ -2882,9 +2889,10 @@ class StudentsController extends AppController
 						'Studenttransactions.amount', 
 						'Studenttransactions.original_amount',
 						'Studenttransactions.amount_dollar'])
+					->contain(['Students'])
 					->where([['Studenttransactions.student_id' => $familyStudent->id],
 						['Studenttransactions.transaction_description' => $concepto],
-						['Studenttransactions.amount_dollar >' => 0]])
+						['Students.balance' => $anoBusqueda]])
 					->order(['Studenttransactions.created' => 'DESC']);
 
 				$row = $signedUp->first();	
@@ -4334,4 +4342,170 @@ class StudentsController extends AppController
         } 
         return $contadorTransacciones;   
     }
+	public function ReporteInscritosConFactura()
+	{
+		$estudiantesInscritos = [];
+
+		$this->loadModel('Schools');
+
+        $school = $this->Schools->get(2);
+
+		$anoEscolarActual = $school->current_year_registration;
+
+		$estudiantes = $this->Students->find('all')->where(['Students.balance' => $anoEscolarActual])->order(['Students.type_of_identification' => 'DESC', 'Students.identity_card' => 'DESC']);
+
+		$contadorEstudiantes = $estudiantes->count();
+
+		// $this->Flash->success(__('Estudiantes inscritos ' . $contadorEstudiantes));
+
+		if ($contadorEstudiantes > 0)
+		{
+			$transaccionesEstudiante = $this->Students->Studenttransactions->find('all')->where(['OR' => [['Studenttransactions.transaction_description' => 'Matrícula ' . $anoEscolarActual], ['Studenttransactions.transaction_description' => 'Sep ' . $anoEscolarActual]]]);
+
+			$contadorTransacciones = $transaccionesEstudiante->count();
+
+			// $this->Flash->success(__('Transacciones encontradas ' . $contadorTransacciones));
+
+			foreach ($estudiantes as $estudiante)
+			{
+				$estudianteImprimir = 0;
+				$numeroFactura = 0;
+				$descripcionTransaccion = '';
+				$montoPagado = 0;
+
+				if ($estudiante->tipo_descuento == '' || $estudiante->tipo_descuento == null)
+				{
+					foreach ($transaccionesEstudiante as $transaccion)
+					{
+						if ($transaccion->student_id == $estudiante->id)
+						{
+							if ($transaccion->transaction_description == 'Matrícula ' . $anoEscolarActual)
+							{
+								if ($transaccion->bill_number != 0 && $transaccion->bill_number != null && $transaccion->amount_dollar > 0)
+								{
+									$estudianteImprimir = 1;
+									$numeroFactura = $transaccion->bill_number;
+									$descripcionTransaccion = $transaccion->transaction_description;
+									$montoPagado = $transaccion->amount_dollar;
+									break;
+								}
+								else
+								{
+									break;
+								}
+							}
+						}
+					}
+				}
+				elseif ($estudiante->tipo_descuento == 'Hijos' && $estudiante->discount > 0)
+				{
+					foreach ($transaccionesEstudiante as $transaccion)
+					{
+						if ($transaccion->student_id == $estudiante->id)
+						{
+							if ($transaccion->transaction_description == 'Sep ' . $anoEscolarActual)
+							{
+								if ($transaccion->bill_number != 0 && $transaccion->bill_number != null && $transaccion->amount_dollar > 0)
+								{
+									$estudianteImprimir = 1;
+									$numeroFactura = $transaccion->bill_number;
+									$descripcionTransaccion = $transaccion->transaction_description;
+									$montoPagado = $transaccion->amount_dollar;
+									break;
+								}
+								else
+								{
+									break;
+								}
+							}
+						}
+					}
+				}
+				elseif ($estudiante->tipo_descuento == 'Empleado' && $estudiante->discount > 0)
+				{
+					$indicadorMatrícula = 0;
+
+					foreach ($transaccionesEstudiante as $transaccion)
+					{
+						if ($transaccion->student_id == $estudiante->id)
+						{
+							if ($transaccion->transaction_description == 'Matrícula ' . $anoEscolarActual)
+							{
+								if ($transaccion->bill_number != 0 && $transaccion->bill_number != null && $transaccion->amount_dollar > 0)
+								{
+									$estudianteImprimir = 1;
+									$numeroFactura = $transaccion->bill_number;
+									$descripcionTransaccion = $transaccion->transaction_description;
+									$montoPagado = $transaccion->amount_dollar;
+									break;
+								}
+								elseif ($transaccion->bill_number == 0 || $transaccion->bill_number != null)
+								{
+									if ($transaccion->amount_dollar > 0)
+									{
+										break;
+									}
+								}
+							}
+							elseif ($transaccion->transaction_description == 'Sep ' . $anoEscolarActual)
+							{
+								if ($transaccion->bill_number != 0 && $transaccion->bill_number != null && $transaccion->amount_dollar > 0)
+								{
+									$estudianteImprimir = 1;
+									$numeroFactura = $transaccion->bill_number;
+									$descripcionTransaccion = $transaccion->transaction_description;
+									$montoPagado = $transaccion->amount_dollar;
+									break;
+								}	
+								elseif ($transaccion->bill_number == 0 || $transaccion->bill_number != null)
+								{
+									if ($transaccion->amount_dollar > 0)
+									{
+										break;
+									}
+								}							
+							}
+						}
+					}
+				}	
+				else
+				{
+					foreach ($transaccionesEstudiante as $transaccion)
+					{
+						if ($transaccion->student_id == $estudiante->id)
+						{
+							if ($transaccion->transaction_description == 'Matrícula ' . $anoEscolarActual)
+							{
+								if ($transaccion->bill_number != 0 && $transaccion->bill_number != null && $transaccion->amount_dollar > 0)
+								{
+									$estudianteImprimir = 1;
+									$numeroFactura = $transaccion->bill_number;
+									$descripcionTransaccion = $transaccion->transaction_description;
+									$montoPagado = $transaccion->amount_dollar;
+									break;
+								}
+							}
+						}
+					}
+				}	
+				if ($estudianteImprimir == 1)
+				{
+					$estudiantesInscritos[] =
+						[
+							'cédula' => $estudiante->type_of_identification . '-' . $estudiante->identity_card,
+							'nombre' => $estudiante->surname,
+							'apellido' => $estudiante->first_name,
+							'grado' => $estudiante->level_of_study, 
+							'tipo_descuento' => $estudiante->tipo_descuento,
+							'descuento' => $estudiante->discount,
+							'factura' => $numeroFactura,
+							'transaccion' => $descripcionTransaccion,
+							'monto' => $montoPagado
+						];		
+				}
+			}
+		}
+		$this->set(compact('estudiantesInscritos', 'contadorEstudiantes'));
+        $this->set('_serialize', ['estudiantesInscritos', 'contadorEstudiantes']);
+	}
 }

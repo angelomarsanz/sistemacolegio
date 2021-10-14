@@ -49,7 +49,15 @@ class StudentsController extends AppController
     }
     
     public function testFunction()
-    {
+    {		
+		$this->log("Something didn't work!"); 
+		$mesesTarifas = $this->mesesTarifas(0);
+
+		$otrasTarifas = $this->otrasTarifas(0);
+
+		$this->set(compact('mesesTarifas', 'otrasTarifas'));
+        $this->set('_serialize', ['mesesTarifas', 'otrasTarifas']);
+		/*
 		$this->loadModel('Studenttransactions');
 
 		$contadorEstudiantesSinMensualidades = 0;
@@ -81,15 +89,6 @@ class StudentsController extends AppController
 
 		$this->Flash->success(__('Estudiantes inscritos sin mensualidades ' . $contadorEstudiantesSinMensualidades));
 		$this->Flash->success(__('Transacciones Insertadas ' . $contadorInsertadas));
-
-		/*		
-		$this->log("Something didn't work!"); 
-		$mesesTarifas = $this->mesesTarifas(0);
-
-		$otrasTarifas = $this->otrasTarifas(0);
-
-		$this->set(compact('mesesTarifas', 'otrasTarifas'));
-        $this->set('_serialize', ['mesesTarifas', 'otrasTarifas']);
 		*/
     }
 	
@@ -1772,6 +1771,15 @@ class StudentsController extends AppController
         $yearMonthUp = $yearUntil . '08';
 
         $nameSection = $this->Students->Sections->get($section);
+
+		if ($nameSection->level == 'Primaria')
+		{
+			$nivelEstudio = 'primaria';
+		}
+		else
+		{
+			$nivelEstudio = 'secundaria';
+		}
         
         $level = $this->sublevelLevel($nameSection->sublevel);
 
@@ -1787,76 +1795,61 @@ class StudentsController extends AppController
 		{
 			$studentTransactions = $this->Students->Studenttransactions->find('all')->where(['student_id' => $student->id]);
 
-			$swSignedUp = 0;
+			$monthlyPayments[$accountantManager]['student'] = $student->full_name;
+		
+			$monthlyPayments[$accountantManager]['studentTransactions'] = [];
+			
+			if ($student->scholarship == true)
+			{
+				$monthlyPayments[$accountantManager]['tipoDescuento'] = "Completo";
+				$monthlyPayments[$accountantManager]['descuento'] = 100;
+			}
+			elseif ($student->discount === null || $student->discount == 0)
+			{
+				$monthlyPayments[$accountantManager]['tipoDescuento'] = "";
+				$monthlyPayments[$accountantManager]['descuento'] = 0;
+			}
+			else
+			{
+				$monthlyPayments[$accountantManager]['tipoDescuento'] = $student->tipo_descuento;
+				$monthlyPayments[$accountantManager]['descuento'] = $student->discount;
+			}
 
 			foreach ($studentTransactions as $studentTransaction) 
 			{
-				if ($studentTransaction->transaction_description == 'Matrícula ' . $yearFrom)
+				if ($studentTransaction->transaction_type == "Mensualidad")
 				{
-					if ($studentTransaction->amount_dollar > 0)
+					$month = substr($studentTransaction->transaction_description, 0, 3);
+					
+					$year = substr($studentTransaction->transaction_description, 4, 4);
+					
+					$numberOfTheMonth = $this->nameMonth($month);
+					
+					$yearMonth = $year . $numberOfTheMonth;
+					
+					if ($yearMonth > $yearMonthFrom && $yearMonth < $yearMonthUp)
 					{
-						$swSignedUp = 1;
-					}
-				}
-			}                    
-
-			if ($swSignedUp == 1)
-			{
-				$monthlyPayments[$accountantManager]['student'] = $student->full_name;
-			
-				$monthlyPayments[$accountantManager]['studentTransactions'] = [];
-				
-				if ($student->scholarship == true)
-				{
-					$monthlyPayments[$accountantManager]['tipoDescuento'] = "Completo";
-					$monthlyPayments[$accountantManager]['descuento'] = 100;
-				}
-				elseif ($student->discount === null || $student->discount == 0)
-				{
-					$monthlyPayments[$accountantManager]['tipoDescuento'] = "";
-					$monthlyPayments[$accountantManager]['descuento'] = 0;
-				}
-				else
-				{
-					$monthlyPayments[$accountantManager]['tipoDescuento'] = $student->tipo_descuento;
-					$monthlyPayments[$accountantManager]['descuento'] = $student->discount;
-				}
-
-				foreach ($studentTransactions as $studentTransaction) 
-				{
-					if ($studentTransaction->transaction_type == "Mensualidad")
-					{
-						$month = substr($studentTransaction->transaction_description, 0, 3);
-						
-						$year = substr($studentTransaction->transaction_description, 4, 4);
-						
-						$numberOfTheMonth = $this->nameMonth($month);
-						
-						$yearMonth = $year . $numberOfTheMonth;
-						
-						if ($yearMonth > $yearMonthFrom && $yearMonth < $yearMonthUp)
+						if ($student->scholarship == 1)
 						{
-							if ($student->scholarship == 1)
+							$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'B';
+						}
+						else
+						{
+							if ($studentTransaction->paid_out == 1)
 							{
-								$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'B';
+
+								$indicadorPagado = $this->verificarDiferencia($studentTransaction, $nivelEstudio);
+
+								$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = $indicadorPagado;    
 							}
 							else
 							{
-								if ($studentTransaction->paid_out == 1)
-								{
-									$indicadorPagado = $this->verificarDiferencia($studentTransaction);
-
-									$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = $indicadorPagado;    
-								}
-								else
-								{
-									$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'P'; 
-								}
+								$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'P'; 
 							}
 						}
 					}
-				}  
-			}
+				}
+			}  
 			$accountantManager++;
         }
 
@@ -4220,7 +4213,7 @@ class StudentsController extends AppController
 		$this->Flash->success(__('Total transacciones actualizadas ' . $transaccionesActualizadas));
 	}
 
-	public function verificarDiferencia($studentTransaction = null)
+	public function verificarDiferencia($studentTransaction = null, $nivelEstudio = null)
 	{
 		$indicadorPagado = '*';
 
@@ -4239,7 +4232,7 @@ class StudentsController extends AppController
 			$mesCadena = (string) $mes;
 		}
 
-		$anoMes = $ano . $mesCadena;
+		$anoMes = 'Mensualidad' . $nivelEstudio. $ano . $mesCadena;
 						
 		foreach ($mesesTarifas as $mesTarifa)
 		{

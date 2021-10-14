@@ -258,8 +258,9 @@
 													<?php else: ?>
 														<td style="text-align: center;">R</td>
 													<?php endif; ?>
-													<td style="text-align: center;"><?= number_format(round($pago['totalFacturaDolar'], 2), 2, ",", ".") ?></td>
-													<td style="text-align: center;"><?= number_format($pago['totalFacturaBolivar'], 2, ",", ".") ?></td>
+													<td style="text-align: center;"><?= number_format(round($pago['totalFacturaDolar'] - $pago['compensadoDolar'], 2), 2, ",", ".") ?></td>
+													<?php $compensado = round($pago['compensadoDolar'] * $pago['tasaDolar'], 2); ?>
+													<td style="text-align: center;"><?= number_format($pago['totalFacturaBolivar'] - $compensado, 2, ",", ".") ?></td>
 													<?php if (isset($pago['descuentoRecargo'])): ?>
 														<td style="text-align: center;"><?= number_format($pago['descuentoRecargo'], 2, ",", ".") ?></td>
 													<?php else: ?>
@@ -291,12 +292,12 @@
 															$cobradoBolivares += round(($pago['euros'] / $pago['tasaEuro']) * $pago['tasaDolar'], 2); 
 														endif; ?>														
 													<td style="text-align: center;"><?= number_format($cobradoBolivares, 2, ",", ".") ?></td>
-													<?php $compensado = round($pago['compensadoDolar'] * $pago['tasaDolar'], 2); ?>
+													
 													<td style="text-align: center;"><?= number_format($compensado, 2, ",", ".") ?></td>
 													<?php if (isset($pago['descuentoRecargo'])):
-														$diferencia = ($pago['totalFacturaBolivar'] + $pago['descuentoRecargo']) - ($cobradoBolivares + round($pago['compensadoDolar'] * $pago['tasaDolar'], 2));
+														$diferencia = $pago['totalFacturaBolivar'] + $pago['descuentoRecargo'] - $compensado - $cobradoBolivares;
 													else: 
-														$diferencia = $pago['totalFacturaBolivar'] - ($cobradoBolivares + round($pago['compensadoDolar'] * $pago['tasaDolar'], 2));													
+														$diferencia = $pago['totalFacturaBolivar'] - $compensado -  $cobradoBolivares;													
 													endif; ?>
 													<td style="text-align: center;"><?= number_format($diferencia, 2, ",", ".") ?></td>
 													<?php if (isset($pago['tasaTemporalDolar'])):
@@ -321,8 +322,8 @@
 													endif; ?>
 													<td style="text-align: center;"><?= $transferenciaDestiempo . $cuotasAlumnoBecado . $cambioMontoCuota; ?></td>
 												</tr>
-												<?php $totalFacturaDolar += $pago['totalFacturaDolar'];  
-												$totalFacturaBolivar += $pago['totalFacturaBolivar']; 
+												<?php $totalFacturaDolar += ($pago['totalFacturaDolar'] - $pago['compensadoDolar']);  
+												$totalFacturaBolivar += $pago['totalFacturaBolivar'] - $compensado; 
 												if (isset($pago['descuentoRecargo'])): 
 													$totalDescuentosRecargosFA += $pago['descuentoRecargo'];
 												endif;

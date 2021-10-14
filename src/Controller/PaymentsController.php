@@ -594,7 +594,7 @@ class PaymentsController extends AppController
 					$serial = $_POST['serial'];
 
 					$pagos = $this->Payments->find('all')
-					->where(['OR' => [['payment_type' => 'Transferencia'], ['payment_type' => 'Depósito']], 'bank' => $banco, 'serial' => $serial])
+					->where(['OR' => [['payment_type' => 'Transferencia'], ['payment_type' => 'Depósito']], 'bank' => $banco, 'serial' => $serial, 'annulled' => 0])
 					->order(['id' => 'DESC']);
 
 					$pago = $pagos->first();

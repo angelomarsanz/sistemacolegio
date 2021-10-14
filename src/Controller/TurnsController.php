@@ -1546,7 +1546,9 @@ class TurnsController extends AppController
             return $this->redirect(['controller' => 'users', 'action' => 'wait']);
         }
 
-		$this->loadModel('Bills');		
+		$this->loadModel('Bills');
+		$this->loadModel('Concepts');
+		
 		$payment = new PaymentsController();
 					
 		$indicadorFacturasAnticipos = 0;
@@ -1677,6 +1679,33 @@ class TurnsController extends AppController
 				}
 			}
 		}
+	
+		$soloFacturas = $this->Bills->find('all', ['conditions' => ['Bills.turn' => $id, 'Bills.annulled' => 0],
+			'order' => ['Bills.school_year' => 'ASC']]);
+
+		$soloConceptos = $this->Concepts->find('all', ['conditions' => ['Concepts.annulled' => 0],
+			'select' => ['Concepts.bill_id', 'Concepts.concept', 'Concepts.amount'],
+			'order' => ['Concepts.bill_id' => 'ASC']]);
+
+		$vectorConceptos = [];
+
+		foreach ($soloFacturas as $factura)
+		{
+			foreach ($soloConceptos as $concepto)
+			{
+				if ($concepto->bill_id == $factura->id)
+				{
+					$vectorConceptos[] = 
+						[
+							'idFactura' => $concepto->bill_id,
+							'concepto' 	=> $concepto->concept,
+							'monto' => $concepto->amount,
+							'observacion' => $concepto->observation
+						];
+				}
+			}
+		}
+
 															
 		$this->set(compact
 			('turn',
@@ -1704,7 +1733,10 @@ class TurnsController extends AppController
 			'indicadorRecibosAnulados',
 			'documentosAnulados',
 			'totalGeneralSobrantes',
-			'totalGeneralReintegrosSobrantes'));	
+			'totalGeneralReintegrosSobrantes',
+			'soloFacturas',
+			'vectorConceptos'
+		));	
 			
 		$this->set('_serialize', 
 			['turn',
@@ -1731,7 +1763,10 @@ class TurnsController extends AppController
 			'indicadorRecibosAnulados',
 			'documentosAnulados',
 			'totalGeneralSobrantes',
-			'totalGeneralReintegrosSobrantes']);	
+			'totalGeneralReintegrosSobrantes',
+			'soloFacturas',
+			'vectorConceptos'
+		]);	
 	}
 	
     public function excelDocumentos($id = null)

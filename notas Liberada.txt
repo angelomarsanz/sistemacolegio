@@ -1,3 +1,10 @@
+La factura Nro. 41719 (id 216), tiene un error: En el item exonerado se refleja 0,01 y debería ser 0,00. Es un niño nuevo Sanabria Andrés, que se le exoneró Septiembre, porque se inscribió tarde
+
+Videos Enzo Mollericona
+https://www.youtube.com/watch?v=X8WtT-8GDM4
+https://www.youtube.com/watch?v=fobopRlquj0&list=PL-9WnOL7eRJYmdqHWCKigyl_tRHjNkrlF&index=5
+https://www.youtube.com/watch?v=I5l3IyUiTcM&list=PL-9WnOL7eRJYmdqHWCKigyl_tRHjNkrlF&index=10
+
 REVISAR 41557 DIFERENCIAS CONVERSIÓN
 
 Después de terminar el proceso de migración eliminar BillsController los códigos de compensación en la acción "Invoice" y del template "Invoice", así como también en Turns.edit, Turns.reporte_cierre y Turns.excel_documentos

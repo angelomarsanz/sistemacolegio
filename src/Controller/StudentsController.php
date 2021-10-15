@@ -3061,6 +3061,26 @@ class StudentsController extends AppController
         date_default_timezone_set('America/Caracas');
 		
         $currentDate = Time::now();
+
+		$this->loadModel('Sections');
+
+		$gradoNivelEstudio = 
+		[
+			'Pre-kinder' => 'Pre-escolar, pre-kinder',                                
+			'Kinder' => 'Pre-escolar, kinder',
+			'Preparatorio' => 'Pre-escolar, preparatorio',
+			'1er. Grado' => 'Primaria, 1er. grado',
+			'2do. Grado' => 'Primaria, 2do. grado',
+			'3er. Grado' => 'Primaria, 3er. grado',
+			'4to. Grado' => 'Primaria, 4to. grado',
+			'5to. Grado' => 'Primaria, 5to. grado',
+			'6to. Grado' => 'Primaria, 6to. grado',
+			'1er. Año' => 'Secundaria, 1er. año',
+			'2do. Año' => 'Secundaria, 2do. año',
+			'3er. Año' => 'Secundaria, 3er. año',
+			'4to. Año' => 'Secundaria, 4to. año',
+			'5to. Año' => 'Secundaria, 5to. año'
+		];
 		
 		$sections = $this->Students->Sections->find('list', ['limit' => 200]);
 		
@@ -3071,6 +3091,10 @@ class StudentsController extends AppController
             $student = $this->Students->patchEntity($student, $this->request->data);
             
             $student->brothers_in_school = 0;
+
+			$seccion = $this->Sections->get($student->section_id);
+			
+			$student->level_of_study = $gradoNivelEstudio[$seccion->sublevel];
 		            
             if ($this->Students->save($student)) 
             {			

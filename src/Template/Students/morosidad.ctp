@@ -1,6 +1,8 @@
 <div class="row">
     <div class="col-md-4">
 		<div class="page-header">
+			<br />
+    	    <?= $this->Html->link('Volver', ['controller' => 'users', 'action' => 'wait'], ['class' => 'btn btn-sm btn-primary']); ?>
 	        <h3>Reporte de Morosidad</h3>
 	    </div>
 	    <?= $this->Form->create() ?>
@@ -20,12 +22,8 @@
 	                    '11' => 'Noviembre',
 	                    '12' => 'Diciembre']]); 
 					echo "<div id='mensaje-mes' class='mensaje-usuario'></div>";
-					echo "Nota: Agosto no está en la lista de meses porque es parte de los conceptos de incripción<br/><br />";
 	               	echo $this->Form->input('ano', ['label' => 'Año: ', 'options' => 
 	                    ["" => "",
-						'2018' => '2018',
-	                    '2019' => '2019',
-	                    '2020' => '2020',
 						'2021' => '2021',
 						'2022' => '2022',
 						'2023' => '2023']]);
@@ -38,7 +36,6 @@
 					echo "<div id='mensaje-tipo-reporte' class='mensaje-usuario'></div>";
 	               	echo $this->Form->input('ano_escolar', ['label' => 'Inscritos en el: ', 'options' => 
 	                    ["" => "",
-						'Año escolar anterior' => 'Año escolar anterior',
 	                    'Año escolar actual' => 'Año escolar actual']]);
 					echo "<div id='mensaje-ano-escolar' class='mensaje-usuario'></div>";
 					echo "<br />"
@@ -46,8 +43,6 @@
 		    </fieldset>
         	<?= $this->Form->button(__('Crear reporte'), ['id' => 'crear-reporte', 'class' =>'btn btn-success']) ?>
         <?= $this->Form->end() ?>
-        <br />
-        <?= $this->Html->link('Volver al inicio', ['controller' => 'users', 'action' => 'wait'], ['class' => 'btn btn-sm btn-primary']); ?>
 	</div>
 </div>
 <script>

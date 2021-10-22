@@ -3587,10 +3587,6 @@ class StudentsController extends AppController
 		$dollarExchangeRate = $moneda->tasa_cambio_dolar; 
 				
 		$mesesTarifas = $this->mesesTarifas(0);
-
-		$tarifaDolarAnoMes = 0;
-
-		$amountMonthly = 0;
 								
 		if ($anoEscolar == "Año escolar anterior")
 		{
@@ -3657,6 +3653,8 @@ class StudentsController extends AppController
 		
 		$detalleMorosos = [];
 		$totalMoroso = 0;
+
+		$contadorEstudiantes = 0;
 				
 		foreach ($studentsFor as $studentsFors)
 		{		
@@ -3670,7 +3668,7 @@ class StudentsController extends AppController
 			{
 				$nivelEstudio = 'secundaria';
 			}
-			
+					
 			if ($studentsFors->section_id > 1)
 			{				
 				$delinquentMonths = 0;
@@ -3691,6 +3689,13 @@ class StudentsController extends AppController
 
 					if ($studentsFors->balance == $yearFrom)
 					{
+						/*$contadorEstudiantes++;
+
+						if ($contadorEstudiantes == 20)
+						{
+							break;
+						} */
+
 						foreach ($studentTransactions as $studentTransaction)
 						{
 							if ($studentTransaction->transaction_type == "Mensualidad")
@@ -3704,6 +3709,8 @@ class StudentsController extends AppController
 								$yearMonth = 'Mensualidad' . $nivelEstudio. $year . $numberOfTheMonth;
 
 								$soloAnoMes = $year . $numberOfTheMonth;
+
+								// echo '<br />yearMonth ' . $yearMonth;
 									
 								if ($month != "Ago")
 								{
@@ -3715,8 +3722,11 @@ class StudentsController extends AppController
 										{
 											foreach ($mesesTarifas as $mesesTarifa)
 											{
+												// echo '<br />mesesTarifa anoMes ' . $mesesTarifa["anoMes"];
+
 												if ($mesesTarifa["anoMes"] == $yearMonth)
 												{
+													// echo "<br />Mensualidad encontrada " . $mesesTarifa["anoMes"] . " " . $yearMonth;
 													if ($studentsFors->discount != null)
 													{
 														$amountMonthly = round(($mesesTarifa["tarifaDolar"] * (100 - $studentsFors->discount)) / 100);
@@ -3802,7 +3812,7 @@ class StudentsController extends AppController
 						}	
 					}	
 				}
-				if ($studentsFors->balance == $yearFrom)
+				if ($scholarship == 1 || $swSignedUp == 1)
 				{
 					if ($swSection == 0)
 					{
@@ -3864,8 +3874,7 @@ class StudentsController extends AppController
 			
 		$this->set(compact('school', 'defaulters', 'tDefaulters', 'totalDebt', 'currentDate', 'ano', 'mes', 'tipoReporte', 'detalleMorosos', 'totalMoroso'));
 	}
-
-	public function relatedstudentsPrueba()
+    public function relatedstudentsPrueba()
     {
         setlocale(LC_TIME, 'es_VE', 'es_VE.utf-8', 'es_VE.utf8'); 
         date_default_timezone_set('America/Caracas');

@@ -1684,22 +1684,48 @@ class TurnsController extends AppController
 			'order' => ['Bills.school_year' => 'ASC']]);
 
 		$soloConceptos = $this->Concepts->find('all', ['conditions' => ['Concepts.annulled' => 0],
-			'select' => ['Concepts.bill_id', 'Concepts.concept', 'Concepts.amount'],
-			'order' => ['Concepts.bill_id' => 'ASC']]);
+			'select' => ['Concepts.bill_id', 'Concepts.concept', 'Concepts.amount']]);
 
 		$vectorConceptos = [];
 
 		foreach ($soloFacturas as $factura)
 		{
+			if ($factura->saldo_compensado_dolar > 0)
+			{
+				$montoCompensado = round($factura->saldo_compensado_dolar * $factura->tasa_cambio, 2);
+			}
+			else
+			{
+				$montoCompensado = 0;
+			}
+
 			foreach ($soloConceptos as $concepto)
 			{
 				if ($concepto->bill_id == $factura->id)
 				{
+					if ($montoCompensado > 0)
+					{
+						if ($concepto->amount >= $montoCompensado)
+						{
+							$amountConcept = $concepto->amount - $montoCompensado;
+							$montoCompensado = 0;
+						}
+						else
+						{
+							$amountConcept = 0;
+							$montoCompensado = $montoCompensado - $concepto->amount;
+						}
+					}
+					else
+					{
+						$amountConcept = $concepto->amount;
+					}
+
 					$vectorConceptos[] = 
 						[
 							'idFactura' => $concepto->bill_id,
 							'concepto' 	=> $concepto->concept,
-							'monto' => $concepto->amount,
+							'monto' => $amountConcept,
 							'observacion' => $concepto->observation
 						];
 				}

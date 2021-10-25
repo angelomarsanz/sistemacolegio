@@ -2004,6 +2004,11 @@
 					{
 						biggestYearFrom = parseInt(item['dbMonthlyPayment'].substring(10, 14));
 					}
+					else if (item['dbMonthlyPayment'].substring(0, 3) == "Sep")
+					{
+						biggestYearFrom = parseInt(item['dbMonthlyPayment'].substring(4, 8));
+					}
+
 					if (item['dbScholarship'] == 1 || item['dbDescuentoAlumno'] < 1)
 					{
 						cuotasAlumnoBecado++;

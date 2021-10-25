@@ -49,7 +49,8 @@ class StudentsController extends AppController
     }
     
     public function testFunction()
-    {		
+    {	
+		/*
 		$this->log("Something didn't work!"); 
 		$mesesTarifas = $this->mesesTarifas(0);
 
@@ -57,39 +58,35 @@ class StudentsController extends AppController
 
 		$this->set(compact('mesesTarifas', 'otrasTarifas'));
         $this->set('_serialize', ['mesesTarifas', 'otrasTarifas']);
-		/*
+		
+		$this->loadModel('Studenttransactions');
+		*/
+
 		$this->loadModel('Studenttransactions');
 
-		$contadorEstudiantesSinMensualidades = 0;
-		$contadorInsertadas = 0;
-
-		$estudiantes = $this->Students->find('all')->where(['Students.id >' => 1, 'Students.balance' => '2021']);
+		$estudiantes = $this->Students->find('all')->where(['Students.id >' => 1, 'Students.student_condition' => 'Regular', 'Students.balance <' => '2021', 'Students.discount >' => 0]);
 
 		$contadorEstudiantes = $estudiantes->count();
 
-		$this->Flash->success(__('Estudiantes inscritos 2021 ' . $contadorEstudiantes));
+		$this->Flash->success(__('Estudiantes no inscritos en el 2021 ' . $contadorEstudiantes));
 
 		if ($contadorEstudiantes > 0)
 		{
 			foreach ($estudiantes as $estudiante)
 			{
-				$transaccionesEstudiante = $this->Studenttransactions->find('all')->where(['student_id' => $estudiante->id, 'transaction_type' => 'Mensualidad', 'ano_escolar' => '2021']);
+				$transaccionesEstudiante = $this->Studenttransactions->find('all')->where(['student_id' => $estudiante->id, 'transaction_description' => 'Sep 2021', 'amount_dollar >' => 0]);
 
 				$contadorTransacciones = $transaccionesEstudiante->count();
 
-				if ($contadorTransacciones == 0)
+				if ($contadorTransacciones > 0)
 				{
-					$contadorEstudiantesSinMensualidades++;
-					$contadorTransacciones = $this->crearCuotasInscritos($estudiante->id);
-					$contadorInsertadas = $contadorInsertadas + $contadorTransacciones;
-			
+					foreach ($transaccionesEstudiante as $transaccion)
+					{
+						$this->Flash->success(__('id Estudiante que pagó matrícula 2021 ' . $transaccion->student_id));
+					}
 				}
 			}
 		}
-
-		$this->Flash->success(__('Estudiantes inscritos sin mensualidades ' . $contadorEstudiantesSinMensualidades));
-		$this->Flash->success(__('Transacciones Insertadas ' . $contadorInsertadas));
-		*/
     }
 	
     public function testFunction2()

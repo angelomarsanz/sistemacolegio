@@ -139,6 +139,10 @@ class TurnsController extends AppController
 				{
 					return $this->redirect(['controller' => 'bills', 'action' => 'notaContable']);
 				}
+				elseif ($menuOption == 'Papel fiscal')
+				{
+					return $this->redirect(['controller' => 'bills', 'action' => 'anularPapelFiscal', $result[0]['id'], $result[0]['turn']]);
+				}
 				else
                 {
                     return $this->redirect(['controller' => 'bills', 'action' => 'createInvoice', $menuOption, $result[0]['id'], $result[0]['turn']]);

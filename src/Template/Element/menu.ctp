@@ -125,6 +125,7 @@
 								<li><?= $this->Html->link('Consultar nota de crédito', ['controller' => 'Bills', 'action' => 'consultarNotaCredito']) ?></li>
 								<li><?= $this->Html->link('Consultar nota de débito', ['controller' => 'Bills', 'action' => 'consultarNotaDebito']) ?></li>
 								<li><?= $this->Html->link('Anular factura', ['controller' => 'Turns', 'action' => 'checkTurnInvoice', 'Anular']) ?></li>
+								<li><?= $this->Html->link('Anular papel fiscal', ['controller' => 'Turns', 'action' => 'checkTurnInvoice', 'Papel fiscal']) ?></li>
 								<li><?= $this->Html->link('Crear nota contable', ['controller' => 'Turns', 'action' => 'checkTurnInvoice', 'NC']) ?></li>
 								<li><?= $this->Html->link('Recibo reintegro', ['controller' => 'Parentsandguardians', 'action' => 'busquedaReciboReintegro']) ?></li>			
 								<li><?= $this->Html->link('Modificar lote de facturas', ['controller' => 'Controlnumbers', 'action' => 'edit']) ?></li>

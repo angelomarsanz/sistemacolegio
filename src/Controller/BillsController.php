@@ -1215,6 +1215,8 @@ class BillsController extends AppController
 		        
         if ($this->request->is('post')) 
         {	
+			$facturaAnular = $_POST['bill_number'];
+
 			$ultimoRegistro = $this->Bills->find('all', ['conditions' => ['bill_number' => $_POST['bill_number'], 'OR' => [['tipo_documento' => 'Factura'], ['SUBSTRING(tipo_documento, 1, 6) =' => 'Recibo']]], 
 				'order' => ['Bills.created' => 'DESC']]); 
 								
@@ -1377,8 +1379,8 @@ class BillsController extends AppController
 										$binnacles->add('controller', 'Bills', 'annulInvoice', 'No se pudo actualizar el saldo del representante con id ' . $idParentsandguardian . ' en la factura ' . $billNumber);
 									}
 								}
-											
-								return $this->redirect(['action' => 'annulledInvoice', $idBill]);
+								$this->Flash->success(__('La factura Nro. ' . $facturaAnular . ' fue anulada exitosamente'));			
+								return $this->redirect(['controller' => 'Users', 'action' => 'wait']);
 							}
 						}
 						else
@@ -2626,4 +2628,156 @@ class BillsController extends AppController
 	{
 		
 	}
+    public function anularPapelFiscal($idTurn = null, $turn = null)
+    {
+        $this->loadModel('Controlnumbers');
+        
+        setlocale(LC_TIME, 'es_VE', 'es_VE.utf-8', 'es_VE.utf8'); 
+        date_default_timezone_set('America/Caracas');
+        
+        $dateTurn = Time::now();
+		
+		$anoMesActual = $dateTurn->year . $dateTurn->month;
+		        
+        if ($this->request->is('post')) 
+        {	
+			$numeroAnular = $_POST['control_number'];
+
+			$facturas = $this->Bills->find('all', ['conditions' => ['control_number' => $numeroAnular], 
+			'order' => ['Bills.created' => 'DESC']]); 
+								
+			$contadorFacturas = $facturas->count();
+			   
+			if ($contadorFacturas > 0)
+			{
+				$facturaRequerida = $facturas->first();			
+
+				if ($facturaRequerida->annulled == 0)
+				{
+					$this->Flash->error(__('Este papel fiscal corresponde a la factura ' . $facturaRequerida->bill_number));
+				}
+				else
+				{
+					$this->Flash->error(__('Este papel fiscal ya está anulado'));
+				}
+			}
+			else
+			{
+
+				$numerosDeControl = $this->Controlnumbers->find('all', ['conditions' => ['Controlnumbers.username' => 'angel2703'],
+                'order' => ['Controlnumbers.created' => 'DESC'] ]);
+
+				$contadorNumeros = $numerosDeControl->count();
+
+				if ($contadorNumeros > 0)
+				{
+            		$numeroEncontrado = $numerosDeControl->first();
+        
+					if ($numeroEncontrado->invoice_series == 0)
+					{
+						$this->Flash->error(__('Se agotó el lote de factura, por favor registre otro'));
+
+						return $this->redirect(['controller' => 'Controlnumbers', 'action' => 'edit']);
+					}     
+					elseif ($numeroEncontrado->invoice_series != $numeroAnular)
+					{
+						$this->Flash->error(__('Número de control del papel fiscal fuera de secuencia'));
+					}
+					elseif ($numeroEncontrado->invoice_series == $numeroAnular)
+					{
+						$codigoRetornoFactura = $this->agregarFacturaAnulada($numeroAnular, $idTurn);
+
+						if ($codigoRetornoFactura == 0)
+						{
+							$numeroDeControlActualizar = $this->Controlnumbers->get($numeroEncontrado->id);
+
+							$numeroDeControlActualizar->invoice_series++;   
+					
+							$numeroDeControlActualizar->invoice_lot--;
+
+							if (!($this->Controlnumbers->save($numeroDeControlActualizar)))
+							{
+								$this->Flash->error(__('No se pudo actualizar el lote de factura. Se debe actualizar manualmente'));
+								
+								return $this->redirect(['controller' => 'Controlnumbers', 'action' => 'edit']);
+							}
+							else
+							{
+								$this->Flash->success(__('El papel fiscal con el número ' . $numeroAnular . ' se anuló exitosamente'));
+								return $this->redirect(['controller' => 'users', 'action' => 'wait']);
+							}
+						}
+					}
+				}
+				else
+				{
+					$this->Flash->error(__('No se encontró el lote de factura'));	
+				}
+			}
+        }
+        $this->set(compact('idTurn', 'turn', 'dateTurn'));
+    }
+
+    public function agregarFacturaAnulada($numeroAnular, $idTurn = null)
+    {
+		$codigoRetornoFactura = 0;
+
+        $consecutiveInvoice = new ConsecutiveinvoicesController();
+        	
+		$nuevoNumeroFactura = 0;
+
+        setlocale(LC_TIME, 'es_VE', 'es_VE.utf-8', 'es_VE.utf8'); 
+        date_default_timezone_set('America/Caracas');
+        
+        $fechaHora = Time::now();
+
+		$this->loadModel('Schools');
+		$school = $this->Schools->get(2);	
+		
+		$anoEscolarActual = $school->current_school_year; 
+			
+			$nuevoNumeroFactura = $consecutiveInvoice->add();
+			
+			$bill = $this->Bills->newEntity();
+			$bill->parentsandguardian_id = 1;
+			$bill->user_id = $this->Auth->user('id');
+			$bill->date_and_time = $fechaHora;
+			$bill->turn = $idTurn;
+			
+			$bill->bill_number = $nuevoNumeroFactura;
+			$bill->control_number = $numeroAnular;
+			$bill->fiscal = 1;
+			$bill->tipo_documento = "Factura";
+			$bill->school_year = $anoEscolarActual;
+			$bill->identification = '';
+			$bill->client = '';
+			$bill->tax_phone = '';
+			$bill->fiscal_address = '';
+			$bill->amount = 0;
+			$bill->amount_paid = 0;
+			$bill->annulled = 1;
+			$bill->date_annulled = $fechaHora;
+			$bill->invoice_migration = 0;
+			$bill->new_family = 0;
+			$bill->impresa = 1;
+			$bill->id_documento_padre = 0;
+			$bill->id_anticipo = 0;
+			$bill->factura_pendiente = 0;
+			$bill->moneda_id = 1;
+			$bill->tasa_cambio = 0;
+			$bill->tasa_euro = 0;
+			$bill->tasa_dolar_euro = 0;
+			$bill->saldo_compensado_dolar = 0;
+			$bill->sobrante_dolar = 0;
+			$bill->tasa_temporal_dolar = 0;
+			$bill->tasa_temporal_euro = 0;
+			$bill->cuotas_alumno_becado = 0;
+			$bill->cambio_monto_cuota = 0;
+			
+			if (!($this->Bills->save($bill))) 
+			{
+				$codigoRetornoFactura = 1;
+			}
+		return $codigoRetornoFactura;
+    }
 }

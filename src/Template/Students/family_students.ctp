@@ -56,7 +56,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="page-header">
-			<h2>Familias - Alumnos</h2>
+			<h2>Reporte Excel de Representantes y Alumnos</h2>
 		</div>
 		<?= $this->Form->create() ?>
 			<fieldset>	
@@ -78,7 +78,7 @@
 						<?php
 							echo $this->Form->input('order_report', ['label' => 'Ordenar por: *', 'required' => true, 'options' => 
 							[null => " ",
-							 'Familia' => 'Familia',
+							 'Representante' => 'Representante',
 							 'Alumno' => 'Alumno'],
 							 ]);
 						?>

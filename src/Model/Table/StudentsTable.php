@@ -323,17 +323,19 @@ class StudentsTable extends Table
 			$conditionQuery = [['Students.id >' => 1], ['Students.student_condition !=' => 'Eliminado'], ['Students.balance' => $options['anoEscolarActual']]];
 		}
 		
-		if ($options['orderReport'] == 'Familia') 
+		if ($options['orderReport'] == 'Representante') 
 		{
-			$orderQuery = ['Parentsandguardians.family' => 'ASC',
-				'Parentsandguardians.surname' => 'ASC',
-				'Parentsandguardians.second_surname' => 'ASC',
-				'Parentsandguardians.first_name' => 'ASC',
-				'Parentsandguardians.second_name' => 'ASC',
-				'Students.surname' => 'ASC',
-				'Students.second_surname' => 'ASC',
-				'Students.first_name' => 'ASC',
-				'Students.second_name' => 'ASC'];
+			$orderQuery = 
+                [
+                    'Parentsandguardians.surname' => 'ASC',
+                    'Parentsandguardians.second_surname' => 'ASC',
+                    'Parentsandguardians.first_name' => 'ASC',
+                    'Parentsandguardians.second_name' => 'ASC',
+                    'Students.surname' => 'ASC',
+                    'Students.second_surname' => 'ASC',
+                    'Students.first_name' => 'ASC',
+                    'Students.second_name' => 'ASC'
+                ];
 		}
 		else
 		{

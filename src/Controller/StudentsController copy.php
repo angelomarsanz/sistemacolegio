@@ -49,40 +49,8 @@ class StudentsController extends AppController
     }
     
     public function testFunction()
-    {
-		$this->loadModel('Studenttransactions');
-
-		$contadorEstudiantesSinMensualidades = 0;
-		$contadorInsertadas = 0;
-
-		$estudiantes = $this->Students->find('all')->where(['Students.id >' => 1, 'Students.balance' => '2021']);
-
-		$contadorEstudiantes = $estudiantes->count();
-
-		$this->Flash->success(__('Estudiantes inscritos 2021 ' . $contadorEstudiantes));
-
-		if ($contadorEstudiantes > 0)
-		{
-			foreach ($estudiantes as $estudiante)
-			{
-				$transaccionesEstudiante = $this->Studenttransactions->find('all')->where(['student_id' => $estudiante->id, 'transaction_type' => 'Mensualidad', 'ano_escolar' => '2021']);
-
-				$contadorTransacciones = $transaccionesEstudiante->count();
-
-				if ($contadorTransacciones == 0)
-				{
-					$contadorEstudiantesSinMensualidades++;
-					$contadorTransacciones = $this->crearCuotasInscritos($estudiante->id);
-					$contadorInsertadas = $contadorInsertadas + $contadorTransacciones;
-			
-				}
-			}
-		}
-
-		$this->Flash->success(__('Estudiantes inscritos sin mensualidades ' . $contadorEstudiantesSinMensualidades));
-		$this->Flash->success(__('Transacciones Insertadas ' . $contadorInsertadas));
-
-		/*		
+    {	
+		/*
 		$this->log("Something didn't work!"); 
 		$mesesTarifas = $this->mesesTarifas(0);
 
@@ -90,7 +58,35 @@ class StudentsController extends AppController
 
 		$this->set(compact('mesesTarifas', 'otrasTarifas'));
         $this->set('_serialize', ['mesesTarifas', 'otrasTarifas']);
+		
+		$this->loadModel('Studenttransactions');
 		*/
+
+		$this->loadModel('Studenttransactions');
+
+		$estudiantes = $this->Students->find('all')->where(['Students.id >' => 1, 'Students.student_condition' => 'Regular', 'Students.balance <' => '2021', 'Students.discount >' => 0]);
+
+		$contadorEstudiantes = $estudiantes->count();
+
+		$this->Flash->success(__('Estudiantes no inscritos en el 2021 ' . $contadorEstudiantes));
+
+		if ($contadorEstudiantes > 0)
+		{
+			foreach ($estudiantes as $estudiante)
+			{
+				$transaccionesEstudiante = $this->Studenttransactions->find('all')->where(['student_id' => $estudiante->id, 'transaction_description' => 'Sep 2021', 'amount_dollar >' => 0]);
+
+				$contadorTransacciones = $transaccionesEstudiante->count();
+
+				if ($contadorTransacciones > 0)
+				{
+					foreach ($transaccionesEstudiante as $transaccion)
+					{
+						$this->Flash->success(__('id Estudiante que pagó matrícula 2021 ' . $transaccion->student_id));
+					}
+				}
+			}
+		}
     }
 	
     public function testFunction2()
@@ -1772,6 +1768,15 @@ class StudentsController extends AppController
         $yearMonthUp = $yearUntil . '08';
 
         $nameSection = $this->Students->Sections->get($section);
+
+		if ($nameSection->level == 'Primaria')
+		{
+			$nivelEstudio = 'primaria';
+		}
+		else
+		{
+			$nivelEstudio = 'secundaria';
+		}
         
         $level = $this->sublevelLevel($nameSection->sublevel);
 
@@ -1787,76 +1792,61 @@ class StudentsController extends AppController
 		{
 			$studentTransactions = $this->Students->Studenttransactions->find('all')->where(['student_id' => $student->id]);
 
-			$swSignedUp = 0;
+			$monthlyPayments[$accountantManager]['student'] = $student->full_name;
+		
+			$monthlyPayments[$accountantManager]['studentTransactions'] = [];
+			
+			if ($student->scholarship == true)
+			{
+				$monthlyPayments[$accountantManager]['tipoDescuento'] = "Completo";
+				$monthlyPayments[$accountantManager]['descuento'] = 100;
+			}
+			elseif ($student->discount === null || $student->discount == 0)
+			{
+				$monthlyPayments[$accountantManager]['tipoDescuento'] = "";
+				$monthlyPayments[$accountantManager]['descuento'] = 0;
+			}
+			else
+			{
+				$monthlyPayments[$accountantManager]['tipoDescuento'] = $student->tipo_descuento;
+				$monthlyPayments[$accountantManager]['descuento'] = $student->discount;
+			}
 
 			foreach ($studentTransactions as $studentTransaction) 
 			{
-				if ($studentTransaction->transaction_description == 'Matrícula ' . $yearFrom)
+				if ($studentTransaction->transaction_type == "Mensualidad")
 				{
-					if ($studentTransaction->amount_dollar > 0)
+					$month = substr($studentTransaction->transaction_description, 0, 3);
+					
+					$year = substr($studentTransaction->transaction_description, 4, 4);
+					
+					$numberOfTheMonth = $this->nameMonth($month);
+					
+					$yearMonth = $year . $numberOfTheMonth;
+					
+					if ($yearMonth > $yearMonthFrom && $yearMonth < $yearMonthUp)
 					{
-						$swSignedUp = 1;
-					}
-				}
-			}                    
-
-			if ($swSignedUp == 1)
-			{
-				$monthlyPayments[$accountantManager]['student'] = $student->full_name;
-			
-				$monthlyPayments[$accountantManager]['studentTransactions'] = [];
-				
-				if ($student->scholarship == true)
-				{
-					$monthlyPayments[$accountantManager]['tipoDescuento'] = "Completo";
-					$monthlyPayments[$accountantManager]['descuento'] = 100;
-				}
-				elseif ($student->discount === null || $student->discount == 0)
-				{
-					$monthlyPayments[$accountantManager]['tipoDescuento'] = "";
-					$monthlyPayments[$accountantManager]['descuento'] = 0;
-				}
-				else
-				{
-					$monthlyPayments[$accountantManager]['tipoDescuento'] = $student->tipo_descuento;
-					$monthlyPayments[$accountantManager]['descuento'] = $student->discount;
-				}
-
-				foreach ($studentTransactions as $studentTransaction) 
-				{
-					if ($studentTransaction->transaction_type == "Mensualidad")
-					{
-						$month = substr($studentTransaction->transaction_description, 0, 3);
-						
-						$year = substr($studentTransaction->transaction_description, 4, 4);
-						
-						$numberOfTheMonth = $this->nameMonth($month);
-						
-						$yearMonth = $year . $numberOfTheMonth;
-						
-						if ($yearMonth > $yearMonthFrom && $yearMonth < $yearMonthUp)
+						if ($student->scholarship == 1)
 						{
-							if ($student->scholarship == 1)
+							$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'B';
+						}
+						else
+						{
+							if ($studentTransaction->paid_out == 1)
 							{
-								$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'B';
+
+								$indicadorPagado = $this->verificarDiferencia($studentTransaction, $nivelEstudio);
+
+								$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = $indicadorPagado;    
 							}
 							else
 							{
-								if ($studentTransaction->paid_out == 1)
-								{
-									$indicadorPagado = $this->verificarDiferencia($studentTransaction);
-
-									$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = $indicadorPagado;    
-								}
-								else
-								{
-									$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'P'; 
-								}
+								$monthlyPayments[$accountantManager]['studentTransactions'][]['monthlyPayment'] = 'P'; 
 							}
 						}
 					}
-				}  
-			}
+				}
+			}  
 			$accountantManager++;
         }
 
@@ -2776,7 +2766,7 @@ class StudentsController extends AppController
 			}
 			else
 			{
-				$this->Flash->error(___('Error al guardar el archivo Binnacles'));
+				$this->Flash->error(___('Error al guardar el registro Binnacles'));
 			}
 		}
 	}
@@ -3068,6 +3058,26 @@ class StudentsController extends AppController
         date_default_timezone_set('America/Caracas');
 		
         $currentDate = Time::now();
+
+		$this->loadModel('Sections');
+
+		$gradoNivelEstudio = 
+		[
+			'Pre-kinder' => 'Pre-escolar, pre-kinder',                                
+			'Kinder' => 'Pre-escolar, kinder',
+			'Preparatorio' => 'Pre-escolar, preparatorio',
+			'1er. Grado' => 'Primaria, 1er. grado',
+			'2do. Grado' => 'Primaria, 2do. grado',
+			'3er. Grado' => 'Primaria, 3er. grado',
+			'4to. Grado' => 'Primaria, 4to. grado',
+			'5to. Grado' => 'Primaria, 5to. grado',
+			'6to. Grado' => 'Primaria, 6to. grado',
+			'1er. Año' => 'Secundaria, 1er. año',
+			'2do. Año' => 'Secundaria, 2do. año',
+			'3er. Año' => 'Secundaria, 3er. año',
+			'4to. Año' => 'Secundaria, 4to. año',
+			'5to. Año' => 'Secundaria, 5to. año'
+		];
 		
 		$sections = $this->Students->Sections->find('list', ['limit' => 200]);
 		
@@ -3078,6 +3088,10 @@ class StudentsController extends AppController
             $student = $this->Students->patchEntity($student, $this->request->data);
             
             $student->brothers_in_school = 0;
+
+			$seccion = $this->Sections->get($student->section_id);
+			
+			$student->level_of_study = $gradoNivelEstudio[$seccion->sublevel];
 		            
             if ($this->Students->save($student)) 
             {			
@@ -3570,6 +3584,10 @@ class StudentsController extends AppController
 		$dollarExchangeRate = $moneda->tasa_cambio_dolar; 
 				
 		$mesesTarifas = $this->mesesTarifas(0);
+
+		$tarifaDolarAnoMes = 0;
+
+		$amountMonthly = 0;
 								
 		if ($anoEscolar == "Año escolar anterior")
 		{
@@ -3640,6 +3658,15 @@ class StudentsController extends AppController
 		foreach ($studentsFor as $studentsFors)
 		{		
 			$nameSection = $this->Students->Sections->get($studentsFors->section_id);
+
+			if ($nameSection->level == 'Primaria')
+			{
+				$nivelEstudio = 'primaria';
+			}
+			else
+			{
+				$nivelEstudio = 'secundaria';
+			}
 			
 			if ($studentsFors->section_id > 1)
 			{				
@@ -3659,18 +3686,7 @@ class StudentsController extends AppController
 				{				
 					$studentTransactions = $this->Students->Studenttransactions->find('all')->where(['student_id' => $studentsFors->id, 'invoiced' => 0]);
 
-					foreach ($studentTransactions as $studentTransaction) 
-					{
-						if ($studentTransaction->transaction_description == 'Matrícula ' . $yearFrom)
-						{
-							if ($studentTransaction->amount_dollar > 0)
-							{
-								$swSignedUp = 1;
-							}
-							break;						
-						}
-					}
-					if ($swSignedUp == 1)
+					if ($studentsFors->balance == $yearFrom)
 					{
 						foreach ($studentTransactions as $studentTransaction)
 						{
@@ -3682,7 +3698,9 @@ class StudentsController extends AppController
 									
 								$numberOfTheMonth = $this->nameMonth($month);
 									
-								$yearMonth = $year . $numberOfTheMonth;
+								$yearMonth = 'Mensualidad' . $nivelEstudio. $year . $numberOfTheMonth;
+
+								$soloAnoMes = $year . $numberOfTheMonth;
 									
 								if ($month != "Ago")
 								{
@@ -3690,7 +3708,7 @@ class StudentsController extends AppController
 									{
 										$wholeYear = 1;
 										
-										if ($yearMonth <= $yearMonthUntil)
+										if ($soloAnoMes <= $yearMonthUntil)
 										{
 											foreach ($mesesTarifas as $mesesTarifa)
 											{
@@ -3750,7 +3768,7 @@ class StudentsController extends AppController
 										{
 											$wholeYear = 1;
 
-											if ($yearMonth <= $yearMonthUntil)
+											if ($soloAnoMes <= $yearMonthUntil)
 											{											
 												$diferenciaDolares = $tarifaDolarAnoMes - $studentTransaction->amount_dollar;
 												$diferenciaBolivares = round($diferenciaDolares * $dollarExchangeRate);
@@ -3781,7 +3799,7 @@ class StudentsController extends AppController
 						}	
 					}	
 				}
-				if ($scholarship == 1 || $swSignedUp == 1)
+				if ($studentsFors->balance == $yearFrom)
 				{
 					if ($swSection == 0)
 					{
@@ -3843,7 +3861,8 @@ class StudentsController extends AppController
 			
 		$this->set(compact('school', 'defaulters', 'tDefaulters', 'totalDebt', 'currentDate', 'ano', 'mes', 'tipoReporte', 'detalleMorosos', 'totalMoroso'));
 	}
-    public function relatedstudentsPrueba()
+
+	public function relatedstudentsPrueba()
     {
         setlocale(LC_TIME, 'es_VE', 'es_VE.utf-8', 'es_VE.utf8'); 
         date_default_timezone_set('America/Caracas');
@@ -4220,7 +4239,7 @@ class StudentsController extends AppController
 		$this->Flash->success(__('Total transacciones actualizadas ' . $transaccionesActualizadas));
 	}
 
-	public function verificarDiferencia($studentTransaction = null)
+	public function verificarDiferencia($studentTransaction = null, $nivelEstudio = null)
 	{
 		$indicadorPagado = '*';
 
@@ -4239,7 +4258,7 @@ class StudentsController extends AppController
 			$mesCadena = (string) $mes;
 		}
 
-		$anoMes = $ano . $mesCadena;
+		$anoMes = 'Mensualidad' . $nivelEstudio. $ano . $mesCadena;
 						
 		foreach ($mesesTarifas as $mesTarifa)
 		{

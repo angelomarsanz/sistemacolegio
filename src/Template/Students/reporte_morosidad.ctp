@@ -192,7 +192,7 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td style='text-align:left;'><b>Total</b></td>
+							<td style='text-align:left;'><b>Total Bs.</b></td>
 							<td></td>
 							<td></td>
 							<td></td>

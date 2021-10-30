@@ -62,7 +62,7 @@
 		<?php if ($tipoReporte == "Por grado"): ?>
 			<div>
 				<div style="float: left; width:10%;">
-					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/logo1.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
+					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/Logo CvyL.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
 				</div>
 				<div style="float: left; width: 90%;">
 					<p style="text-align: right;">Página 1</p>
@@ -83,7 +83,7 @@
 							<th style="text-align:center;">Grado</th>
 							<th style="text-align:center;">Morosos</th>
 							<th style="text-align:center;">Solventes</th>
-							<th style="text-align:center;">Becados</th>
+							<th style="text-align:center;">Becados 100%</th>
 						</tr>
 					</thead>
 					<tfoot>
@@ -108,7 +108,7 @@
 			</div>
 			<div class="saltopagina">
 				<div style="float: left; width:10%;">
-					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/logo1.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
+					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/Logo CvyL.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
 				</div>
 				<div style="float: left; width: 90%;">
 					<p style="text-align: right;">Página 2</p>
@@ -124,14 +124,14 @@
 				<p><b><?= 'Total morosidad a la fecha Bs.S ' . number_format($totalDebt, 2, ",", ".") ?><b></p>
 				<p><b><?= 'Total alumnos morosos: ' . $tDefaulters[0]['defaulters'] . " (" . number_format((($tDefaulters[0]['defaulters']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
 				<p><b><?= 'Total alumnos solventes: ' . $tDefaulters[0]['solvents'] . " (" . number_format((($tDefaulters[0]['solvents']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
-				<p><b><?= 'Total alumnos becados: ' . $tDefaulters[0]['scholarship'] . " (" . number_format((($tDefaulters[0]['scholarship']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
+				<p><b><?= 'Total alumnos becados 100%: ' . $tDefaulters[0]['scholarship'] . " (" . number_format((($tDefaulters[0]['scholarship']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
 				<br />
 				<br />
 			</div>
 		<?php elseif ($tipoReporte == "Total general"): ?>
 			<div>
 				<div style="float: left; width:10%;">
-					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/logo1.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
+					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/Logo CvyL.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
 				</div>
 				<div style="float: left; width: 90%;">
 					<p style="text-align: right;">Página 2</p>
@@ -147,7 +147,7 @@
 				<p><b><?= 'Total morosidad a la fecha Bs.S ' . number_format($totalDebt, 2, ",", ".") ?><b></p>
 				<p><b><?= 'Total alumnos morosos: ' . $tDefaulters[0]['defaulters'] . " (" . number_format((($tDefaulters[0]['defaulters']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
 				<p><b><?= 'Total alumnos solventes: ' . $tDefaulters[0]['solvents'] . " (" . number_format((($tDefaulters[0]['solvents']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
-				<p><b><?= 'Total alumnos becados: ' . $tDefaulters[0]['scholarship'] . " (" . number_format((($tDefaulters[0]['scholarship']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
+				<p><b><?= 'Total alumnos becados 100%: ' . $tDefaulters[0]['scholarship'] . " (" . number_format((($tDefaulters[0]['scholarship']/$tDefaulters[0]['totalStudents'])*100), 2, ",", ".") . '%)' ?><b></p>
 				<br />
 				<br />
 			</div>
@@ -155,7 +155,7 @@
 			$contadorAlumnosMorosos = 1; ?>
 			<div>
 				<div style="float: left; width:10%;">
-					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/logo1.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
+					<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/Logo CvyL.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
 				</div>
 				<div style="float: left; width: 90%;">
 					<p style="text-align: right;">Página 1</p>
@@ -203,7 +203,6 @@
 					</tfoot>
 				</table>
 		<?php endif; ?>
-		<p><b>Nota: las cuotas anteriores al mes de noviembre 2018 se han devaluado porque se cobraban en bolívares.</b></p> 
 		<br />			
 	</div>
 </div>

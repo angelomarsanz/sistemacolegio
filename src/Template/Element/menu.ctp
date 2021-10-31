@@ -160,6 +160,14 @@
                                 </div>
                             </form>
                         <?php endif; ?>
+						
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Control de estudios <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu"> 
+									<li><?= $this->Html->link('Materias', ['controller' => 'Materias', 'action' => 'index']) ?></li>
+								</ul>
+						</li>
+												 
 					<?php elseif($current_user['role'] == 'Control de estudios'): ?>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Representantes <span class="caret"></span></a>

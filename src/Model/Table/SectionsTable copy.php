@@ -48,9 +48,7 @@ class SectionsTable extends Table
         $this->hasMany('Students', [
             'foreignKey' => 'section_id'
         ]);
-        $this->hasMany('Materias', [
-            'foreignKey' => 'section_id'
-        ]);
+
         
         $this->belongsToMany('Employees', [
             'foreignKey' => 'section_id',

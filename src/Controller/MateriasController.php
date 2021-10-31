@@ -27,7 +27,7 @@ class MateriasController extends AppController
 
     public function index()
     {
-        $Materias = $this->paginate($this->Materias);
+        $materias = $this->paginate($this->Materias);
 
         $this->set(compact('materias'));
         $this->set('_serialize', ['materias']);
@@ -68,8 +68,11 @@ class MateriasController extends AppController
                 $this->Flash->error(__('La materia no pudo ser registrada, por favor intente nuevamente'));
             }
         }
-        $this->set(compact('materia'));
-        $this->set('_serialize', ['materia']);
+
+        $secciones = $this->Materias->Sections->find('list', ['limit' => 200]);
+
+        $this->set(compact('materia', 'secciones'));
+        $this->set('_serialize', ['materia', 'secciones']);
     }
 
     /**
@@ -86,7 +89,7 @@ class MateriasController extends AppController
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $materia = $this->Materias->patchEntity($materia, $this->request->data);
-            if ($this->Materias->save($Materia)) {
+            if ($this->Materias->save($materia)) {
                 $this->Flash->success(__('La materia fue actualizada exitosamente'));
 
                 return $this->redirect(['action' => 'index']);
@@ -94,8 +97,11 @@ class MateriasController extends AppController
                 $this->Flash->error(__('La materia no pudo ser actualizada. Por favor intente nuevamente'));
             }
         }
-        $this->set(compact('Materia'));
-        $this->set('_serialize', ['Materia']);
+
+        $secciones = $this->Materias->Sections->find('list', ['limit' => 200]);
+
+        $this->set(compact('materia', 'secciones'));
+        $this->set('_serialize', ['materia', 'secciones']);
     }
 
     /**

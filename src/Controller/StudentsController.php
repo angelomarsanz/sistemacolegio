@@ -2892,16 +2892,16 @@ class StudentsController extends AppController
 					$arraySignedUp[$familyStudent->id] = 'Pagado';
 					if ($familyStudent->new_student == 1)
 					{
-						if ($orderReport == "Familia")
+						if ($orderReport == "Representante")
 						{
 							if ($accountNewRegistration == 0)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
-							if ($familiaAnterior != $familyStudent->parentsandguardian->family)
+							if ($familiaAnterior != $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
 						}							
@@ -2909,16 +2909,16 @@ class StudentsController extends AppController
 					}
 					else
 					{
-						if ($orderReport == "Familia")
+						if ($orderReport == "Representante")
 						{
 							if ($accountRegularRegistration == 0)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
-							if ($familiaAnterior != $familyStudent->parentsandguardian->family)
+							if ($familiaAnterior != $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
 						}												

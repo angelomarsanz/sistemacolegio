@@ -8,8 +8,8 @@ Control de estudios:
 /opt/lampp/htdocs/sistemacolegio/src/Template/Materias/view.ctp
 
 Reporte representantes - alumnos
-/opt/lampp/htdocs/sistemacolegio/src/Model/Table/StudentsTable.php
 /opt/lampp/htdocs/sistemacolegio/src/Template/Element/menu.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Controller/StudentsController.php
 /opt/lampp/htdocs/sistemacolegio/src/Model/Table/StudentsTable.php
+/opt/lampp/htdocs/sistemacolegio/src/Template/Students/family_students.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Template/Students/report_family_students.ctp

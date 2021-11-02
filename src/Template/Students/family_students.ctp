@@ -66,9 +66,7 @@
 							echo $this->Form->input('filters_report', ['label' => 'Seleccionar: *', 'required' => true, 'options' => 
 							[null => " ",
 							 'Nuevos' => 'Alumnos nuevos',
-							 'Nuevos próximo año escolar' => 'Alumnos nuevos inscritos para el próximo año escolar',
 							 'Regulares' => 'Alumnos regulares',
-							 'Regulares próximo año escolar' => 'Alumnos regulares inscritos para el próximo año escolar',
 							 'Nuevos y regulares' => 'Alumnos nuevos y regulares',
 							 'Todos' => 'Todos: Nuevos, regulares, egresados, expulsados, etc.'
 							 ]]);

@@ -1,15 +1,20 @@
 Control de estudios:
-/opt/lampp/htdocs/sistemacolegio/src/Controller/MateriasController.php
 /opt/lampp/htdocs/sistemacolegio/src/Model/Entity/Materia.php
 /opt/lampp/htdocs/sistemacolegio/src/Model/Table/MateriasTable.php
+/opt/lampp/htdocs/sistemacolegio/src/Controller/MateriasController.php
 /opt/lampp/htdocs/sistemacolegio/src/Template/Materias/add.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Template/Materias/index.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Template/Materias/edit.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Template/Materias/view.ctp
 
-Reporte representantes - alumnos
-/opt/lampp/htdocs/sistemacolegio/src/Template/Element/menu.ctp
-/opt/lampp/htdocs/sistemacolegio/src/Controller/StudentsController.php
-/opt/lampp/htdocs/sistemacolegio/src/Model/Table/StudentsTable.php
-/opt/lampp/htdocs/sistemacolegio/src/Template/Students/family_students.ctp
-/opt/lampp/htdocs/sistemacolegio/src/Template/Students/report_family_students.ctp
+/opt/lampp/htdocs/sistemacolegio/src/Model/Entity/Profesor.php
+/opt/lampp/htdocs/sistemacolegio/src/Model/Table/ProfesorTable.php
+/opt/lampp/htdocs/sistemacolegio/src/Controller/ProfesorsController.php
+/opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/add.ctp
+/opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/edit.ctp
+/opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/index.ctp
+/opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/view.ctp
+
+Reporte saldo - representante
+/opt/lampp/htdocs/sistemacolegio/src/Controller/ParentsandguardiansController.php
+/opt/lampp/htdocs/sistemacolegio/src/Controller/ParentsandguardiansController.php

@@ -173,13 +173,13 @@ class ParentsandguardiansController extends AppController
 
             $parentsandguardian = $this->Parentsandguardians->patchEntity($parentsandguardian, $this->request->data);
 
-            $lastRecord = $this->Users->find('all', ['conditions' => ['username' => $parentsandguardian->identidy_card], 'order' => ['Users.created' => 'DESC'] ]);
+            $lastRecord = $this->Users->find('all', ['conditions' => ['username' => $parentsandguardian->type_of_identification . $parentsandguardian->identidy_card], 'order' => ['Users.created' => 'DESC'] ]);
                     
             $row = $lastRecord->first();
 
             if ($row)
             {
-                $this->Flash->error(__('El usuario ' . $parentsandguardian->identidy_card . ' ya está registrado en la base de datos con el nombre de: ' . $row->surname . ' ' . $row->first_name));
+                $this->Flash->error(__('Ya existe un representante con el mismo número de documento de identidad ' . $parentsandguardian->type_of_identification . $parentsandguardian->identidy_card));
             }
             else
             {
@@ -223,9 +223,9 @@ class ParentsandguardiansController extends AppController
                 $parentsandguardian->work_phone_mother = "";
                 $parentsandguardian->profession_mother = "";
                 $parentsandguardian->address_mother = "";
-                $parentsandguardian->client = "";
-                $parentsandguardian->type_of_identification_client = "";
-                $parentsandguardian->identification_number_client = "";
+                $parentsandguardian->client = $parentsandguardian->first_name . ' ' . $parentsandguardian->surname;
+                $parentsandguardian->type_of_identification_client = $parentsandguardian->type_of_identification;
+                $parentsandguardian->identification_number_client = $parentsandguardian->identidy_card;
                 $parentsandguardian->fiscal_address = "";
                 $parentsandguardian->tax_phone = "";
                 $parentsandguardian->code_for_user = "";
@@ -244,9 +244,9 @@ class ParentsandguardiansController extends AppController
                 {
                     $user = $this->Users->newEntity();
                     
-                    $user->username = $parentsandguardian->identidy_card;
+                    $user->username = $parentsandguardian->type_of_identification . $parentsandguardian->identidy_card;
                         
-                    $user->password = "sga40";
+                    $user->password = "verdad";
         
                     $user->role = "Representante";
         
@@ -260,7 +260,7 @@ class ParentsandguardiansController extends AppController
                         
                     $user->sex = " ";
                         
-                    $user->email = $parentsandguardian->email;
+                    $user->email = $parentsandguardian->type_of_identification . $parentsandguardian->identidy_card . '@correo.com';
                         
                     $user->cell_phone = " ";
                     
@@ -278,7 +278,7 @@ class ParentsandguardiansController extends AppController
                     
                         $row = $lastRecord->first();
                             
-                        $lastRecordParent = $this->Parentsandguardians->find('all', ['conditions' => ['identidy_card' => $parentsandguardian->identidy_card], 'order' => ['Parentsandguardians.created' => 'DESC'] ]);
+                        $lastRecordParent = $this->Parentsandguardians->find('all', ['conditions' => ['type_of_identification' => $parentsandguardian->type_of_identification, 'identidy_card' => $parentsandguardian->identidy_card], 'order' => ['Parentsandguardians.created' => 'DESC'] ]);
                     
                         $rowParent = $lastRecordParent->first();
                         
@@ -446,7 +446,7 @@ class ParentsandguardiansController extends AppController
             $this->autoRender = false;
             $name = trim($this->request->query['term']);
             $results = $this->Parentsandguardians->find('all', [
-                'conditions' => [['surname LIKE' => $name . '%'], ['guardian !=' => 1]]]);
+                'conditions' => ['surname LIKE' => $name . '%']]);
             $resultsArr = [];
             foreach ($results as $result) {
 				$resultsArr[] =['label' => $result['surname'] . ' ' . $result['first_name'] . ' (' . $result['type_of_identification'] . $result['identidy_card'] . ')', 'value' => $result['surname'] . ' ' . $result['first_name'] . ' (' . $result['type_of_identification'] . $result['identidy_card'] . ')', 'id' => $result['id']];

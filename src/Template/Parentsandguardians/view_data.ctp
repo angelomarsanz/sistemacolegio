@@ -6,6 +6,7 @@
     <h4>Familia: <?= $family ?></h4>
 	<input type="hidden" id="ambiente" value=<?= $schools->ambient ?> />
 	<input type="hidden" id="id-user" value=<?= $user->id ?> />
+	<input type="hidden" id="id-representante" value=<?= $representante->id ?> />
 </div>
 <div>
 	<?php // if(isset($current_user['role']) && $current_user['role'] == 'Administrador'): ?>
@@ -23,12 +24,34 @@
 					</div>
 					<div class="modal-footer">
 					  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-					  <button id="actualizar" "type="button" class="btn btn-success" data-dismiss="modal">Actualizar</button>
+					  <button id="actualizar" type="button" class="btn btn-success" data-dismiss="modal">Actualizar</button>
 					</div>
 				</div>
 			</div>
 		</div> -->
 	<?php // endif; ?>
+
+	<?php if(isset($current_user['role']) && $current_user['role'] == 'Administrador'): ?>
+		<button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Actualizar saldo representante</button>
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Actualizar saldo representante</h4>
+					</div>
+					<div class="modal-body">
+						<p><input type="number" id="saldo-representante" value=<?= $representante->balance ?> class="form-control" /></p>
+					</div>
+					<div class="modal-footer">
+					  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					  <button id="actualizar-saldo" type="button" class="btn btn-success" data-dismiss="modal">Actualizar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php endif; ?>
+
 	<?= $this->Html->link('Ver datos de la familia', ['action' => 'view', $idFamily], ['class' => 'btn btn-success']); ?>
 	<br />
 	<br />
@@ -69,5 +92,31 @@
                 alert('algo falló en el programa');
             });
         });
+
+        $('#actualizar-saldo').click(function(e) 
+        {
+            e.preventDefault();
+
+			actualizarSaldoRepresentante = '<?php echo Router::url(["controller" => "Parentsandguardian", "action" => "actualizarSaldoRepresentante"]); ?>'
+            
+            $.post(actualizarSaldoRepresentante, { idRepresentante : $("#id-representante").val(), nuevoSaldoRepresentante : $("#saldo-representante").val() }, null, "json")
+                
+            .done(function(response) 
+            {
+                if (response.success == true) 
+                {
+                    alert(response.message);
+                }        
+				else
+				{
+					alert(response.message);
+				}
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) 
+            {
+                alert('algo falló en el programa');
+            });
+        });
+
 	});
 </script>

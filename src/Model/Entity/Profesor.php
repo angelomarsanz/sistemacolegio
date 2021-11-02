@@ -4,13 +4,13 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Materia Entity
+ * Profesor Entity
  *
  * @property int $id
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */
-class Materia extends Entity
+class Profesor extends Entity
 {
 
     /**

@@ -579,6 +579,7 @@ class ParentsandguardiansController extends AppController
     {
         
     }
+
     public function viewData($idFamily = null, $family = null)
     {
 		$this->loadModel('Schools');
@@ -594,16 +595,17 @@ class ParentsandguardiansController extends AppController
         $lastRecord = $this->Parentsandguardians->find('all', ['conditions' => [['id' => $idFamily]], 
             'order' => ['Parentsandguardians.created' => 'DESC']]);
             
-        $row = $lastRecord->first();
+        $representante = $lastRecord->first();
                 
-        if ($row)
+        if ($representante)
         {        				
-			$user = $this->Parentsandguardians->Users->get($row->user_id);			
+			$user = $this->Parentsandguardians->Users->get($representante->user_id);			
 		}
 
-        $this->set(compact('idFamily', 'family', 'schools', 'user'));
-		$this->set('_serialize', ['schools', 'user']);
+        $this->set(compact('idFamily', 'family', 'schools', 'user', 'representante'));
+		$this->set('_serialize', ['schools', 'user', 'representante']);
     }
+
     public function consultCardboard()
     {
         
@@ -729,5 +731,37 @@ class ParentsandguardiansController extends AppController
 		{
 			$this->Flash->error(__('Estimado usuario este representante no tiene saldo para reintegrar'));
 		}
+	}
+
+	public function actualizarSaldoRepresentante()
+	{
+        $this->autoRender = false;
+         
+        if ($this->request->is('json'))
+        {
+            $jsondata = [];
+
+            if (isset($_POST['idRepresentante']))
+            {               
+	            $idRepresentante = $_POST['idRepresentante'];
+                $nuevoSaldoRepresentante = $_POST['saldo'];     
+                
+				$representante = $this->Parentsandguardians->get($idRepresentante);
+					
+				$representante->balance = $nuevoSaldoRepresentante;
+					
+                if ($this->Parentsandguardians->save($representante)) 
+                {
+                    $jsondata["success"] = true;
+                    $jsondata["message"] = "El saldo del representante se actualizó exitosamente";
+                }
+                else
+                {
+                    $jsondata["success"] = false;
+                    $jsondata["message"] = "No se pudo actualizar el saldo del representante";
+                }
+                exit(json_encode($jsondata, JSON_FORCE_OBJECT));
+			}
+        }
 	}
 }

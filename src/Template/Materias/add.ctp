@@ -13,6 +13,7 @@
             echo $this->Form->input('nombre_materia');
             echo $this->Form->input('descripcion_materia');
             echo $this->Form->input('cantidad_horas_semanales');
+            echo $this->Form->input('profesors._ids', ['options' => $profesors]);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

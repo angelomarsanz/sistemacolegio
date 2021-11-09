@@ -3621,6 +3621,8 @@ class StudentsController extends AppController
 		
 		$studentsFor = $arrayResult['searchRequired'];
 
+		$representantes = $this->Students->Parentsandguardians->find('all');
+
 		$defaulters = [];
         
 		$accountantManager = 0;	
@@ -3657,7 +3659,7 @@ class StudentsController extends AppController
 				
 		foreach ($studentsFor as $studentsFors)
 		{		
-			$indiceEstudiante = $studentsFors->full_name . '-' . $studentsFors->type_of_identification . $studentsFors->identity_card;
+			$indiceEstudiante = $studentsFors->full_name . '- ' . $studentsFors->type_of_identification . $studentsFors->identity_card;
 
 			$nameSection = $this->Students->Sections->get($studentsFors->section_id);
 
@@ -3736,11 +3738,24 @@ class StudentsController extends AppController
 										}
 										else
 										{
+											$nombreRepresentante = '';
+											$cedulaRepresentante = '';
+											foreach ($representantes as $representante)
+											{
+												if ($representante->id == $studentsFors->parentsandguardian_id)
+												{
+													$nombreRepresentante = $representante->surname . ' ' . $representante->first_name;
+													$cedulaRepresentante = $representante->type_of_identification . '-' . $representante->identidy_card;
+													break;
+												}
+											}
 											$detalleMorosos[$indiceEstudiante] = 
 												['grado' => $nameSection->full_name,
 												'descuento' => $studentsFors->discount,
 												'cuotasPendientes' => 1,
-												'pendiente' => $saldoCuota];
+												'pendiente' => $saldoCuota,
+												'nombreRepresentante' => $nombreRepresentante,
+												'cedulaRepresentante' => $cedulaRepresentante];
 											$totalMoroso += $saldoCuota;
 										}
 									}
@@ -3784,11 +3799,24 @@ class StudentsController extends AppController
 											}
 											else
 											{
+												$nombreRepresentante = '';
+												$cedulaRepresentante = '';
+												foreach ($representantes as $representante)
+												{
+													if ($representante->id == $studentFors->parentsandguardian_id)
+													{
+														$nombreRepresentante = $representante->surname . ' ' . $representante->first_name;
+														$cedulaRepresentante = $representante->type_of_identification . '-' . $representante->identidy_card;
+														break;
+													}
+												}
 												$detalleMorosos[$indiceEstudiante] = 
 													['grado' => $nameSection->full_name,
 													'descuento' => $studentsFors->discount,
 													'cuotasPendientes' => 1,
-													'pendiente' => $diferenciaDolares];
+													'pendiente' => $diferenciaDolares,
+													'nombreRepresentante' => $nombreRepresentante,
+													'cedulaRepresentante' => $cedulaRepresentante];
 												$totalMoroso += $diferenciaDolares;
 											}
 										}

@@ -42,6 +42,12 @@ class MateriasTable extends Table
             'foreignKey' => 'section_id',
             'joinType' => 'INNER'
         ]);
+
+        $this->belongsToMany('Profesors', [
+            'foreignKey' => 'materia_id',
+            'targetForeignKey' => 'profesor_id',
+            'joinTable' => 'materias_profesors'
+        ]);
     }
 
     /**
@@ -73,5 +79,11 @@ class MateriasTable extends Table
             ->allowEmpty('registro_eliminado');
 
         return $validator;
+    }
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['section_id'], 'Sections'));
+
+        return $rules;
     }
 }

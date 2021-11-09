@@ -26,4 +26,5 @@ class Materia extends Entity
         '*' => true,
         'id' => false
     ];
+
 }

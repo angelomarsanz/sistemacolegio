@@ -29,8 +29,8 @@
 				</div>
 			</div>
 		</div> -->
+		<!-- <br /> -->
 	<?php // endif; ?>
-
 	<?php if(isset($current_user['role']) && $current_user['role'] == 'Administrador'): ?>
 		<button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">Actualizar saldo representante</button>
 		<div class="modal fade" id="myModal" role="dialog">
@@ -50,8 +50,9 @@
 				</div>
 			</div>
 		</div>
+		<br />
+		<br />
 	<?php endif; ?>
-
 	<?= $this->Html->link('Ver datos de la familia', ['action' => 'view', $idFamily], ['class' => 'btn btn-success']); ?>
 	<br />
 	<br />
@@ -97,7 +98,7 @@
         {
             e.preventDefault();
 
-			actualizarSaldoRepresentante = '<?php echo Router::url(["controller" => "Parentsandguardian", "action" => "actualizarSaldoRepresentante"]); ?>'
+			actualizarSaldoRepresentante = '<?php echo Router::url(["controller" => "Parentsandguardians", "action" => "actualizarSaldoRepresentante"]); ?>'
             
             $.post(actualizarSaldoRepresentante, { idRepresentante : $("#id-representante").val(), nuevoSaldoRepresentante : $("#saldo-representante").val() }, null, "json")
                 

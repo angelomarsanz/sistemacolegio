@@ -14,7 +14,3 @@ Control de estudios:
 /opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/edit.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/index.ctp
 /opt/lampp/htdocs/sistemacolegio/src/Template/Profesors/view.ctp
-
-Reporte saldo - representante
-/opt/lampp/htdocs/sistemacolegio/src/Controller/ParentsandguardiansController.php
-/opt/lampp/htdocs/sistemacolegio/src/Controller/ParentsandguardiansController.php

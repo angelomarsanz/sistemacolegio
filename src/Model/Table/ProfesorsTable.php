@@ -38,9 +38,14 @@ class ProfesorsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Sections', [
-            'foreignKey' => 'section_id',
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
             'joinType' => 'INNER'
+        ]);
+        $this->belongsToMany('Materias', [
+            'foreignKey' => 'profesor_id',
+            'targetForeignKey' => 'materia_id',
+            'joinTable' => 'materias_profesors'
         ]);
     }
 
@@ -87,5 +92,11 @@ class ProfesorsTable extends Table
             ->allowEmpty('modified');
 
         return $validator;
+    }
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['user_id'], 'Users'));
+
+        return $rules;
     }
 }

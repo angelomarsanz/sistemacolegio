@@ -9,10 +9,19 @@
     <fieldset>
         <legend><?= __('Add Profesor') ?></legend>
         <?php
-            echo $this->Form->input('section_id', ['options' => $secciones]);
-            echo $this->Form->input('nombre_profesor');
-            echo $this->Form->input('descripcion_profesor');
-            echo $this->Form->input('cantidad_horas_semanales');
+
+            echo $this->Form->input('nacionalidad', ['options' => [null => " ", 'Venezolano' =>  'Venezolano', 'Extranjero' => 'Extranjero'], 'label' => 'Nacionalidad: *', 'required']);
+            echo $this->Form->input('tipo_documento_identificacion', 
+                ['options' => 
+                [null => " ",
+                    'V' => 'Cédula venezolano',
+                    'E' => 'Cédula extranjero',
+                    'P' => 'Pasaporte'],
+                    'label' => 'Tipo de documento de identificación: *',
+                    'required']);
+            echo $this->Form->input('numero_documento_identificacion', ['label' => 'Número de documento de identificación: *', 'required']);
+                
+            echo $this->Form->input('materias._ids', ['options' => $materias]);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>

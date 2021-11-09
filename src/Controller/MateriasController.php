@@ -70,9 +70,10 @@ class MateriasController extends AppController
         }
 
         $secciones = $this->Materias->Sections->find('list', ['limit' => 200]);
+        $profesors = $this->Materias->Profesors->find('list', ['limit' => 200]);
 
-        $this->set(compact('materia', 'secciones'));
-        $this->set('_serialize', ['materia', 'secciones']);
+        $this->set(compact('materia', 'secciones', 'profesors'));
+        $this->set('_serialize', ['materia']);
     }
 
     /**

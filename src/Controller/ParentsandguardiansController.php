@@ -744,7 +744,7 @@ class ParentsandguardiansController extends AppController
             if (isset($_POST['idRepresentante']))
             {               
 	            $idRepresentante = $_POST['idRepresentante'];
-                $nuevoSaldoRepresentante = $_POST['saldo'];     
+                $nuevoSaldoRepresentante = $_POST['nuevoSaldoRepresentante'];     
                 
 				$representante = $this->Parentsandguardians->get($idRepresentante);
 					

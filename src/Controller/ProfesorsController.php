@@ -60,6 +60,7 @@ class ProfesorsController extends AppController
         $profesor = $this->Profesors->newEntity();
         if ($this->request->is('post')) {
             $profesor = $this->Profesors->patchEntity($profesor, $this->request->data);
+            $profesor->user_id = 2;
             if ($this->Profesors->save($profesor)) {
                 $this->Flash->success(__('El profesor fue exitosamente registrado'));
 
@@ -69,10 +70,10 @@ class ProfesorsController extends AppController
             }
         }
 
-        $secciones = $this->Profesors->Sections->find('list', ['limit' => 200]);
+        $materias = $this->Profesors->Materias->find('list', ['limit' => 200]);
 
-        $this->set(compact('profesor', 'secciones'));
-        $this->set('_serialize', ['profesor', 'secciones']);
+        $this->set(compact('profesor', 'materias'));
+        $this->set('_serialize', ['profesor']);
     }
 
     /**

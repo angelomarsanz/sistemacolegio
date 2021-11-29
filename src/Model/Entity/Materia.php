@@ -27,4 +27,9 @@ class Materia extends Entity
         'id' => false
     ];
 
+    protected function _getFullName()
+    {
+        return 
+            $this->_properties['nombre_materia'] . '  ' . $this->_properties['grado_materia'];
+    }
 }

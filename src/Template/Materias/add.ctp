@@ -12,6 +12,7 @@
             echo $this->Form->input('section_id', ['options' => $secciones]);
             echo $this->Form->input('nombre_materia');
             echo $this->Form->input('descripcion_materia');
+            echo $this->Form->input('grado_materia', ['type' => 'hidden']);
             echo $this->Form->input('cantidad_horas_semanales');
             echo $this->Form->input('profesors._ids', ['options' => $profesors]);
         ?>
@@ -19,3 +20,12 @@
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<script>
+    $(document).ready(function() 
+    {
+        $( "#section-id" ).change(function() 
+        {
+            $('#grado').val($('#section-id option:selected').text());
+        });
+    });
+</script>

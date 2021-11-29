@@ -33,7 +33,7 @@ class ProfesorsTable extends Table
         parent::initialize($config);
 
         $this->table('profesors');
-        $this->displayField('id');
+        $this->displayField('full_name');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -68,10 +68,28 @@ class ProfesorsTable extends Table
             ->allowEmpty('nacionalidad');
 
         $validator
-            ->allowEmpty('numero_documento_identidad');
+            ->allowEmpty('tipo_documento_identificacion');
+
+        $validator
+            ->allowEmpty('numero_documento_identificacion');
 
         $validator
             ->allowEmpty('titulo_universitario');
+
+        $validator
+            ->allowEmpty('primer_nombre');
+
+        $validator
+            ->allowEmpty('segundo_nombre');
+
+        $validator
+            ->allowEmpty('primer_apellido');
+
+        $validator
+            ->allowEmpty('segundo_apellido');
+
+        $validator
+            ->allowEmpty('sexo');
 
         $validator
             ->allowEmpty('direccion_habitacion');

@@ -39,9 +39,7 @@ class Section extends Entity
     
     protected function _getFullName()
     {
-        return $this->_properties['level'] . '  ' .
-            $this->_properties['sublevel'] . '  ' .
-            $this->_properties['section'] . '  ' .
-            $this->_properties['other'];
+        return 
+            $this->_properties['sublevel'] . '  ' . $this->_properties['section'];
     }
 }

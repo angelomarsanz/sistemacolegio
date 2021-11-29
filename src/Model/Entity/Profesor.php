@@ -26,4 +26,10 @@ class Profesor extends Entity
         '*' => true,
         'id' => false
     ];
+
+    protected function _getFullName()
+    {
+        return 
+            $this->_properties['primer_nombre'] . '  ' . $this->_properties['segundo_nombre'] . '  ' . $this->_properties['segundo_apellido'] . '  ' . $this->_properties['segundo_apellido'];
+    }
 }

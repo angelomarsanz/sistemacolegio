@@ -33,7 +33,7 @@ class MateriasTable extends Table
         parent::initialize($config);
 
         $this->table('materias');
-        $this->displayField('id');
+        $this->displayField('full_name');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -70,6 +70,10 @@ class MateriasTable extends Table
  
         $validator
             ->allowEmpty('descripcion_materia');
+
+        $validator
+            ->allowEmpty('grado_materia');
+
 
         $validator
             ->allowEmpty('cantidad_horas_semanales');

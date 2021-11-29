@@ -165,6 +165,7 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Control de estudios <span class="caret"></span></a>
 								<ul class="dropdown-menu" role="menu"> 
 									<li><?= $this->Html->link('Materias', ['controller' => 'Materias', 'action' => 'index']) ?></li>
+									<li><?= $this->Html->link('Profesores', ['controller' => 'Profesors', 'action' => 'index']) ?></li>
 								</ul>
 						</li>
 												 

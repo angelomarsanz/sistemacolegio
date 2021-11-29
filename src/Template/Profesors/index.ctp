@@ -9,22 +9,16 @@
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
-                <th scope="col"><?= $this->Paginator->sort('id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('section_id') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('nombre_profesor') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('descripcion_profesor') ?></th>
-                <th scope="col"><?= $this->Paginator->sort('cantidad_horas_semanales') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('Nombre') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('Cédula o pasaporte') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($profesors as $profesor): ?>
             <tr>
-                <td><?= $this->Number->format($profesor->id) ?></td>
-                <td><?= h($profesor->section_id) ?></td>
-                <td><?= h($profesor->nombre_profesor) ?></td>
-                <td><?= h($profesor->descripcion_profesor) ?></td>
-                <td><?= h($profesor->cantidad_horas_semanales) ?></td>
+                <td><?= h($profesor->full_name) ?></td>
+                <td><?= h($profesor->tipo_documento_identificacion . '-' . $profesor->numero_documento_identificacion) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['action' => 'view', $profesor->id]) ?>
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $profesor->id]) ?>

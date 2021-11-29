@@ -793,9 +793,11 @@ class BillsController extends AppController
 				}
 				elseif ($aConcept->observation == "(Exonerado)" && substr($aConcept->concept, 0, 18) != "Servicio educativo")
 				{
+					/*
 					$invoiceLine = $aConcept->student_name . " " . $aConcept->concept . " - (Exonerado)";
 					$amountConcept = $aConcept->amount;
 					$this->invoiceConcept($aConcept->accounting_code, $invoiceLine, $amountConcept);
+					*/
 					$loadIndicator = 1;
 					$firstMonthly= " ";
 					$lastInstallment = " ";
@@ -953,9 +955,11 @@ class BillsController extends AppController
 						$this->invoiceConcept($previousAcccountingCode, $invoiceLine, $amountConcept);
 						$loadIndicator = 1;
 					}
+					/*
 					$invoiceLine = $aConcept->student_name . " " . $aConcept->concept . " - (Exonerado)";
 					$amountConcept = $aConcept->amount;
 					$this->invoiceConcept($aConcept->accounting_code, $invoiceLine, $amountConcept);
+					*/
 					$LoadIndicator = 1;
 					$lastInstallment = " ";
 					$amountConcept = 0;

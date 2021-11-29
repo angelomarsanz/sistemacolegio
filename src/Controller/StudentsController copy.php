@@ -2892,16 +2892,16 @@ class StudentsController extends AppController
 					$arraySignedUp[$familyStudent->id] = 'Pagado';
 					if ($familyStudent->new_student == 1)
 					{
-						if ($orderReport == "Familia")
+						if ($orderReport == "Representante")
 						{
 							if ($accountNewRegistration == 0)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
-							if ($familiaAnterior != $familyStudent->parentsandguardian->family)
+							if ($familiaAnterior != $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
 						}							
@@ -2909,16 +2909,16 @@ class StudentsController extends AppController
 					}
 					else
 					{
-						if ($orderReport == "Familia")
+						if ($orderReport == "Representante")
 						{
 							if ($accountRegularRegistration == 0)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
-							if ($familiaAnterior != $familyStudent->parentsandguardian->family)
+							if ($familiaAnterior != $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card)
 							{
-								$familiaAnterior = $familyStudent->parentsandguardian->family;
+								$familiaAnterior = $familyStudent->parentsandguardian->type_of_identification . $familyStudent->parentsandguardian->identidy_card;
 								$contadorFamilias++;
 							}
 						}												
@@ -3621,6 +3621,8 @@ class StudentsController extends AppController
 		
 		$studentsFor = $arrayResult['searchRequired'];
 
+		$representantes = $this->Students->Parentsandguardians->find('all');
+
 		$defaulters = [];
         
 		$accountantManager = 0;	
@@ -3657,6 +3659,8 @@ class StudentsController extends AppController
 				
 		foreach ($studentsFor as $studentsFors)
 		{		
+			$indiceEstudiante = $studentsFors->full_name . '- ' . $studentsFors->type_of_identification . $studentsFors->identity_card;
+
 			$nameSection = $this->Students->Sections->get($studentsFors->section_id);
 
 			if ($nameSection->level == 'Primaria')
@@ -3684,68 +3688,29 @@ class StudentsController extends AppController
 				}
 				else
 				{				
-					$studentTransactions = $this->Students->Studenttransactions->find('all')->where(['student_id' => $studentsFors->id, 'invoiced' => 0]);
+					$studentTransactions = $this->Students->Studenttransactions->find('all')->where(['student_id' =>$studentsFors->id, 'invoiced' => 0, 'ano_escolar' => $yearFrom, 'transaction_type' => 'Mensualidad']);
 
 					if ($studentsFors->balance == $yearFrom)
 					{
 						foreach ($studentTransactions as $studentTransaction)
 						{
-							if ($studentTransaction->transaction_type == "Mensualidad")
-							{
-								$month = substr($studentTransaction->transaction_description, 0, 3);
-									
-								$year = substr($studentTransaction->transaction_description, 4, 4);
-									
-								$numberOfTheMonth = $this->nameMonth($month);
-									
-								$yearMonth = 'Mensualidad' . $nivelEstudio. $year . $numberOfTheMonth;
+							$month = substr($studentTransaction->transaction_description, 0, 3);
+								
+							$year = substr($studentTransaction->transaction_description, 4, 4);
+								
+							$numberOfTheMonth = $this->nameMonth($month);
+								
+							$yearMonth = 'Mensualidad' . $nivelEstudio. $year . $numberOfTheMonth;
 
-								$soloAnoMes = $year . $numberOfTheMonth;
-									
-								if ($month != "Ago")
+							$soloAnoMes = $year . $numberOfTheMonth;
+								
+							if ($month != "Ago")
+							{
+								if ($studentTransaction->paid_out == 0)
 								{
-									if ($studentTransaction->paid_out == 0)
-									{
-										$wholeYear = 1;
-										
-										if ($soloAnoMes <= $yearMonthUntil)
-										{
-											foreach ($mesesTarifas as $mesesTarifa)
-											{
-												if ($mesesTarifa["anoMes"] == $yearMonth)
-												{
-													if ($studentsFors->discount != null)
-													{
-														$amountMonthly = round(($mesesTarifa["tarifaDolar"] * (100 - $studentsFors->discount)) / 100);
-													}
-													else
-													{
-														$amountMonthly = $mesesTarifa["tarifaDolar"];
-													}
-													break;
-												}
-											}
-											$delinquentMonths++;
-											$saldoCuota = $amountMonthly - $studentTransaction->amount_dolar;
-											$totalDebt = $totalDebt + $saldoCuota;
-											if (isset($detalleMorosos[$studentsFors->full_name]))
-											{
-												$detalleMorosos[$studentsFors->full_name]['cuotasPendientes']++;
-												$detalleMorosos[$studentsFors->full_name]['pendiente'] += $saldoCuota; 
-												$totalMoroso += $saldoCuota;
-											}
-											else
-											{
-												$detalleMorosos[$studentsFors->full_name] = 
-													['grado' => $nameSection->full_name,
-													'descuento' => $studentsFors->discount,
-													'cuotasPendientes' => 1,
-													'pendiente' => $saldoCuota];
-												$totalMoroso += $saldoCuota;
-											}
-										}
-									}
-									else
+									$wholeYear = 1;
+									
+									if ($soloAnoMes <= $yearMonthUntil)
 									{
 										foreach ($mesesTarifas as $mesesTarifa)
 										{
@@ -3753,49 +3718,111 @@ class StudentsController extends AppController
 											{
 												if ($studentsFors->discount != null)
 												{
-													$tarifaDolarAnoMes = round(($mesesTarifa["tarifaDolar"] * (100 - $studentsFors->discount)) / 100, 2);
+													$amountMonthly = round(($mesesTarifa["tarifaDolar"] * (100 - $studentsFors->discount)) / 100, 2);
 												}
 												else
 												{
-													$tarifaDolarAnoMes = $mesesTarifa["tarifaDolar"];
+													$amountMonthly = $mesesTarifa["tarifaDolar"];
 												}
 												break;
 											}
 										}
-										$descuentoAplicado = $studentTransaction->original_amount - $studentTransaction->amount;
-										$cuotaAplicadaAlumno = $tarifaDolarAnoMes - $descuentoAplicado; 
-										if ($studentTransaction->amount_dollar < $cuotaAplicadaAlumno)
+										$delinquentMonths++;
+										$saldoCuota = $amountMonthly - $studentTransaction->amount_dolar;
+										$totalDebt = $totalDebt + $saldoCuota;
+										if (isset($detalleMorosos[$indiceEstudiante]))
 										{
-											$wholeYear = 1;
+											$detalleMorosos[$indiceEstudiante]['cuotasPendientes']++;
+											$detalleMorosos[$indiceEstudiante]['pendiente'] += $saldoCuota; 
+											$totalMoroso += $saldoCuota;
+										}
+										else
+										{
+											$nombreRepresentante = '';
+											$cedulaRepresentante = '';
+											foreach ($representantes as $representante)
+											{
+												if ($representante->id == $studentsFors->parentsandguardian_id)
+												{
+													$nombreRepresentante = $representante->surname . ' ' . $representante->first_name;
+													$cedulaRepresentante = $representante->type_of_identification . '-' . $representante->identidy_card;
+													break;
+												}
+											}
+											$detalleMorosos[$indiceEstudiante] = 
+												['grado' => $nameSection->full_name,
+												'descuento' => $studentsFors->discount,
+												'cuotasPendientes' => 1,
+												'pendiente' => $saldoCuota,
+												'nombreRepresentante' => $nombreRepresentante,
+												'cedulaRepresentante' => $cedulaRepresentante];
+											$totalMoroso += $saldoCuota;
+										}
+									}
+								}
+								else
+								{
+									foreach ($mesesTarifas as $mesesTarifa)
+									{
+										if ($mesesTarifa["anoMes"] == $yearMonth)
+										{
+											if ($studentsFors->discount != null)
+											{
+												$tarifaDolarAnoMes = round(($mesesTarifa["tarifaDolar"] * (100 - $studentsFors->discount)) / 100, 2);
+											}
+											else
+											{
+												$tarifaDolarAnoMes = $mesesTarifa["tarifaDolar"];
+											}
+											break;
+										}
+									}
+									$descuentoAplicado = $studentTransaction->original_amount - $studentTransaction->amount;
+									$cuotaAplicadaAlumno = $tarifaDolarAnoMes - $descuentoAplicado; 
+									if ($studentTransaction->amount_dollar < $cuotaAplicadaAlumno)
+									{
+										$wholeYear = 1;
 
-											if ($soloAnoMes <= $yearMonthUntil)
-											{											
-												$diferenciaDolares = $tarifaDolarAnoMes - $studentTransaction->amount_dollar;
-												$diferenciaBolivares = round($diferenciaDolares * $dollarExchangeRate);
-											
-												$delinquentMonths++;
-												$totalDebt = $totalDebt + $diferenciaDolares;
-													
-												if (isset($detalleMorosos[$studentsFors->full_name]))
+										if ($soloAnoMes <= $yearMonthUntil)
+										{											
+											$diferenciaDolares = $tarifaDolarAnoMes - $studentTransaction->amount_dollar;
+											$diferenciaBolivares = round($diferenciaDolares * $dollarExchangeRate);
+										
+											$delinquentMonths++;
+											$totalDebt = $totalDebt + $diferenciaDolares;
+												
+											if (isset($detalleMorosos[$indiceEstudiante]))
+											{
+												$detalleMorosos[$indiceEstudiante]['cuotasPendientes']++;
+												$detalleMorosos[$indiceEstudiante]['pendiente'] += $diferenciaDolares; 
+												$totalMoroso += $diferenciaDolares;
+											}
+											else
+											{
+												$nombreRepresentante = '';
+												$cedulaRepresentante = '';
+												foreach ($representantes as $representante)
 												{
-													$detalleMorosos[$studentsFors->full_name]['cuotasPendientes']++;
-													$detalleMorosos[$studentsFors->full_name]['pendiente'] += $diferenciaDolares; 
-													$totalMoroso += $diferenciaDolares;
+													if ($representante->id == $studentFors->parentsandguardian_id)
+													{
+														$nombreRepresentante = $representante->surname . ' ' . $representante->first_name;
+														$cedulaRepresentante = $representante->type_of_identification . '-' . $representante->identidy_card;
+														break;
+													}
 												}
-												else
-												{
-													$detalleMorosos[$studentsFors->full_name] = 
-														['grado' => $nameSection->full_name,
-														'descuento' => $studentsFors->discount,
-														'cuotasPendientes' => 1,
-														'pendiente' => $diferenciaDolares];
-													$totalMoroso += $diferenciaDolares;
-												}
+												$detalleMorosos[$indiceEstudiante] = 
+													['grado' => $nameSection->full_name,
+													'descuento' => $studentsFors->discount,
+													'cuotasPendientes' => 1,
+													'pendiente' => $diferenciaDolares,
+													'nombreRepresentante' => $nombreRepresentante,
+													'cedulaRepresentante' => $cedulaRepresentante];
+												$totalMoroso += $diferenciaDolares;
 											}
 										}
 									}
-								}	
-							}
+								}
+							}	
 						}	
 					}	
 				}

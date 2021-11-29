@@ -57,16 +57,45 @@ class ProfesorsController extends AppController
      */
     public function add()
     {
+        $this->loadModel('Users');
+
         $profesor = $this->Profesors->newEntity();
         if ($this->request->is('post')) {
             $profesor = $this->Profesors->patchEntity($profesor, $this->request->data);
-            $profesor->user_id = 2;
-            if ($this->Profesors->save($profesor)) {
-                $this->Flash->success(__('El profesor fue exitosamente registrado'));
+            $usuario = $this->Users->newEntity();
 
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('El profesor no pudo ser registrado, por favor intente nuevamente'));
+            $usuario->username = $profesor->tipo_documento_identificacion . $profesor->numero_documento_identificacion;            
+            $usuario->password = "verdad";
+            $usuario->role = "Profesor";
+            $usuario->first_name = $profesor->primer_nombre;
+            $usuario->second_name = $profesor->segundo_nombre;
+            $usuario->surname = $profesor->primer_nombre;              
+            $usuario->second_surname = $profesor->segundo_nombre;
+            $usuario->sex = $profesor->sexo;                
+            $usuario->email = $profesor->correo_electronico;
+            $usuario->cell_phone = $profesor->celular;
+            $usuario->profile_photo = "";
+            $usuario->profile_photo_dir = "";
+
+            if (!($this->Users->save($usuario))) 
+            {
+                $this->Flash->error(__('El usuario no fue guardado ' . $usuario->username));
+                return $this->redirect(['action' => 'Users', 'action' => 'index']);
+            }
+            else
+            {
+                $usuarios = $this->Users->find('all', ['conditions' => ['username' => $usuario->username], 'order' => ['Users.created' => 'DESC'] ]);
+                    
+                $primerUsuario = $usuarios->first();
+                $profesor->user_id = $primerUsuario->id;
+                
+                if ($this->Profesors->save($profesor)) {
+                    $this->Flash->success(__('El profesor fue exitosamente registrado'));
+    
+                    return $this->redirect(['action' => 'index']);
+                } else {
+                    $this->Flash->error(__('El profesor no pudo ser registrado, por favor intente nuevamente'));
+                }   
             }
         }
 

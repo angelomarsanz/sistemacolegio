@@ -151,7 +151,7 @@
 				<br />
 				<br />
 			</div>
-		<?php else: 
+		<?php elseif ($tipoReporte == "Por alumno"): 
 			$contadorAlumnosMorosos = 1; ?>
 			<div>
 				<div style="float: left; width:10%;">
@@ -202,6 +202,59 @@
 						</tr>
 					</tfoot>
 				</table>
+		<?php else: ?>
+			<?php $contadorAlumnosImpresos = 0; ?>
+			<?php $contadorSaltoPagina = 0; ?>
+			<?php $gradoAnterior = '' ?>;
+			<?php $contadorGrado = 0; ?>
+			<?php foreach ($detalleMorosos as $clave => $moroso): ?>
+				<?php $contadorAlumnosImpresos++; ?>
+				<?php // if ($contadorAlumnosImpresos == 20): ?>
+					<?php // break; ?>
+				<?php // endif; ?>
+
+				<?php if ($contadorGrado == 0): ?>
+					<?php $gradoAnterior = $moroso['grado']; ?>
+					<div>
+						<h1 style="text-align: center;"><b><?= $moroso['grado']; ?></b></h1>	
+					</div>
+					<?php $contadorSaltoPagina = 2 ?>
+				<?php endif; ?>
+
+				<?php $contadorGrado++; ?>
+
+				<?php if ($gradoAnterior != $moroso['grado']): ?>
+					<?php $gradoAnterior = $moroso['grado']; ?>
+					<div class="saltopagina">
+						<h1 style="text-align: center;"><b><?= $moroso['grado']; ?></b></h1>	
+					</div>
+					<?php $contadorSaltoPagina = 2 ?>
+				<?php endif; ?>
+
+				<?php if ($contadorSaltoPagina == 2): ?>
+					<div class="saltopagina">
+					<?php $contadorSaltoPagina = 1 ?>
+				<?php else: ?>
+					<?php $contadorSaltoPagina++; ?>
+					<div>
+				<?php endif; ?>
+						<p><img src="<?php echo Router::url(["controller" => "files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/Logo CvyL.png'; ?>" width = 50 height = 50 class="img-thumbnail img-responsive logo"/></p>
+						<h5><b><?= $school->name ?></b></h5>
+						<p>RIF: <?= $school->rif ?></p>
+						<p>Fecha de emisión: <?= $currentDate->format('d/m/Y'); ?></p>
+						<h4 style="text-align: center;"><b>Aviso de Cobro - <?= $moroso['grado'] ?></b></h4>
+						<h5><?= 'Estudiante: ' . $clave . ' Representante: ' . $moroso['nombreRepresentante'] . ' ' . $moroso['cedulaRepresentante'] ?></h5> 
+						<p>Estimado representante, a la presente fecha usted tiene <?= $moroso['cuotasPendientes'] ?> cuotas vencidas por un monto total de: <?= number_format($moroso['pendiente'], 2, ",", ".") ?> $ USD, correspondientes al estudiante <?= $clave ?>. Le agradecemos cancelar a la brevedad posible.</p>
+						<p>Atentamente, </p>
+						<p>Por el Departamento de Administración del Colegio Verdad y Libertad</p>
+						<p>Firma y sello:</p> 
+						<br />
+						<br />
+						<p>------------------------------------------------------------------------------------------------------</p>
+						<br />
+						<br />
+					</div>
+			<?php endforeach; ?> 
 		<?php endif; ?>
 		<br />			
 	</div>

@@ -26,7 +26,7 @@ class UsersController extends AppController
     {
         if(isset($user['role']))
 		{
-			if ($user['role'] === 'Representante' || $user['role'] === 'Jefe de nómina' || $user['role'] === 'Control de estudios')
+			if ($user['role'] === 'Representante' || $user['role'] === 'Jefe de nómina' || $user['role'] === 'Control de estudios' || $user['role'] === 'Profesor')
 			{
 				if(in_array($this->request->action, ['home', 'view', 'edit', 'logout']))
 				{
@@ -337,6 +337,35 @@ class UsersController extends AppController
 				{
 					$jsondata["success"] = false;
 					$jsondata["message"] = "Ya existe otro representante con el mismo usuario, por favor intente nuevamente";
+				}
+                exit(json_encode($jsondata, JSON_FORCE_OBJECT));
+			}
+        }
+	}
+	public function verificarUsuario()
+	{
+        $this->autoRender = false;
+         
+        if ($this->request->is('json'))
+        {
+            $jsondata = [];
+
+            if (isset($_POST['usuario']))
+            {               	                
+                $lastRecord = $this->Users->find('all', ['conditions' => ['Users.username' => $_POST['usuario']], 
+                    'order' => ['Users.created' => 'DESC']]);
+            
+                $row = $lastRecord->first();
+                
+                if ($row)
+                {        
+					$jsondata["success"] = true;
+					$jsondata["message"] = "El usuario existe";
+				}
+				else
+				{
+					$jsondata["success"] = false;
+					$jsondata["message"] = "Ya existe el usuario";
 				}
                 exit(json_encode($jsondata, JSON_FORCE_OBJECT));
 			}

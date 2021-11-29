@@ -60,6 +60,11 @@ class MateriasController extends AppController
         $materia = $this->Materias->newEntity();
         if ($this->request->is('post')) {
             $materia = $this->Materias->patchEntity($materia, $this->request->data);
+
+            $seccion = $this->Materias->Sections->get($materia->section_id);
+
+            $materia->grado_materia = $seccion->sublevel;
+
             if ($this->Materias->save($materia)) {
                 $this->Flash->success(__('La materia fue exitosamente registrada'));
 
@@ -69,7 +74,7 @@ class MateriasController extends AppController
             }
         }
 
-        $secciones = $this->Materias->Sections->find('list', ['limit' => 200]);
+        $secciones = $this->Materias->Sections->find('list', ['limit' => 200])->where(['level !=' => 'Pre-escolar']);
         $profesors = $this->Materias->Profesors->find('list', ['limit' => 200]);
 
         $this->set(compact('materia', 'secciones', 'profesors'));

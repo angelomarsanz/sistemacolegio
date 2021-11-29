@@ -2468,7 +2468,7 @@ class StudentsController extends AppController
 
 											if ($yearMonth <= $yearMonthUntil)
 											{											
-												$diferenciaDolares = $tarifaDolarAnoMes - $studentTransaction->amount_dolar;
+												$diferenciaDolares = $tarifaDolarAnoMes - $studentTransaction->amount_dollar;
 												$diferenciaBolivares = round($diferenciaDolares * $dollarExchangeRate);
 											
 												$delinquentMonths++;
@@ -3727,9 +3727,11 @@ class StudentsController extends AppController
 												break;
 											}
 										}
+
 										$delinquentMonths++;
-										$saldoCuota = $amountMonthly - $studentTransaction->amount_dolar;
+										$saldoCuota = $amountMonthly - $studentTransaction->amount_dollar;
 										$totalDebt = $totalDebt + $saldoCuota;
+
 										if (isset($detalleMorosos[$indiceEstudiante]))
 										{
 											$detalleMorosos[$indiceEstudiante]['cuotasPendientes']++;
@@ -3784,13 +3786,13 @@ class StudentsController extends AppController
 										$wholeYear = 1;
 
 										if ($soloAnoMes <= $yearMonthUntil)
-										{											
+										{															
 											$diferenciaDolares = $tarifaDolarAnoMes - $studentTransaction->amount_dollar;
 											$diferenciaBolivares = round($diferenciaDolares * $dollarExchangeRate);
 										
 											$delinquentMonths++;
 											$totalDebt = $totalDebt + $diferenciaDolares;
-												
+											
 											if (isset($detalleMorosos[$indiceEstudiante]))
 											{
 												$detalleMorosos[$indiceEstudiante]['cuotasPendientes']++;

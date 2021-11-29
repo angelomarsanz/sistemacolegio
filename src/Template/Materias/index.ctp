@@ -13,6 +13,7 @@
                 <th scope="col"><?= $this->Paginator->sort('section_id') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('nombre_materia') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('descripcion_materia') ?></th>
+                <th scope="col"><?= $this->Paginator->sort('grado_materia') ?></th>
                 <th scope="col"><?= $this->Paginator->sort('cantidad_horas_semanales') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
             </tr>
@@ -24,6 +25,7 @@
                 <td><?= h($materia->section_id) ?></td>
                 <td><?= h($materia->nombre_materia) ?></td>
                 <td><?= h($materia->descripcion_materia) ?></td>
+                <td><?= h($materia->grado_materia) ?></td>
                 <td><?= h($materia->cantidad_horas_semanales) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('View'), ['action' => 'view', $materia->id]) ?>

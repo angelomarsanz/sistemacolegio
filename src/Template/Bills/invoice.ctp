@@ -122,7 +122,7 @@ $tiempoActual = Time::now();
 					</tr>
 						<td style='width:30%;'>C.I./RIF: <?= $bill->identification ?></td>
 						<td style='width:30%;'>Teléfono: <?= $bill->tax_phone ?></td>
-						<td style="width:40%; text-align: left; ">Fecha: <?= $bill->created->format('d-m-Y H:i') ?></td>
+						<td style="width:40%; text-align: left; ">Fecha: <?= $bill->created->format('d-m-Y') ?></td>
 					</tr>
 				</tbody>
 			</table>

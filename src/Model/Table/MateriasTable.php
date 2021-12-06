@@ -48,6 +48,12 @@ class MateriasTable extends Table
             'targetForeignKey' => 'profesor_id',
             'joinTable' => 'materias_profesors'
         ]);
+        $this->hasMany('Objetivos', [
+            'foreignKey' => 'materia_id'
+        ]);
+        $this->hasMany('ParametrosCargaCalificaciones', [
+            'foreignKey' => 'materia_id'
+        ]);
     }
 
     /**

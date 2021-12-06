@@ -166,6 +166,9 @@
 								<ul class="dropdown-menu" role="menu"> 
 									<li><?= $this->Html->link('Materias', ['controller' => 'Materias', 'action' => 'index']) ?></li>
 									<li><?= $this->Html->link('Profesores', ['controller' => 'Profesors', 'action' => 'index']) ?></li>
+									<li><?= $this->Html->link('Lapsos', ['controller' => 'Lapsos', 'action' => 'index']) ?></li>
+									<li><?=  $this->Html->link('Objetivos del lapso', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+									<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
 								</ul>
 						</li>
 												 
@@ -173,10 +176,11 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Representantes <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">    
-								<li><?= $this->Html->link('Datos de familia', ['controller' => 'Parentsandguardians', 'action' => 'consultFamily']) ?></li>
-								<li><?= $this->Html->link('Familias - alumnos', ['controller' => 'Students', 'action' => 'familyStudents']) ?></li>
-								<li><?= $this->Html->link('Familias con tres hijos', ['controller' => 'Students', 'action' => 'familiasDescuento20']) ?></li>
-								<li><?= $this->Html->link('Familias con cuatro o más hijos', ['controller' => 'Students', 'action' => 'familiasDescuento50']) ?></li> 
+								<li><?= $this->Html->link('Materias', ['controller' => 'Materias', 'action' => 'index']) ?></li>
+								<li><?= $this->Html->link('Profesores', ['controller' => 'Profesors', 'action' => 'index']) ?></li>
+								<li><?= $this->Html->link('Lapsos', ['controller' => 'Lapsos', 'action' => 'index']) ?></li>
+								<li><?=  $this->Html->link('Objetivos del lapso', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+								<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -192,7 +196,10 @@
 						</li>					
                     <?php elseif($current_user['role'] == 'Representante'): ?>
                         <li><?=  $this->Html->link('Actualizar datos', ['controller' => 'Guardiantransactions', 'action' => 'homeScreen']) ?></li>
-                    <?php endif; ?>
+					<?php elseif($current_user['role'] == 'Profesor'): ?>
+                        <li><?=  $this->Html->link('Objetivos del lapso', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+						<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
+						<?php endif; ?>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>

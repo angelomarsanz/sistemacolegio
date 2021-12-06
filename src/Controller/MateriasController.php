@@ -46,7 +46,10 @@ class MateriasController extends AppController
             'contain' => []
         ]);
 
-        $this->set('materia', $materia);
+        $this->loadModel('MateriasProfesors');
+        $profesoresMateria = $this->MateriasProfesors->find('all')->contain(['Profesors'])->where(['MateriasProfesors.materia_id' => $id]);
+
+        $this->set(compact('materia', 'profesoresMateria'));
         $this->set('_serialize', ['materia']);
     }
 
@@ -78,7 +81,7 @@ class MateriasController extends AppController
         $profesors = $this->Materias->Profesors->find('list', ['limit' => 200]);
 
         $this->set(compact('materia', 'secciones', 'profesors'));
-        $this->set('_serialize', ['materia']);
+        $this->set('_serialize', ['materia', 'secciones', 'profesors']);
     }
 
     /**
@@ -104,10 +107,11 @@ class MateriasController extends AppController
             }
         }
 
-        $secciones = $this->Materias->Sections->find('list', ['limit' => 200]);
+        $secciones = $this->Materias->Sections->find('list', ['limit' => 200])->where(['level !=' => 'Pre-escolar']);
+        $profesors = $this->Materias->Profesors->find('list', ['limit' => 200]);
 
-        $this->set(compact('materia', 'secciones'));
-        $this->set('_serialize', ['materia', 'secciones']);
+        $this->set(compact('materia', 'secciones', 'profesors'));
+        $this->set('_serialize', ['materia', 'secciones', 'profesors']);
     }
 
     /**

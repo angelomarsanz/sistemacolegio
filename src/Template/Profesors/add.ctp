@@ -13,14 +13,13 @@
 </style>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('List Profesors'), ['action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('Lista de profesores'), ['action' => 'index']) ?></li>
     </ul>
 </nav>
 <div class="profesors form large-9 medium-8 columns content">
     <?= $this->Form->create($profesor) ?>
     <fieldset>
-        <legend><?= __('Nuevo Profesor') ?></legend>
+        <legend><?= __('Agregar un Nuevo Profesor') ?></legend>
         <?php
 
             echo $this->Form->input('nacionalidad', ['options' => [null => " ", 'VENEZOLANO' =>  'Venezolano', 'EXTRANJERO' => 'Extranjero'], 'label' => 'Nacionalidad: *', 'required']);
@@ -32,24 +31,25 @@
                     'P' => 'Pasaporte'],
                     'label' => 'Tipo de documento de identificación: *',
                     'required']);
-            echo $this->Form->input('numero_documento_identificacion', ['label' => 'Número de documento de identificación: *', 'required', 'type' => 'number']); ?>
+            echo $this->Form->input('numero_documento_identificacion', ['label' => 'Número de documento de identificación: *', 'required']); ?>
 
             <p class='noverScreen fontColor' id='mismo-usuario'>Ya existe otro usuario con el mismo nombre</p>
 
             <?php
-            echo $this->Form->input('primer_nombre', ['label' => 'Primer nombre: *', 'required']);
-            echo $this->Form->input('segundo_nombre', ['label' => 'Segundo nombre: ']);
             echo $this->Form->input('primer_apellido', ['label' => 'Primer apellido: *', 'required']);
             echo $this->Form->input('segundo_apellido', ['label' => 'Segundo apellido: ']);
+            echo $this->Form->input('primer_nombre', ['label' => 'Primer nombre: *', 'required']);
+            echo $this->Form->input('segundo_nombre', ['label' => 'Segundo nombre: ']);
 
             echo $this->Form->input('sexo', ['options' => [null => " ", 'FEMENINO' =>  'Femenino', 'MASCULINO' => 'Masculino'], 'label' => 'Sexo: *', 'required']);
 
 
             echo $this->Form->input('titulo_universitario', ['label' => 'Título universitario: *', 'required']);
             echo $this->Form->input('direccion_habitacion', ['label' => 'Dirección de habitación: *', 'required']);
-            echo $this->Form->input('celular', ['label' => 'Nro. De teléfono celular: *', 'type' => 'number', 'required']);
-            echo $this->Form->input('telefono_fijo', ['label' => 'Nro. De teléfono fijo: *', 'type' => 'number', 'required']);
+            echo $this->Form->input('celular', ['label' => 'Nro. De teléfono celular: *', 'type' => 'text', 'required']);
+            echo $this->Form->input('telefono_fijo', ['label' => 'Nro. De teléfono fijo: *', 'type' => 'text', 'required']);
             echo $this->Form->input('correo_electronico', ['label' => 'Correo electrónico: *', 'type' => 'email', 'required']);
+            echo $this->Form->input('numero_horas', ['label' => 'Número de horas: *', 'type' => 'number', 'required']);
                 
             echo $this->Form->input('materias._ids', ['options' => $materias]);
         ?>
@@ -76,7 +76,7 @@
             }
             else
             {
-                $.post('<?php echo Router::url(["controller" => "Users", "action" => "verificarUsuario"]); ?>', {'usuario' : $("#tipo-documento-identificacion").val() + $("#numero-documento-identificacion").val()}, null, "json")				
+                $.post('<?php echo Router::url(["controller" => "Users", "action" => "verificarUsuario"]); ?>', {'usuario' : $("#tipo-documento-identificacion").val() + 'P' + $("#numero-documento-identificacion").val()}, null, "json")				
                         
                 .done(function(response) 
                 {
@@ -115,7 +115,7 @@
             }
             else
             {
-                $.post('<?php echo Router::url(["controller" => "Users", "action" => "verificarUsuario"]); ?>', {'usuario' : $("#tipo-documento-identificacion").val() + $("#numero-documento-identificacion").val()}, null, "json")				
+                $.post('<?php echo Router::url(["controller" => "Users", "action" => "verificarUsuario"]); ?>', {'usuario' : $("#tipo-documento-identificacion").val() + 'P' + $("#numero-documento-identificacion").val()}, null, "json")				
                         
                 .done(function(response) 
                 {
@@ -143,7 +143,6 @@
 
         $('#registrar-profesor').click(function(e) 
         {
-            console.log('documentoInvalido ' + documentoInvalido);
             if (documentoInvalido == 1)
             {
                 alert("Número de documento de identificación inválido");

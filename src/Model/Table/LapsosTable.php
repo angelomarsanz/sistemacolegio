@@ -41,7 +41,7 @@ class LapsosTable extends Table
         parent::initialize($config);
 
         $this->table('lapsos');
-        $this->displayField('id');
+        $this->displayField('numero_lapso');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');

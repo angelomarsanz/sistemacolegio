@@ -10,6 +10,21 @@ use App\Controller\AppController;
  */
 class ObjetivosController extends AppController
 {
+    public function isAuthorized($user)
+    {
+		if(isset($user['role']))
+		{
+			if ($user['role'] === 'Profesor')
+			{
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete']))
+				{
+					return true;
+				}
+			}
+        }
+				
+        return parent::isAuthorized($user);
+    }
 
     /**
      * Index method
@@ -37,7 +52,7 @@ class ObjetivosController extends AppController
     public function view($id = null)
     {
         $objetivo = $this->Objetivos->get($id, [
-            'contain' => ['Lapsos', 'Materias', 'Profesors', 'Calificacions']
+            'contain' => ['Lapsos', 'Materias', 'Profesors', 'Calificacions' => ['Students']]
         ]);
 
         $this->set('objetivo', $objetivo);
@@ -64,8 +79,9 @@ class ObjetivosController extends AppController
         }
         $lapsos = $this->Objetivos->Lapsos->find('list', ['limit' => 200]);
         $materias = $this->Objetivos->Materias->find('list', ['limit' => 200]);
+        $secciones = $this->Objetivos->Sections->find('list', ['limit' => 200])->where(['level !=' => 'Pre-escolar', 'section' => 'A']);
         $profesors = $this->Objetivos->Profesors->find('list', ['limit' => 200]);
-        $this->set(compact('objetivo', 'lapsos', 'materias', 'profesors'));
+        $this->set(compact('objetivo', 'lapsos', 'materias', 'secciones', 'profesors'));
         $this->set('_serialize', ['objetivo']);
     }
 
@@ -93,8 +109,9 @@ class ObjetivosController extends AppController
         }
         $lapsos = $this->Objetivos->Lapsos->find('list', ['limit' => 200]);
         $materias = $this->Objetivos->Materias->find('list', ['limit' => 200]);
+        $secciones = $this->Objetivos->Sections->find('list', ['limit' => 200])->where(['level !=' => 'Pre-escolar', 'section' => 'A']);
         $profesors = $this->Objetivos->Profesors->find('list', ['limit' => 200]);
-        $this->set(compact('objetivo', 'lapsos', 'materias', 'profesors'));
+        $this->set(compact('objetivo', 'lapsos', 'materias', 'secciones', 'profesors'));
         $this->set('_serialize', ['objetivo']);
     }
 

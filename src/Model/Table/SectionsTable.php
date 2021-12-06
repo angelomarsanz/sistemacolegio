@@ -51,6 +51,9 @@ class SectionsTable extends Table
         $this->hasMany('Materias', [
             'foreignKey' => 'section_id'
         ]);
+        $this->hasMany('Objetivos', [
+            'foreignKey' => 'section_id'
+        ]);
         
         $this->belongsToMany('Employees', [
             'foreignKey' => 'section_id',

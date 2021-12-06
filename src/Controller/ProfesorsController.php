@@ -46,7 +46,11 @@ class ProfesorsController extends AppController
             'contain' => []
         ]);
 
-        $this->set('profesor', $profesor);
+        $this->loadModel('MateriasProfesors');
+
+        $materiasProfesor = $this->MateriasProfesors->find('all')->contain(['Materias'])->where(['MateriasProfesors.profesor_id' => $id]);
+
+        $this->set(compact('profesor', 'materiasProfesor'));
         $this->set('_serialize', ['profesor']);
     }
 
@@ -64,17 +68,17 @@ class ProfesorsController extends AppController
             $profesor = $this->Profesors->patchEntity($profesor, $this->request->data);
             $usuario = $this->Users->newEntity();
 
-            $usuario->username = $profesor->tipo_documento_identificacion . $profesor->numero_documento_identificacion;            
-            $usuario->password = "verdad";
+            $usuario->username = $profesor->tipo_documento_identificacion . 'P' . $profesor->numero_documento_identificacion;  
+            $usuario->password = substr($profesor->primer_apellido, 1, 2) . (string)$profesor->numero_horas . substr($profesor->sexo, 2, 3) . '$';
             $usuario->role = "Profesor";
             $usuario->first_name = $profesor->primer_nombre;
             $usuario->second_name = $profesor->segundo_nombre;
-            $usuario->surname = $profesor->primer_nombre;              
+            $usuario->surname = $profesor->primer_apellido;              
             $usuario->second_surname = $profesor->segundo_nombre;
             $usuario->sex = $profesor->sexo;                
             $usuario->email = $profesor->correo_electronico;
             $usuario->cell_phone = $profesor->celular;
-            $usuario->profile_photo = "";
+            $usuario->profile_photo = substr($profesor->primer_apellido, 1, 2) . (string)$profesor->numero_horas . substr($profesor->sexo, 2, 3) . '$';
             $usuario->profile_photo_dir = "";
 
             if (!($this->Users->save($usuario))) 
@@ -99,10 +103,10 @@ class ProfesorsController extends AppController
             }
         }
 
-        $materias = $this->Profesors->Materias->find('list', ['limit' => 200]);
+        $materias = $this->Profesors->Materias->find('list', ['limit' => 200])->order(['nombre_materia' => 'ASC', 'grado_materia' => 'ASC']);
 
         $this->set(compact('profesor', 'materias'));
-        $this->set('_serialize', ['profesor']);
+        $this->set('_serialize', ['profesor', 'materias']);
     }
 
     /**
@@ -128,10 +132,10 @@ class ProfesorsController extends AppController
             }
         }
 
-        $secciones = $this->Profesors->Sections->find('list', ['limit' => 200]);
+        $materias = $this->Profesors->Materias->find('list', ['limit' => 200])->order(['nombre_materia' => 'ASC', 'grado_materia' => 'ASC']);
 
-        $this->set(compact('profesor', 'secciones'));
-        $this->set('_serialize', ['profesor', 'secciones']);
+        $this->set(compact('profesor', 'materias'));
+        $this->set('_serialize', ['profesor', 'materias']);
     }
 
     /**

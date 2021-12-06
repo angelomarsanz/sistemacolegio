@@ -75,6 +75,12 @@ class UsersTable extends Table
         $this->hasMany('Messages', [
             'foreignKey' => 'user_id'
         ]);
+        $this->hasMany('Profesors', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->hasMany('ParametrosCargaCalificacions', [
+            'foreignKey' => 'user_id'
+        ]);
     }
 
     /**

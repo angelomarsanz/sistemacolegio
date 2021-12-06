@@ -38,7 +38,7 @@ class ObjetivosTable extends Table
         parent::initialize($config);
 
         $this->table('objetivos');
-        $this->displayField('id');
+        $this->displayField('objetivo');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -49,6 +49,10 @@ class ObjetivosTable extends Table
         ]);
         $this->belongsTo('Materias', [
             'foreignKey' => 'materia_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Sections', [
+            'foreignKey' => 'section_id',
             'joinType' => 'INNER'
         ]);
         $this->belongsTo('Profesors', [
@@ -73,9 +77,7 @@ class ObjetivosTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->integer('numero_objetivo')
-            ->requirePresence('numero_objetivo', 'create')
-            ->notEmpty('numero_objetivo');
+            ->allowEmpty('objetivo');
 
         $validator
             ->date('fecha_objetivo')

@@ -1,19 +1,7 @@
-<?php
-    use Cake\Routing\Router; 
-?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li><?= $this->Html->link(__('Agregar nueva calificación'), ['action' => 'add']) ?></li>
     </ul>
-    <div class="calificacions form large-9 medium-8 columns content">
-        <?= $this->Form->create() ?>
-            <fieldset>
-                <?php
-                    echo $this->Form->input('materias', ['label' => 'Materia', 'options' => $materias]);
-                ?>
-            </fieldset>
-        <?= $this->Form->end() ?>
-    </div>
 </nav>
 <div class="calificacions index large-9 medium-8 columns content">
     <h3><?= __('Calificaciones') ?></h3>
@@ -52,9 +40,3 @@
         <p><?= $this->Paginator->counter() ?></p>
     </div>
 </div>
-<script>
-    $(document).ready(function() 
-    {
-
-    });    
-</script>

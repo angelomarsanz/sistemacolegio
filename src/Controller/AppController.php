@@ -59,7 +59,7 @@ class AppController extends Controller
                 'controller' => 'Users',
                 'action' => 'login'
             ],
-            'authError' => 'Ingrese sus datos, nuevamente',
+            'authError' => 'Estimado usuario, usted no está autorizado a esta opción del sistema',
             'loginRedirect' => [
                 'controller' => 'Users',
                 'action' => 'home'

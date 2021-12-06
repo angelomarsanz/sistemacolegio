@@ -64,12 +64,13 @@ class CalificacionsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->decimal('puntaje')
             ->allowEmpty('puntaje');
 
         $validator
-            ->decimal('puntaje_112')
             ->allowEmpty('puntaje_112');
+
+        $validator
+            ->allowEmpty('observacion');
 
         $validator
             ->boolean('registro_eliminado')

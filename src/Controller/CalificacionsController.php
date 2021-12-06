@@ -11,19 +11,87 @@ use App\Controller\AppController;
 class CalificacionsController extends AppController
 {
 
+    public function isAuthorized($user)
+    {
+		if(isset($user['role']))
+		{
+			if ($user['role'] === 'Profesor')
+			{
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete']))
+				{
+					return true;
+				}
+			}
+        }
+        return parent::isAuthorized($user);
+    }
+
     /**
      * Index method
      *
      * @return \Cake\Network\Response|null
      */
+
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Objetivos', 'Students']
-        ];
-        $calificacions = $this->paginate($this->Calificacions);
+        $this->loadModel('Materias');
+        $this->loadModel('Profesors');
+        $this->loadModel('MateriasProfesors');
+        $this->loadModel('ParametrosCargaCalificacions');
 
-        $this->set(compact('calificacions'));
+        if ($this->Auth->user('role') == 'Profesor')
+        {
+            $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+            $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
+            $vectorMaterias = [];
+            
+            if ($materiasProfesor)
+            {
+                foreach ($materiasProfesor as $materias)
+                {
+                    $vectorMaterias[] = $materias->materia_id;
+                }
+            }
+
+            $materias = $this->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias]);
+        }
+        else
+        {
+            $materias = $this->Materias->find('list', ['limit' => 200]);
+        }
+
+        $materiaBuscar = 0;
+
+        $parametrosCargaCalificaciones = $this->ParametrosCargaCalificacions->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+
+        if ($parametrosCargaCalificaciones)
+        {
+            $materiaBuscar = $parametrosCargaCalificaciones->materia_id;
+        }
+        else
+        {
+            if ($this->Auth->user('role') == 'Profesor')
+            {
+                if ($materiasProfesor)
+                {
+                    $primeraMateria = $materiasProfesor->first();
+                    $materiaBuscar = $primeraMateria->materia_id;        
+                }
+                else
+                {
+                    $materiaBuscar = 1;
+                }
+        }
+
+        $this->paginate = [
+            'order' => ['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Objetivos.objetivo' => 'ASC'],
+            'contain' => ['Objetivos' => 'Materias', 'Students'],
+            'where' => ['Objetivos.materia_id' => $materiaBuscar]
+        ];
+    
+        $calificacions = $this->paginate($this->Calificacions);
+     
+        $this->set(compact('calificacions', 'materias'));
         $this->set('_serialize', ['calificacions']);
     }
 
@@ -63,7 +131,7 @@ class CalificacionsController extends AppController
             }
         }
         $objetivos = $this->Calificacions->Objetivos->find('list', ['limit' => 200]);
-        $students = $this->Calificacions->Students->find('list', ['limit' => 200]);
+        $students = $this->Calificacions->Students->find('list', ['limit' => 200])->where(['id >' => 1, 'student_condition' => 'Regular'])->order(['surname' => 'ASC', 'second_surname' => 'ASC', 'first_name' => 'ASC', 'second_name' => 'ASC']);
         $this->set(compact('calificacion', 'objetivos', 'students'));
         $this->set('_serialize', ['calificacion']);
     }

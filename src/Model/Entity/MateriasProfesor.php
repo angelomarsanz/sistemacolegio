@@ -4,13 +4,18 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Profesor Entity
+ * MateriasProfesor Entity
  *
  * @property int $id
+ * @property int $materia_id
+ * @property int $profesor_id
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
+ *
+ * @property \App\Model\Entity\Materia $materia
+ * @property \App\Model\Entity\Profesor $profesor
  */
-class Profesor extends Entity
+class MateriasProfesor extends Entity
 {
 
     /**
@@ -26,10 +31,4 @@ class Profesor extends Entity
         '*' => true,
         'id' => false
     ];
-
-    protected function _getFullName()
-    {
-        return 
-            $this->_properties['primer_apellido'] . '  ' . $this->_properties['segundo_apellido'] . '  ' . $this->_properties['primer_nombre'] . '  ' . $this->_properties['segundo_nombre'];
-    }
 }

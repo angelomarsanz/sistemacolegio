@@ -43,8 +43,8 @@ class ParametrosCargaCalificacionsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Profesors', [
-            'foreignKey' => 'profesor_id',
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
         $this->belongsTo('Lapsos', [
@@ -53,10 +53,6 @@ class ParametrosCargaCalificacionsTable extends Table
         ]);
         $this->belongsTo('Materias', [
             'foreignKey' => 'materia_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Sections', [
-            'foreignKey' => 'section_id',
             'joinType' => 'INNER'
         ]);
     }

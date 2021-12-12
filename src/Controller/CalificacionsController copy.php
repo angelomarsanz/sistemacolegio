@@ -17,7 +17,7 @@ class CalificacionsController extends AppController
 		{
 			if ($user['role'] === 'Profesor')
 			{
-				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'actualizarParametros', 'registrarCalificaciones']))
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'actualizarParametros']))
 				{
 					return true;
 				}
@@ -37,12 +37,10 @@ class CalificacionsController extends AppController
         $this->loadModel('Lapsos');
         $this->loadModel('Materias');
         $this->loadModel('Profesors');
+        $this->loadModel('Students');
         $this->loadModel('Objetivos');
         $this->loadModel('MateriasProfesors');
         $this->loadModel('ParametrosCargaCalificacions');
-        $objetivos = new ObjetivosController();
-
-        $vectorMaterias = [];
 
         $lapsos = $this->Lapsos->find('list', ['limit' => 200]);
 
@@ -50,13 +48,15 @@ class CalificacionsController extends AppController
         {
             $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
             $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
-            $objetivosProfesor = $this->Objetivos->find('all')->where(['profesor_id' => $profesor->id]);
-
-            if ($materiasProfesor->count() > 0):
-                foreach ($materiasProfesor as $materias):
+            $vectorMaterias = [];
+            
+            if ($materiasProfesor)
+            {
+                foreach ($materiasProfesor as $materias)
+                {
                     $vectorMaterias[] = $materias->materia_id;
-                endforeach;
-            endif;
+                }
+            }
 
             $materias = $this->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias]);
         }
@@ -64,8 +64,6 @@ class CalificacionsController extends AppController
         {
             $materias = $this->Materias->find('list', ['limit' => 200]);
         }
-
-        $objetivos->crearObjetivos();
 
         $lapsoBuscar = 0;
         $materiaBuscar = 0;
@@ -90,24 +88,18 @@ class CalificacionsController extends AppController
             }
             else
             {
-                $lapsoBuscar = 1;
                 $materiaBuscar = 1;
+                $lapsoBuscar = 1;
             }
         }
 
-        $materia = $this->Materias->get($materiaBuscar);
-
-        $estudiantes = $this->Calificacions->Students->find('All')
-        ->where(['section_id' => $materia->section_id, 'student_condition' => 'Regular', 'balance' => '2021'])
-        ->order(['surname' => 'ASC', 'first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC']);
-       
         $calificaciones = $this->Calificacions->find('All')
-        ->contain(['Objetivos', 'Students'])
-        ->where(['Calificacions.registro_eliminado' => false, 'Objetivos.lapso_id' => $lapsoBuscar, 'Objetivos.materia_id' => $materiaBuscar])
-        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
+        ->contain(['Objetivos' => 'Materias', 'Students'])
+        ->where(['Objetivos.lapso_id' => $lapsoBuscar, 'Objetivos.materia_id' => $materiaBuscar])
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
 
-        $this->set(compact('calificaciones', 'materias', 'lapsos', 'lapsoBuscar', 'materiaBuscar'));
-        $this->set('estudiantes', $this->paginate($estudiantes, ['limit' => 50]));    
+        $this->set(compact('materias', 'lapsos', 'lapsoBuscar', 'materiaBuscar'));
+        $this->set('calificacions', $this->paginate($calificaciones));    
     }
 
     /**
@@ -190,84 +182,56 @@ class CalificacionsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $calificacion = $this->Calificacions->get($id);
-        $calificacion->registro_eliminado = 1;
-        if ($this->Calificacions->save($calificacion)) {
-            $this->Flash->success(__('La calificación fue eliminada'));
+        if ($this->Calificacions->delete($calificacion)) {
+            $this->Flash->success(__('The calificacion has been deleted.'));
         } else {
-            $this->Flash->error(__('La calificación no pudo ser eliminada'));
+            $this->Flash->error(__('The calificacion could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
     }
-    public function registrarCalificaciones($idEstudiante = null, $idMateria = null, $idLapso = null)
-    {  
-        $this->loadModel('Profesors');
-        $this->loadModel('Students');
-        $this->loadModel('Sections');
-        $this->loadModel('Materias');
-        $this->loadModel('Lapsos');
-        $this->loadModel('Objetivos');
-
-        $parametrosCargaCalificaciones = new ParametrosCargaCalificacionsController();
-
-        $parametrosCargaCalificaciones->actualizarParametrosCargaCalificaciones($idLapso, $idMateria, $idEstudiante);
-
-        $estudiante = $this->Students->get($idEstudiante);
-        $materia = $this->Materias->get($idMateria);
-        $seccion = $this->Sections->get($materia->section_id);
-        $lapso = $this->Lapsos->get($idLapso);
+    public function actualizarParametros()
+    {
+        $this->autoRender = false;
 
         if ($this->request->is('post')) 
         {
-            $idEstudiante = $_POST['id_estudiante'];
-            $idMateria = $_POST['id_materia'];
-            $idLapso = $_POST['id_lapso'];
+            $this->loadModel('ParametrosCargaCalificacions');
+            $lapso_id = $_POST['lapsos'];
+            $materia_id = $_POST['materias'];
 
-            $calificaciones = $this->Calificacions->find('All')
-            ->contain(['Objetivos', 'Students'])
-            ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.materia_id' => $idMateria,  'Objetivos.lapso_id' => $idLapso, ])
-            ->order(['Objetivos.objetivo' => 'ASC']);
+            $parametro = $this->ParametrosCargaCalificacions->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
 
-            foreach ($calificaciones as $calificacion):
-                $nota = $this->Calificacions->get($calificacion->id);
-                $nota->puntaje = $_POST['nota_' . $calificacion->id];
-                $nota->puntaje_112 = $_POST['nota112_' . $calificacion->id];
-                if (!($this->Calificacions->save($nota))): 
-                    $this->Flash->error(__('La calificación no pudo ser actualizada'));
-                endif;
-            endforeach;
-            return $this->redirect(['action' => 'index']);
+            if ($parametro)
+            {
+                $parametro->lapso_id = $lapso_id;
+                $parametro->materia_id = $materia_id;
+                if ($this->ParametrosCargaCalificacions->save($parametro)) 
+                {
+                    $this->Flash->success(__('El parámetro fue actualizado'));
+                } 
+                else 
+                {
+                    $this->Flash->error(__('El parámetro no fue actualizado'));
+                } 
+            }
+            else
+            {
+                $parametro = $this->ParametrosCargaCalificacions->newEntity();
+                $parametro->user_id = $this->Auth->user('id');
+                $parametro->lapso_id = $lapso_id;
+                $parametro->materia_id = $materia_id;  
+
+                if ($this->ParametrosCargaCalificacions->save($parametro)) 
+                {
+                    $this->Flash->success(__('El parámetro fue actualizado'));
+                }
+                else
+                {
+                    $this->Flash->error(__('El parámetro no fue actualizado'));
+                }
+            }
         }
-
-        $calificaciones = $this->Calificacions->find('All')
-        ->contain(['Objetivos', 'Students'])
-        ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.materia_id' => $idMateria,  'Objetivos.lapso_id' => $idLapso, ])
-        ->order(['Objetivos.objetivo' => 'ASC']);
-
-        if ($calificaciones->count() == 0):
-            if ($this->Auth->user('role') == 'Profesor'):
-                $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
-                $objetivosProfesor = $this->Objetivos->find('all')
-                    ->where(['profesor_id' => $profesor->id, 'materia_id' => $idMateria, 'lapso_id' => $idLapso]);
-                foreach ($objetivosProfesor as $objetivo):
-                    $calificacion = $this->Calificacions->newEntity();
-                    $calificacion->objetivo_id = $objetivo->id;
-                    $calificacion->student_id = $idEstudiante;
-                    $calificacion->puntaje = 0;
-                    $calificacion->puntaje_112 = 0;
-                    $calificacion->observacion = '';
-                    if (!($this->Calificacions->save($calificacion))): 
-                        $this->Flash->error(__('La calificación no pudo ser creada'));
-                    endif;
-                endforeach;
-
-                $calificaciones = $this->Calificacions->find('All')
-                ->contain(['Objetivos', 'Students'])
-                ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.materia_id' => $idMateria,  'Objetivos.lapso_id' => $idLapso, ])
-                ->order(['Objetivos.objetivo' => 'ASC']);
-            endif;
-        endif;
-
-        $this->set(compact('idEstudiante', 'idMateria', 'idLapso', 'calificaciones', 'estudiante', 'materia', 'seccion', 'lapso'));
+        return $this->redirect(['action' => 'index']);
     }
 }

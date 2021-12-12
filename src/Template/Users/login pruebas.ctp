@@ -38,7 +38,7 @@
         $('#to-access').click(function(e) 
         {
         	passwordUser = $("#password").val();
-        	if (passwordUser.toLowerCase() == "sga40")
+        	if (passwordUser.toLowerCase() == "verdad")
         	{
 	            $('#password').val($('#password').val().toLowerCase());
         	}

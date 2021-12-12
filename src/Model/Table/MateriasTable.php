@@ -51,6 +51,9 @@ class MateriasTable extends Table
         $this->hasMany('Objetivos', [
             'foreignKey' => 'materia_id'
         ]);
+        $this->hasMany('Observacions', [
+            'foreignKey' => 'materia_id'
+        ]);
         $this->hasMany('ParametrosCargaCalificaciones', [
             'foreignKey' => 'materia_id'
         ]);

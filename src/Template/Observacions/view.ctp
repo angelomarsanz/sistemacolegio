@@ -1,46 +1,50 @@
+<br />
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('Edit Observacion'), ['action' => 'edit', $observacion->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Observacion'), ['action' => 'delete', $observacion->id], ['confirm' => __('Are you sure you want to delete # {0}?', $observacion->id)]) ?> </li>
-        <li><?= $this->Html->link(__('List Observacions'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Observacion'), ['action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Lapsos'), ['controller' => 'Lapsos', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Lapso'), ['controller' => 'Lapsos', 'action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Students'), ['controller' => 'Students', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Student'), ['controller' => 'Students', 'action' => 'add']) ?> </li>
+        <li><?= $this->Html->link(__('Lista de calificaciones descriptivas de la materia'), ['action' => 'index']) ?> </li>
+        <li><?= $this->Html->link(__('Modificar calificación descriptiva de la materia'), ['action' => 'edit', $observacion->id]) ?> </li>
+        <li><?= $this->Form->postLink(__('Eliminar calificación descriptiva de la materia'), ['action' => 'delete', $observacion->id], ['confirm' => __('Está seguro de que desea eliminar la calificación {0}?', $observacion->tipo_observacion)]) ?> </li>
+        <li><?= $this->Html->link(__('Agregar nueva calificación descriptiva de la materia'), ['action' => 'add']) ?> </li>
     </ul>
 </nav>
 <div class="observacions view large-9 medium-8 columns content">
-    <h3><?= h($observacion->id) ?></h3>
+    <h3>Calificación descriptiva de la materia</h3>
     <table class="vertical-table">
         <tr>
-            <th scope="row"><?= __('Lapso') ?></th>
-            <td><?= $observacion->has('lapso') ? $this->Html->link($observacion->lapso->id, ['controller' => 'Lapsos', 'action' => 'view', $observacion->lapso->id]) : '' ?></td>
+            <th scope="row"><?= __('Lapso:') ?>&nbsp;&nbsp;&nbsp;</th>
+            <td><?= $observacion->has('lapso') ? $this->Html->link($observacion->lapso->numero_lapso, ['controller' => 'Lapsos', 'action' => 'view', $observacion->lapso->id]) : '' ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Student') ?></th>
+            <th scope="row"><?= __('Materia:') ?>&nbsp;&nbsp;&nbsp;</th>
+            <td><?= $this->Html->link($observacion->materia->full_name, ['controller' => 'Materias', 'action' => 'view', $observacion->materia->id]) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Estudiante:') ?>&nbsp;&nbsp;&nbsp;</th>
             <td><?= $observacion->has('student') ? $this->Html->link($observacion->student->full_name, ['controller' => 'Students', 'action' => 'view', $observacion->student->id]) : '' ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Id') ?></th>
-            <td><?= $this->Number->format($observacion->id) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Created') ?></th>
-            <td><?= h($observacion->created) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Modified') ?></th>
-            <td><?= h($observacion->modified) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Registro Elimindo') ?></th>
-            <td><?= $observacion->registro_elimindo ? __('Yes') : __('No'); ?></td>
+            <th scope="row"><?= __('Tipo:') ?>&nbsp;&nbsp;&nbsp;</th>
+            <td><?= h($observacion->tipo_observacion) ?></td>
         </tr>
     </table>
     <div class="row">
-        <h4><?= __('Observacion') ?></h4>
-        <?= $this->Text->autoParagraph(h($observacion->observacion)); ?>
+        <h5><?= __('Parrafo 1') ?></h5>
+        <?= $this->Text->autoParagraph(h($observacion->parrafo_1)); ?>
+    </div>
+    <div class="row">
+        <h5><?= __('Parrafo 2') ?></h5>
+        <?= $this->Text->autoParagraph(h($observacion->parrafo_2)); ?>
+    </div>
+    <div class="row">
+        <h5><?= __('Parrafo 3') ?></h5>
+        <?= $this->Text->autoParagraph(h($observacion->parrafo_3)); ?>
+    </div>
+    <div class="row">
+        <h5><?= __('Parrafo 4') ?></h5>
+        <?= $this->Text->autoParagraph(h($observacion->parrafo_4)); ?>
+    </div>
+    <div class="row">
+        <h5><?= __('Parrafo 5') ?></h5>
+        <?= $this->Text->autoParagraph(h($observacion->parrafo_5)); ?>
     </div>
 </div>

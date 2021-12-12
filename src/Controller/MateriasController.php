@@ -77,7 +77,7 @@ class MateriasController extends AppController
             }
         }
 
-        $secciones = $this->Materias->Sections->find('list', ['limit' => 200])->where(['level !=' => 'Pre-escolar']);
+        $secciones = $this->Materias->Sections->find('list', ['limit' => 200])->where(['level !=' => 'Pre-escolar', 'section' => 'A']);
         $profesors = $this->Materias->Profesors->find('list', ['limit' => 200]);
 
         $this->set(compact('materia', 'secciones', 'profesors'));

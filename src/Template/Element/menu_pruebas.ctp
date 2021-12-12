@@ -37,7 +37,7 @@
         background-color: #b3e0ff;
      }
 </style>
-<nav class="navbar navbar-default navbar-fixed-top" style="background-color: #b3e0ff;">
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color: red;">
     <div class="container-fluid">
         <div class="navbar-header">
             <a href="<?php echo Router::url(["controller" => "Users", "action" => "home"]); ?>"><img src="<?php echo Router::url(["controller" => "webroot/files", "action" => "schools"]) . '/profile_photo/f0c3559c-c419-42ee-b586-e16819cf7416/Logo CvyL.png'; ?>" width = 50 height = 60 class="img-thumbnail img-responsive logo"/></a>
@@ -167,7 +167,7 @@
 									<li><?= $this->Html->link('Materias', ['controller' => 'Materias', 'action' => 'index']) ?></li>
 									<li><?= $this->Html->link('Profesores', ['controller' => 'Profesors', 'action' => 'index']) ?></li>
 									<li><?= $this->Html->link('Lapsos', ['controller' => 'Lapsos', 'action' => 'index']) ?></li>
-									<li><?=  $this->Html->link('Objetivos', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+									<li><?=  $this->Html->link('Objetivos del lapso', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
 									<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
 								</ul>
 						</li>
@@ -179,7 +179,7 @@
 								<li><?= $this->Html->link('Materias', ['controller' => 'Materias', 'action' => 'index']) ?></li>
 								<li><?= $this->Html->link('Profesores', ['controller' => 'Profesors', 'action' => 'index']) ?></li>
 								<li><?= $this->Html->link('Lapsos', ['controller' => 'Lapsos', 'action' => 'index']) ?></li>
-								<li><?=  $this->Html->link('Objetivos', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+								<li><?=  $this->Html->link('Objetivos del lapso', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
 								<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
 							</ul>
 						</li>
@@ -197,7 +197,7 @@
                     <?php elseif($current_user['role'] == 'Representante'): ?>
                         <li><?=  $this->Html->link('Actualizar datos', ['controller' => 'Guardiantransactions', 'action' => 'homeScreen']) ?></li>
 					<?php elseif($current_user['role'] == 'Profesor'): ?>
-                        <li><?=  $this->Html->link('Objetivos', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+                        <li><?=  $this->Html->link('Objetivos del lapso', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
 						<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
 						<?php endif; ?>
                 </ul>

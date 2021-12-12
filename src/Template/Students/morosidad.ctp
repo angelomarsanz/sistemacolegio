@@ -33,7 +33,8 @@
 						'Total general' => 'Total general',
 	                    'Por grado' => 'Por grado',
 						'Por alumno' => 'Por alumno',
-						'Aviso de cobro' => 'Aviso de cobro']]);
+						'Aviso de cobro' => 'Aviso de cobro',
+						'Por representante' => 'Por representante']]);
 					echo "<div id='mensaje-tipo-reporte' class='mensaje-usuario'></div>";
 	               	echo $this->Form->input('ano_escolar', ['label' => 'Inscritos en el: ', 'options' => 
 	                    ["" => "",

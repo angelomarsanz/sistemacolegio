@@ -1,13 +1,12 @@
 <br />
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li><?= $this->Html->link(__('Agregar nueva calificación descriptiva de la materia'), ['action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('Agregar nueva calificación descriptiva de lapso'), ['action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="observacions index large-9 medium-8 columns content">
     <h5>Estudiante: <?= $estudiante->full_name ?></h5>
-    <h5>Lapso: <?= $lapso->numero_lapso ?></h5>
-    <h4><?= __('Calificaciones descriptivas de la materia: ' . $materia->full_name) ?></h4>
+    <h4><?= __('Calificaciones descriptivas del lapso: ' . $lapso->numero_lapso) ?></h4>
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
@@ -17,7 +16,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($observacionesMateria as $observacion): ?>
+            <?php foreach ($observacionesLapso as $observacion): ?>
             <tr>
                 <td><?= $observacion->tipo_observacion ?>&nbsp;&nbsp;&nbsp;</td>
                 <td><?= substr($observacion->parrafo_1, 0, 60) . '...' ?>&nbsp;&nbsp;&nbsp;</td>

@@ -3,43 +3,161 @@
 ?>
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li><?= $this->Html->link(__('Agregar nueva calificación'), ['action' => 'add']) ?></li>
+
     </ul>
     <div class="calificacions form large-9 medium-8 columns content">
-        <?= $this->Form->create() ?>
+        <?= $this->Form->create(null, ['url' => ['controller' => 'ParametrosCargaCalificacions', 'action' => 'postParametrosCargaCalificaciones']]) ?>
             <fieldset>
                 <?php
-                    echo $this->Form->input('materias', ['label' => 'Materia', 'options' => $materias]);
+                    echo $this->Form->input('id_lapso', ['id' => 'lapsos', 'label' => 'Lapso', 'options' => $lapsos, 'value' => $lapsoBuscar]);
+                    echo $this->Form->input('id_materia', ['type' => 'select', 'id' => 'materias', 'label' => 'Materia', 'options' => $materias, 'value' => $materiaBuscar]);
                 ?>
+                <input type='hidden' name='id_estudiante' value='1'>
             </fieldset>
+            <?= $this->Form->button(__('Filtrar')) ?>
         <?= $this->Form->end() ?>
     </div>
 </nav>
 <div class="calificacions index large-9 medium-8 columns content">
     <h3><?= __('Calificaciones') ?></h3>
+    <?php $contadorEstudiantes = 1 ?>
     <table cellpadding="0" cellspacing="0">
         <thead>
             <tr>
-                <th scope="col"><?= $this->Paginator->sort('Estudiante') ?>&nbsp;&nbsp;&nbsp;</th>
-                <th scope="col"><?= $this->Paginator->sort('Objetivo') ?>&nbsp;&nbsp;&nbsp;</th>
-                <th scope="col"><?= $this->Paginator->sort('puntaje') ?>&nbsp;&nbsp;&nbsp;</th>
-                <th scope="col"><?= $this->Paginator->sort('puntaje_112') ?>&nbsp;&nbsp;&nbsp;</th>
-                <th scope="col" class="actions"><?= __('Acciones') ?></th>
+                <th scope="col">Nro.&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">Estudiante&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">Cédula&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">Calif. Descrip.&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N1&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N112&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N2&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N112&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N3&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N112&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N4&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N112&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N5&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N112&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">NAJ&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N70%&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">NFL&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N112&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">N30%&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">NDEF&nbsp;&nbsp;&nbsp;</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($calificacions as $calificacion): ?>
-            <tr>
-                <td><?= $calificacion->has('student') ? $this->Html->link($calificacion->student->full_name, ['controller' => 'Students', 'action' => 'view', $calificacion->student->id]) : '' ?>&nbsp;&nbsp;&nbsp;</td>
-                <td><?= $calificacion->has('objetivo') ? $this->Html->link($calificacion->objetivo->objetivo, ['controller' => 'Objetivos', 'action' => 'view', $calificacion->objetivo->id]) : '' ?>&nbsp;&nbsp;&nbsp;</td>
-                <td><?= $this->Number->format($calificacion->puntaje) ?>&nbsp;&nbsp;&nbsp;</td>
-                <td><?= $this->Number->format($calificacion->puntaje_112) ?>&nbsp;&nbsp;&nbsp;</td>
-                <td class="actions">
-                    <?= $this->Html->link(__('Ver'), ['action' => 'view', $calificacion->id]) ?>
-                    <?= $this->Html->link(__('Modificar'), ['action' => 'edit', $calificacion->id]) ?>
-                    <?= $this->Form->postLink(__('Eliminar'), ['action' => 'delete', $calificacion->id], ['confirm' => __('Está usted seguro que desea eliminar la calificación del estudiante {0}?', $calificacion->student->full_name)]) ?>
-                </td>
-            </tr>
+            <?php foreach ($estudiantes as $estudiante): ?>
+                <?php 
+                    $notaObjetivo1 = 0; 
+                    $nota112Objetivo1 = 0;
+                    $notaObjetivo2 = 0;
+                    $nota112Objetivo2 = 0;
+                    $notaObjetivo3 = 0;
+                    $nota112Objetivo3 = 0;
+                    $notaObjetivo4 = 0;
+                    $nota112Objetivo4 = 0;
+                    $notaObjetivo5 = 0;
+                    $nota112Objetivo5 = 0;
+                    $notaObjetivoFl = 0;
+                    $nota112ObjetivoFl = 0; 
+                    $nAj = 0;
+                    $n70 = 0;
+                    $nFL = 0;
+                    $n30 = 0;
+                    $nDef = 0;
+                    $div1 = 0;
+                    $div2 = 0;
+                    $div3 = 0;
+                    $div4 = 0;
+                    $div5 = 0;
+                    $divisorNotas = 0;
+                ?>
+                <?php 
+                    foreach ($calificaciones as $calificacion): 
+                        if ($calificacion->student_id == $estudiante->id):
+                            switch ($calificacion->objetivo->objetivo) 
+                            {
+                                case '1':
+                                    $notaObjetivo1 = $calificacion->puntaje;
+                                    $nota112Objetivo1 = $calificacion->puntaje_112;
+                                    break;
+                                case '2':
+                                    $notaObjetivo2 = $calificacion->puntaje;
+                                    $nota112Objetivo2 = $calificacion->puntaje_112;
+                                    break;
+                                case '3':
+                                    $notaObjetivo3 = $calificacion->puntaje;
+                                    $nota112Objetivo3 = $calificacion->puntaje_112;
+                                    break;
+                                case '4':
+                                    $notaObjetivo4 = $calificacion->puntaje;
+                                    $nota112Objetivo4 = $calificacion->puntaje_112;
+                                    break;
+                                case '5':
+                                    $notaObjetivo5 = $calificacion->puntaje;
+                                    $nota112Objetivo5 = $calificacion->puntaje_112;
+                                    break;
+                                case 'Prueba de lapso':
+                                    $notaObjetivoFl = $calificacion->puntaje;
+                                    $nota112ObjetivoFl = $calificacion->puntaje_112;
+                                    break;
+                            }
+                        endif;
+                    endforeach; 
+                    
+                    $nota112Objetivo1 > 0 ? $div1 = $nota112Objetivo1 : $div1 = $notaObjetivo1;
+                    $nota112Objetivo2 > 0 ? $div2 = $nota112Objetivo2 : $div2 = $notaObjetivo2;
+                    $nota112Objetivo3 > 0 ? $div3 = $nota112Objetivo3 : $div3 = $notaObjetivo3; 
+                    $nota112Objetivo4 > 0 ? $div4 = $nota112Objetivo4 : $div4 = $notaObjetivo4; 
+                    $nota112Objetivo5 > 0 ? $div5 = $nota112Objetivo5 : $div5 = $notaObjetivo5;
+                    $nota112ObjetivoFl > 0 ? $nFL = $nota112ObjetivoFl : $nFL = $notaObjetivoFl;  
+
+                    if ($notaObjetivo5 > 0 || $nota112Objetivo5 > 0):                  
+                        $divisorNotas = 5;
+                    else:
+                        $divisorNotas = 4;
+                    endif;
+
+                    $nAj = round(($div1 + $div2 + $div3 + $div4 + $div5)/$divisorNotas);
+
+                    $n70 = round($nAj * 0.7, 2);
+                    $n30 = round($nFL * 0.3, 2);
+                    $nDef = round($n70 + $n30);
+                    
+                ?>
+                <tr>
+                    <td><?= $contadorEstudiantes ?></td>
+                    <td><spam id=<?= 'f' . $contadorEstudiantes ?>><?= $this->Html->link($estudiante->surname . ' ' . $estudiante->first_name, ['controller' => 'Calificacions', 'action' => 'registrarCalificaciones', $estudiante->id, $materiaBuscar, $lapsoBuscar])?></spam>&nbsp;&nbsp;&nbsp;</td>
+                    <td><?= $estudiante->type_of_identification . '-' . $estudiante->identity_card ?>&nbsp;&nbsp;&nbsp;</td>
+                    
+                    <td>
+                        <?= $this->Html->link(__('Materia'), ['controller' => 'ParametrosCargaCalificacions', 'action' => 'calificacionesDescriptivas', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Observacions', 'index']) ?>
+                        &nbsp;&nbsp;&nbsp;
+                        <?= $this->Html->link(__('Lapso'), ['controller' => 'ParametrosCargaCalificacions', 'action' => 'calificacionesDescriptivas', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'ObservacionesLapsos', 'index']) ?>
+                        &nbsp;&nbsp;&nbsp;
+                    </td>
+
+                    <td><?= $notaObjetivo1 ?></td>
+                    <td><?= $nota112Objetivo1 ?></td>
+                    <td><?= $notaObjetivo2 ?></td>
+                    <td><?= $nota112Objetivo2 ?></td>
+                    <td><?= $notaObjetivo3 ?></td>
+                    <td><?= $nota112Objetivo3 ?></td>
+                    <td><?= $notaObjetivo4 ?></td>
+                    <td><?= $nota112Objetivo4 ?></td>
+                    <td><?= $notaObjetivo5 ?></td>
+                    <td><?= $nota112Objetivo5 ?></td>
+
+                    <td><?= $nAj ?></td>
+                    <td><?= $n70 ?></td>
+                    <td><?= $notaObjetivoFl ?></td>
+                    <td><?= $nota112ObjetivoFl ?></td>
+                    <td><?= $n30 ?></td>
+                    <td><?= $nDef ?></td>
+
+                </tr>
+                <?php $contadorEstudiantes++ ?> 
             <?php endforeach; ?>
         </tbody>
     </table>

@@ -10,6 +10,20 @@ use App\Controller\AppController;
  */
 class ParametrosCargaCalificacionsController extends AppController
 {
+    public function isAuthorized($user)
+    {
+		if(isset($user['role']))
+		{
+			if ($user['role'] === 'Profesor')
+			{
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'postParametrosCargaCalificaciones', 'calificacionesDescriptivas']))
+				{
+					return true;
+				}
+			}
+        }
+        return parent::isAuthorized($user);
+    }
 
     /**
      * Index method
@@ -118,5 +132,85 @@ class ParametrosCargaCalificacionsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function actualizarParametrosCargaCalificaciones($idLapso = null, $idMateria = null, $idEstudiante = null)
+    {
+        $this->autoRender = false;
+
+        $parametro = $this->ParametrosCargaCalificacions->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+
+        if ($parametro)
+        {
+            $parametro->lapso_id    = $idLapso;
+            $parametro->materia_id  = $idMateria;
+            $parametro->student_id  = $idEstudiante;
+
+            if (!($this->ParametrosCargaCalificacions->save($parametro))) 
+            {
+                $this->Flash->error(__('El parámetro no fue actualizado'));
+            } 
+        }
+        else
+        {
+            $parametro = $this->ParametrosCargaCalificacions->newEntity();
+            $parametro->user_id     = $this->Auth->user('id');
+            $parametro->lapso_id    = $idLapso;
+            $parametro->materia_id  = $idMateria;  
+            $parametro->student_id  = $idEstudiante;
+
+            if (!($this->ParametrosCargaCalificacions->save($parametro))) 
+            {
+                $this->Flash->error(__('El parámetro no fue creado'));
+            }
+        }
+        return;
+    }
+    public function postParametrosCargaCalificaciones()
+    {
+        $this->autoRender = false;
+
+        if ($this->request->is('post')) 
+        {
+            $idLapso        = $_POST['id_lapso'];
+            $idMateria      = $_POST['id_materia'];
+            $idEstudiante   = $_POST['id_estudiante'];
+ 
+            $parametro = $this->ParametrosCargaCalificacions->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+
+            if ($parametro)
+            {
+                $parametro->lapso_id    = $idLapso;
+                $parametro->materia_id  = $idMateria;
+                $parametro->student_id  = $idEstudiante;
+
+                if (!($this->ParametrosCargaCalificacions->save($parametro))) 
+                {
+                    $this->Flash->error(__('El parámetro no fue actualizado'));
+                } 
+            }
+            else
+            {
+                $parametro = $this->ParametrosCargaCalificacions->newEntity();
+                $parametro->user_id     = $this->Auth->user('id');
+                $parametro->lapso_id    = $idLapso;
+                $parametro->materia_id  = $idMateria;  
+                $parametro->student_id  = $idEstudiante;
+
+                if (!($this->ParametrosCargaCalificacions->save($parametro))) 
+                {
+                    $this->Flash->error(__('El parámetro no fue creado'));
+                }
+            }
+            return $this->redirect(['controller' => 'Calificacions', 'action' => 'index']);
+        }
+    }
+    public function calificacionesDescriptivas($idLapso = null, $idMateria = null, $idEstudiante = null, $controlador = null, $accion = null)
+    {
+        $this->autoRender = false;
+
+        $this->actualizarParametrosCargaCalificaciones($idLapso, $idMateria, $idEstudiante);
+        
+        return $this->redirect(['controller' => $controlador, 'action' => $accion]);
     }
 }

@@ -6,29 +6,29 @@ use Cake\I18n\Time;
 	
 	$fechaActual = time::now();
 ?>
-    <nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li><?= $this->Html->link(__('Lista de objetivos'), ['action' => 'index']) ?></li>
-    </ul>
+<br />
+<nav class="large-3 medium-4 columns" id="actions-sidebar">
 </nav>
 <div class="objetivos form large-9 medium-8 columns content">
     <?= $this->Form->create($objetivo) ?>
     <fieldset>
-        <legend><?= __('Agregar Nuevo Objetivo') ?></legend>
+        <legend><?= __('Modificar Objetivo') ?></legend>
         <?php
             echo $this->Form->input('lapso_id', ['label' => 'Lapso: *', 'options' => $lapsos]);
             echo $this->Form->input('materia_id', ['label' => 'Materia: *', 'options' => $materias]);
-            echo $this->Form->input('section_id', ['label' => 'Sección: *', 'options' => $secciones]);
-            echo $this->Form->input('profesor_id', ['label' => 'Profesor: *', 'options' => $profesors]);
-            echo $this->Form->input('objetivo', ['label' => 'Nro. del objetivo: *', 
+            if ($idProfesor == 0):
+                echo $this->Form->input('profesor_id', ['label' => 'Profesor: *', 'options' => $profesors]);
+            else:
+                echo $this->Form->input('profesor_id', ['type' => 'hidden', 'value' => $idProfesor]);
+            endif;
+            echo $this->Form->input('objetivo', ['label' => 'Objetivo: *', 
                 'options' => 
-                    ['Objetivo 1' => 'Objetivo 1', 
-                    'Objetivo 2' => 'Objetivo 2', 
-                    'Objetivo 3' => 'Objetivo 3', 
-                    'Objetivo 4' => 'Objetivo 4', 
-                    'Objetivo 5' => 'Objetivo 5',
-                    'Prueba de lapso' => 'Prueba de lapso',
-                    'Literal de lapso (Primaria)' => 'Literal de lapso (Primaria)']]);
+                    ['1' => '1', 
+                    '2' => '2', 
+                    '3' => '3', 
+                    '4' => '4', 
+                    '5' => '5',
+                    'Prueba de lapso' => 'Prueba de lapso']]);
             echo $this->Form->input('fecha_objetivo', 
                 ['type' => 'date',
                 'value' => $fechaActual,
@@ -57,9 +57,9 @@ use Cake\I18n\Time;
             echo $this->Form->input('ponderacion_objetivo', ['label' => 'Ponderación: *', 'required', 
                 'options' => 
                     [
-                        '25' => '25% - Objetivo', 
-                        '30' => '30% - Prueba de lapso',
-                        '100' => '100% - Literal de lapso (Primaria)'
+                        '25' => '25%', 
+                        '30' => '30%',
+                        '100' => '100%'
                     ]]);
             echo $this->Form->input('comentario_objetivo', ['label' => 'Observacion:']);
         ?>

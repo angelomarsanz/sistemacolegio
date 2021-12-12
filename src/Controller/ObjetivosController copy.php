@@ -33,15 +33,9 @@ class ObjetivosController extends AppController
      */
     public function index()
     {
-        $this->loadModel('Profesors');
-        $this->crearObjetivos();
-
-        $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
-
         $objetivos = $this->Objetivos->find('All')
             ->contain(['Lapsos', 'Materias', 'Profesors'])
-            ->where(['Objetivos.profesor_id' => $profesor->id, 'Lapsos.periodo_escolar' => '2021-2022', 'Objetivos.registro_eliminado' => false])
-            ->order(['Materias.nombre_materia' => 'ASC', 'Materias.grado_materia' => 'ASC', 'Profesors.primer_apellido' => 'ASC', 'Profesors.primer_nombre' => 'ASC', 'Lapsos.numero_lapso' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
+            ->order(['Materias.nombre_materia' => 'ASC', 'Profesors.primer_apellido' => 'ASC', 'Profesors.primer_nombre' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
 
         $this->set('objetivos', $this->paginate($objetivos));
     }
@@ -195,64 +189,12 @@ class ObjetivosController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $objetivo = $this->Objetivos->get($id);
-        $objetivo->registro_eliminado = 1;
-        if ($this->Objetivos->save($objetivo)) {
-            $this->Flash->success(__('El objetivo fue eliminado'));
+        if ($this->Objetivos->delete($objetivo)) {
+            $this->Flash->success(__('The objetivo has been deleted.'));
         } else {
-            $this->Flash->error(__('No se pudo eliminar el objetivo'));
+            $this->Flash->error(__('The objetivo could not be deleted. Please, try again.'));
         }
 
         return $this->redirect(['action' => 'index']);
-    }
-    public function crearObjetivos()
-    {
-        $this->loadModel('Lapsos');
-        $this->loadModel('Materias');
-        $this->loadModel('Profesors');
-        $this->loadModel('MateriasProfesors');
-
-        $tieneObjetivos = 0;
-        $objetivosBachillerato =
-            [
-                '1',
-                '2',
-                '3',
-                '4',
-                '5',
-                'Prueba de lapso'
-            ];
-
-        $lapsosAnoActual = $this->Lapsos->find('all')->where(['periodo_escolar' => '2021-2022']);
-
-        if ($this->Auth->user('role') == 'Profesor'):
-            $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
-            $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
-            $objetivosProfesor = $this->Objetivos->find('all')->where(['profesor_id' => $profesor->id]);
-
-            if ($objetivosProfesor->count() > 0):
-                $tieneObjetivos = 1;
-            endif;
-
-            if ($materiasProfesor->count() > 0):
-                foreach ($materiasProfesor as $materias):
-                    $materiaActual = $this->Materias->get($materias->materia_id);
-                    if ($tieneObjetivos == 0):
-                        foreach ($lapsosAnoActual as $lapsoActual):
-                            foreach ($objetivosBachillerato as $bachillerato):
-                                $nuevoObjetivo = $this->Objetivos->newEntity();
-                                $nuevoObjetivo->lapso_id = $lapsoActual->id; 
-                                $nuevoObjetivo->materia_id = $materiaActual->id;
-                                $nuevoObjetivo->section_id = $materiaActual->section_id;
-                                $nuevoObjetivo->profesor_id = $profesor->id;
-                                $nuevoObjetivo->objetivo = $bachillerato;           
-                                if (!($this->Objetivos->save($nuevoObjetivo))): 
-                                    $this->Flash->error(__('No se pudo crear el objetivo'));
-                                endif;
-                            endforeach;
-                        endforeach;
-                    endif;
-                endforeach;
-            endif;
-        endif;
     }
 }

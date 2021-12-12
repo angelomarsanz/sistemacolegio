@@ -87,6 +87,12 @@ class StudentsTable extends Table
         $this->hasMany('Studenttransactions', [
             'foreignKey' => 'student_id'
         ]);
+        $this->hasMany('Calificacions', [
+            'foreignKey' => 'student_id'
+        ]);
+        $this->hasMany('ParametrosCargaCalificacions', [
+            'foreignKey' => 'student_id'
+        ]);
     }
 
     /**

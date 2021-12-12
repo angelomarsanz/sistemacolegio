@@ -7,24 +7,22 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * ParametrosCargaCalificacions Model
+ * ObservacionesLapsos Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Profesors
  * @property \Cake\ORM\Association\BelongsTo $Lapsos
- * @property \Cake\ORM\Association\BelongsTo $Materias
- * @property \Cake\ORM\Association\BelongsTo $Sections
+ * @property \Cake\ORM\Association\BelongsTo $Students
  *
- * @method \App\Model\Entity\ParametrosCargaCalificacion get($primaryKey, $options = [])
- * @method \App\Model\Entity\ParametrosCargaCalificacion newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\ParametrosCargaCalificacion[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\ParametrosCargaCalificacion|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\ParametrosCargaCalificacion patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\ParametrosCargaCalificacion[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\ParametrosCargaCalificacion findOrCreate($search, callable $callback = null)
+ * @method \App\Model\Entity\ObservacionesLapso get($primaryKey, $options = [])
+ * @method \App\Model\Entity\ObservacionesLapso newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\ObservacionesLapso[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\ObservacionesLapso|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\ObservacionesLapso patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\ObservacionesLapso[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\ObservacionesLapso findOrCreate($search, callable $callback = null)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class ParametrosCargaCalificacionsTable extends Table
+class ObservacionesLapsosTable extends Table
 {
 
     /**
@@ -37,22 +35,14 @@ class ParametrosCargaCalificacionsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('parametros_carga_calificacions');
+        $this->table('observaciones_lapsos');
         $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Users', [
-            'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
-        ]);
         $this->belongsTo('Lapsos', [
             'foreignKey' => 'lapso_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Materias', [
-            'foreignKey' => 'materia_id',
             'joinType' => 'INNER'
         ]);
         $this->belongsTo('Students', [
@@ -74,6 +64,24 @@ class ParametrosCargaCalificacionsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
+            ->allowEmpty('tipo_observacion');
+
+        $validator
+            ->allowEmpty('parrafo_1');
+
+        $validator
+            ->allowEmpty('parrafo_2');
+
+        $validator
+            ->allowEmpty('parrafo_3');
+
+        $validator
+            ->allowEmpty('parrafo_4');
+
+        $validator
+            ->allowEmpty('parrafo_5');
+
+        $validator
             ->boolean('registro_eliminado')
             ->allowEmpty('registro_eliminado');
 
@@ -90,7 +98,8 @@ class ParametrosCargaCalificacionsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['lapso_id'], 'Lapsos'));
-        $rules->add($rules->existsIn(['materia_id'], 'Materias'));
+        $rules->add($rules->existsIn(['student_id'], 'Students'));
+
         return $rules;
     }
 }

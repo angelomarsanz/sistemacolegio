@@ -1,9 +1,8 @@
+<br />
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li class="heading"><?= __('Acciones') ?></li>
         <li><?= $this->Html->link(__('Modificar objetivo'), ['action' => 'edit', $objetivo->id]) ?> </li>
         <li><?= $this->Form->postLink(__('Eliminar objetivo'), ['action' => 'delete', $objetivo->id], ['confirm' => __('Está usted seguro que desea eliminar el objetivo # {0}?', $objetivo->numer_objetivo)]) ?> </li>
-        <li><?= $this->Html->link(__('Lista de objetivos'), ['action' => 'index']) ?> </li>
         <li><?= $this->Html->link(__('Agregar nuevo objetivo'), ['action' => 'add']) ?> </li>
     </ul>
 </nav>
@@ -24,11 +23,11 @@
         </tr>
         <tr>
             <th scope="row"><?= __('Objetivo') ?>&nbsp;&nbsp;&nbsp;</th>
-            <td><?= $this->Number->format($objetivo->objetivo) ?></td>
+            <td><?= $objetivo->objetivo ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Fecha') ?>&nbsp;&nbsp;&nbsp;</th>
-            <td><?= h($objetivo->fecha_objetivo->format('d-m-Y')) ?></td>
+            <td><?php $objetivo->fecha_objetivo != null ? $objetivo->fecha_objetivo->format('d-m-Y') : '' ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Descripcion') ?>&nbsp;&nbsp;&nbsp;</th>

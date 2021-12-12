@@ -7,22 +7,21 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Observacions Model
+ * LiteralAnos Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Lapsos
  * @property \Cake\ORM\Association\BelongsTo $Students
  *
- * @method \App\Model\Entity\Observacion get($primaryKey, $options = [])
- * @method \App\Model\Entity\Observacion newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\Observacion[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Observacion|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Observacion patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\Observacion[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\Observacion findOrCreate($search, callable $callback = null)
+ * @method \App\Model\Entity\LiteralAno get($primaryKey, $options = [])
+ * @method \App\Model\Entity\LiteralAno newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\LiteralAno[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\LiteralAno|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\LiteralAno patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\LiteralAno[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\LiteralAno findOrCreate($search, callable $callback = null)
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class ObservacionsTable extends Table
+class LiteralAnosTable extends Table
 {
 
     /**
@@ -35,20 +34,12 @@ class ObservacionsTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('observacions');
+        $this->table('literal_anos');
         $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
 
-        $this->belongsTo('Lapsos', [
-            'foreignKey' => 'lapso_id',
-            'joinType' => 'INNER'
-        ]);
-        $this->belongsTo('Materias', [
-            'foreignKey' => 'materia_id',
-            'joinType' => 'INNER'
-        ]);
         $this->belongsTo('Students', [
             'foreignKey' => 'student_id',
             'joinType' => 'INNER'
@@ -68,11 +59,17 @@ class ObservacionsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('observacion');
+            ->allowEmpty('periodo_escolar');
 
         $validator
-            ->boolean('registro_elimindo')
-            ->allowEmpty('registro_elimindo');
+            ->allowEmpty('calificacion_descriptiva');
+
+        $validator
+            ->allowEmpty('literal');
+
+        $validator
+            ->boolean('registro_eliminado')
+            ->allowEmpty('registro_eliminado');
 
         return $validator;
     }
@@ -86,7 +83,6 @@ class ObservacionsTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['lapso_id'], 'Lapsos'));
         $rules->add($rules->existsIn(['student_id'], 'Students'));
 
         return $rules;

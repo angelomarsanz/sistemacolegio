@@ -4,11 +4,11 @@ namespace App\Controller;
 use App\Controller\AppController;
 
 /**
- * Observacions Controller
+ * ObservacionesLapsos Controller
  *
- * @property \App\Model\Table\ObservacionsTable $Observacions
+ * @property \App\Model\Table\ObservacionesLapsosTable $ObservacionesLapsos
  */
-class ObservacionsController extends AppController
+class ObservacionesLapsosController extends AppController
 {
     public function isAuthorized($user)
     {
@@ -34,7 +34,6 @@ class ObservacionsController extends AppController
     {
         $this->loadModel('Students');
         $this->loadModel('Sections');
-        $this->loadModel('Materias');
         $this->loadModel('Lapsos');
         $this->loadModel('ParametrosCargaCalificacions');
 
@@ -43,43 +42,41 @@ class ObservacionsController extends AppController
         if ($parametrosCargaCalificaciones)
         {
             $idLapso        = $parametrosCargaCalificaciones->lapso_id;
-            $idMateria      = $parametrosCargaCalificaciones->materia_id;
             $idEstudiante   = $parametrosCargaCalificaciones->student_id;
 
             $lapso = $this->Lapsos->get($idLapso);
-            $materia = $this->Materias->get($idMateria);
-            $seccion = $this->Sections->get($materia->section_id);
             $estudiante = $this->Students->get($idEstudiante);
 
-            $observacionesMateria = $this->Observacions->find('All')
-            ->contain(['Lapsos', 'Materias', 'Students'])
-            ->where(['Observacions.registro_eliminado' => false, 'Observacions.student_id' => $idEstudiante, 'Observacions.materia_id' => $idMateria, 'Observacions.lapso_id' => $idLapso])
-            ->order(['Observacions.tipo_observacion' => 'ASC']);
+            $observacionesLapso = $this->ObservacionesLapsos->find('All')
+            ->contain(['Lapsos', 'Students'])
+            ->where(['ObservacionesLapsos.registro_eliminado' => false, 'ObservacionesLapsos.student_id' => $idEstudiante, 'ObservacionesLapsos.lapso_id' => $idLapso])
+            ->order(['ObservacionesLapsos.tipo_observacion' => 'ASC']);
 
-            $this->set(compact('idLapso', 'idMateria', 'idEstudiante', 'lapso', 'materia', 'seccion', 'estudiante'));
-            $this->set('observacionesMateria', $this->paginate($observacionesMateria, ['limit' => 50]));
+            $this->set(compact('idLapso', 'idEstudiante', 'lapso', 'estudiante'));
+            $this->set('observacionesLapso', $this->paginate($observacionesLapso, ['limit' => 50]));
         }
         else
         {
             return $this->redirect(['controller' => 'Users', 'action' => 'wait']);        
         }   
+
     }
 
     /**
      * View method
      *
-     * @param string|null $id Observacion id.
+     * @param string|null $id Observaciones Lapso id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)
     {
-        $observacion = $this->Observacions->get($id, [
-            'contain' => ['Lapsos', 'Materias', 'Students']
+        $observacionesLapso = $this->ObservacionesLapsos->get($id, [
+            'contain' => ['Lapsos', 'Students']
         ]);
 
-        $this->set('observacion', $observacion);
-        $this->set('_serialize', ['observacion']);
+        $this->set('observacionesLapso', $observacionesLapso);
+        $this->set('_serialize', ['observacionesLapso']);
     }
 
     /**
@@ -91,15 +88,15 @@ class ObservacionsController extends AppController
     {
         $this->loadModel('ParametrosCargaCalificacions');
 
-        $observacion = $this->Observacions->newEntity();
+        $observacionesLapso = $this->ObservacionesLapsos->newEntity();
         if ($this->request->is('post')) {
-            $observacion = $this->Observacions->patchEntity($observacion, $this->request->data);
-            if ($this->Observacions->save($observacion)) {
-                $this->Flash->success(__('La calificación ha sido registrada exitosamente'));
+            $observacionesLapso = $this->ObservacionesLapsos->patchEntity($observacionesLapso, $this->request->data);
+            if ($this->ObservacionesLapsos->save($observacionesLapso)) {
+                $this->Flash->success(__('La calificación fue agregada'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('No se pudo registrar la calificación'));
+                $this->Flash->error(__('No se pudo agregar la calificación'));
             }
         }
 
@@ -108,27 +105,24 @@ class ObservacionsController extends AppController
         if ($parametrosCargaCalificaciones)
         {
             $idLapso        = $parametrosCargaCalificaciones->lapso_id;
-            $idMateria      = $parametrosCargaCalificaciones->materia_id;
             $idEstudiante   = $parametrosCargaCalificaciones->student_id;
 
-            $lapsos = $this->Observacions->Lapsos->find('list', ['limit' => 200])->where(['id' => $idLapso]);
-            $materias = $this->Observacions->Materias->find('list', ['limit' => 200])->where(['id' => $idMateria]);
-            $estudiantes = $this->Observacions->Students->find('list', ['limit' => 200])->where(['id' => $idEstudiante]);
+            $lapsos = $this->ObservacionesLapsos->Lapsos->find('list', ['limit' => 200])->where(['id' => $idLapso]);
+            $estudiantes = $this->ObservacionesLapsos->Students->find('list', ['limit' => 200])->where(['id' => $idEstudiante]);
         }
         else
         {
             $lapsos = $this->Observacions->Lapsos->find('list', ['limit' => 200]);
-            $materias = $this->Observacions->Materias->find('list', ['limit' => 200]);
             $estudiantes = $this->Observacions->Students->find('list', ['limit' => 200]);            
         }
-        $this->set(compact('observacion', 'lapsos', 'materias', 'estudiantes', 'idLapso', 'idMateria', 'idEstudiante'));
-        $this->set('_serialize', ['observacion']);
+        $this->set(compact('observacionesLapso', 'lapsos', 'estudiantes', 'idLapso', 'idEstudiante'));
+        $this->set('_serialize', ['observacionesLapso']);
     }
 
     /**
      * Edit method
      *
-     * @param string|null $id Observacion id.
+     * @param string|null $id Observaciones Lapso id.
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
@@ -136,13 +130,13 @@ class ObservacionsController extends AppController
     {
         $this->loadModel('ParametrosCargaCalificacions');
 
-        $observacion = $this->Observacions->get($id, [
+        $observacionesLapso = $this->ObservacionesLapsos->get($id, [
             'contain' => []
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $observacion = $this->Observacions->patchEntity($observacion, $this->request->data);
-            if ($this->Observacions->save($observacion)) {
-                $this->Flash->success(__('La calificación fue actualizada'));
+            $observacionesLapso = $this->ObservacionesLapsos->patchEntity($observacionesLapso, $this->request->data);
+            if ($this->ObservacionesLapsos->save($observacionesLapso)) {
+                $this->Flash->success(__('La calificación se actualizó'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
@@ -151,46 +145,40 @@ class ObservacionsController extends AppController
         }
 
         $parametrosCargaCalificaciones = $this->ParametrosCargaCalificacions->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+
         if ($parametrosCargaCalificaciones)
         {
             $idLapso        = $parametrosCargaCalificaciones->lapso_id;
-            $idMateria      = $parametrosCargaCalificaciones->materia_id;
             $idEstudiante   = $parametrosCargaCalificaciones->student_id;
 
-            $lapsos = $this->Observacions->Lapsos->find('list', ['limit' => 200])->where(['id' => $idLapso]);
-            $materias = $this->Observacions->Materias->find('list', ['limit' => 200])->where(['id' => $idMateria]);
-            $estudiantes = $this->Observacions->Students->find('list', ['limit' => 200])->where(['id' => $idEstudiante]);
+            $lapsos = $this->ObservacionesLapsos->Lapsos->find('list', ['limit' => 200])->where(['id' => $idLapso]);
+            $estudiantes = $this->ObservacionesLapsos->Students->find('list', ['limit' => 200])->where(['id' => $idEstudiante]);
         }
         else
         {
             $lapsos = $this->Observacions->Lapsos->find('list', ['limit' => 200]);
-            $materias = $this->Observacions->Materias->find('list', ['limit' => 200]);
             $estudiantes = $this->Observacions->Students->find('list', ['limit' => 200]);            
         }
-        $this->set(compact('observacion', 'lapsos', 'materias', 'estudiantes', 'idLapso', 'idMateria', 'idEstudiante'));
-        $this->set('_serialize', ['observacion']);
+        $this->set(compact('observacionesLapso', 'lapsos', 'estudiantes', 'idLapso', 'idEstudiante'));
+        $this->set('_serialize', ['observacionesLapso']);
     }
 
     /**
      * Delete method
      *
-     * @param string|null $id Observacion id.
+     * @param string|null $id Observaciones Lapso id.
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $observacion = $this->Observacions->get($id);
-        $observacion->registro_eliminado = 1;
-
-        if ($this->Observacions->save($observacion)) 
-        {
+        $observacionesLapso = $this->ObservacionesLapsos->get($id);
+        $observacionesLapso->registro_eliminado = 1;
+        if ($this->ObservacionesLapsos->save($observacionesLapso)) {
             $this->Flash->success(__('La calificación fue eliminada'));
-        } 
-        else 
-        {
-            $this->Flash->error(__('La calificación no pudo ser eliminada'));
+        } else {
+            $this->Flash->error(__('No se pudo eliminar la calificación'));
         }
 
         return $this->redirect(['action' => 'index']);

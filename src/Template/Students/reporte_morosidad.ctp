@@ -202,7 +202,7 @@
 						</tr>
 					</tfoot>
 				</table>
-		<?php else: ?>
+		<?php elseif ($tipoReporte == "Aviso de cobro"): ?>
 			<?php $contadorAlumnosImpresos = 0; ?>
 			<?php $contadorSaltoPagina = 0; ?>
 			<?php $gradoAnterior = '' ?>;
@@ -255,6 +255,36 @@
 						<br />
 					</div>
 			<?php endforeach; ?> 
+		<?php else: ?>
+			<a href='#' id="excel" title="EXCEL" class='btn btn-success'>Descargar reporte en excel</a>
+			<div>
+				<table id="representantes" name="representantes" class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th style="text-align:center;"></th>
+							<th><b>Representantes con cuotas pendientes</b></th>
+						</tr>
+						<tr>
+							<th style="text-align:center;">Grado</th>
+							<th style="text-align:center;">Cédula</th>
+							<th style="text-align:center;">Representantes</th>
+							<th style="text-align:center;">Cuotas</th>
+							<th style="text-align:center;">Monto</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($detalleMorosos as $clave => $moroso): ?>
+							<tr>
+								<td style='text-align:left;'><?= h($moroso['grado']) ?></td>
+								<td style='text-align:center;'><?= h($moroso['cedulaRepresentante']) ?></td>
+								<td style='text-align:center;'><?= h($moroso['nombreRepresentante']) ?></td>
+								<td style='text-align:center;'><?= h($moroso['cuotasPendientes']) ?></td>
+								<td style='text-align:center;'><?= h($moroso['pendiente']) ?></td>
+							</tr>  
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
 		<?php endif; ?>
 		<br />			
 	</div>
@@ -287,6 +317,19 @@ $(document).ready(function(){
     {
         $('#menu-mas').hide();
         $('#menu-menos').show();
+    });
+
+    $("#excel").click(function(){
+        
+        $("#representantes").table2excel({
+    
+            exclude: ".noExl",
+        
+            name: "representantes",
+        
+            filename: $('#representantes').attr('name') 
+    
+        });
     });
 });
 </script>

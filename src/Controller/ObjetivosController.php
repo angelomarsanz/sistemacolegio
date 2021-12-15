@@ -14,7 +14,7 @@ class ObjetivosController extends AppController
     {
 		if(isset($user['role']))
 		{
-			if ($user['role'] === 'Profesor')
+			if (substr($user['role'], 0, 8) === 'Profesor')
 			{
 				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete']))
 				{
@@ -71,7 +71,8 @@ class ObjetivosController extends AppController
     public function add()
     {
         $objetivo = $this->Objetivos->newEntity();
-        if ($this->request->is('post')) {
+        if ($this->request->is('post')) 
+        {
             $objetivo = $this->Objetivos->patchEntity($objetivo, $this->request->data);
 
             $materia = $this->Objetivos->Materias->get($objetivo->materia_id, [
@@ -80,12 +81,26 @@ class ObjetivosController extends AppController
 
             $objetivo->section_id = $materia->section_id;
 
-            if ($this->Objetivos->save($objetivo)) {
-                $this->Flash->success(__('The objetivo has been saved.'));
+            $objetivos = $this->Objetivos->find('All')
+            ->where(['Objetivos.registro_eliminado' => false, 'Objetivos.lapso_id' => $objetivo->lapso_id, 'Objetivos.materia_id' => $objetivo->materia_id, 'Objetivos.section_id' => $objetivo->section_id, 'Objetivos.profesor_id' => $objetivo->profesor_id, 'Objetivos.objetivo' => $objetivo->objetivo])->first();
 
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The objetivo could not be saved. Please, try again.'));
+            if ($objetivos)
+            {
+                $this->Flash->error(__('Objetivo duplicado'));
+            }
+            else
+            {
+                if ($this->Objetivos->save($objetivo)) 
+                {
+                    $this->Flash->success(__('El objetivo fue registrado'));
+    
+                    return $this->redirect(['action' => 'index']);
+                } 
+                else 
+                {
+                    $this->Flash->error(__('No se pudo registrar el objetivo'));
+                }
+    
             }
         }
 
@@ -93,7 +108,7 @@ class ObjetivosController extends AppController
 
         $idProfesor = 0;
 
-        if ($this->Auth->user('role') == 'Profesor')
+        if (substr($this->Auth->user('role'), 0, 8) == 'Profesor')
         {
             $profesor = $this->Objetivos->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
             $idProfesor = $profesor->id;
@@ -108,11 +123,11 @@ class ObjetivosController extends AppController
                 }
             }
 
-            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias]);
+            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias])->order(['Materias.nombre_materia' => 'asc', 'Materias.grado_materia' => 'asc']);
         }
         else
         {
-            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200]);
+            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200])->order(['Materias.nombre_materia' => 'asc', 'Materias.grado_materia' => 'asc']);
         }
 
         $lapsos = $this->Objetivos->Lapsos->find('list', ['limit' => 200]);
@@ -134,7 +149,8 @@ class ObjetivosController extends AppController
         $objetivo = $this->Objetivos->get($id, [
             'contain' => []
         ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
+        if ($this->request->is(['patch', 'post', 'put'])) 
+        {
             $objetivo = $this->Objetivos->patchEntity($objetivo, $this->request->data);
 
             $materia = $this->Objetivos->Materias->get($objetivo->materia_id, [
@@ -143,19 +159,32 @@ class ObjetivosController extends AppController
 
             $objetivo->section_id = $materia->section_id;
 
-            if ($this->Objetivos->save($objetivo)) {
-                $this->Flash->success(__('The objetivo has been saved.'));
+            $objetivos = $this->Objetivos->find('All')
+            ->where(['Objetivos.registro_eliminado' => false, 'Objetivos.id !=' => $id, 'Objetivos.lapso_id' => $objetivo->lapso_id, 'Objetivos.materia_id' => $objetivo->materia_id, 'Objetivos.section_id' => $objetivo->section_id, 'Objetivos.profesor_id' => $objetivo->profesor_id, 'Objetivos.objetivo' => $objetivo->objetivo])->first();
 
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The objetivo could not be saved. Please, try again.'));
+            if ($objetivos)
+            {
+                $this->Flash->error(__('Objetivo duplicado'));
+            }
+            else
+            {
+                if ($this->Objetivos->save($objetivo)) 
+                {
+                    $this->Flash->success(__('El objetivo fue actualizado'));
+
+                    return $this->redirect(['action' => 'index']);
+                }
+                else 
+                {
+                    $this->Flash->error(__('No se pudo actualizar el objetivo'));
+                }
             }
         }
 
         $this->loadModel('MateriasProfesors');
         $idProfesor = 0;
 
-        if ($this->Auth->user('role') == 'Profesor')
+        if (substr($this->Auth->user('role'), 0, 8) == 'Profesor')
         {
             $profesor = $this->Objetivos->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
             $idProfesor = $profesor->id;
@@ -170,11 +199,11 @@ class ObjetivosController extends AppController
                 }
             }
 
-            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias]);
+            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias])->order(['Materias.nombre_materia' => 'asc', 'Materias.grado_materia' => 'asc']);
         }
         else
         {
-            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200]);
+            $materias = $this->Objetivos->Materias->find('list', ['limit' => 200])->order(['Materias.nombre_materia' => 'asc', 'Materias.grado_materia' => 'asc']);
         }
 
         $lapsos = $this->Objetivos->Lapsos->find('list', ['limit' => 200]);
@@ -224,7 +253,7 @@ class ObjetivosController extends AppController
 
         $lapsosAnoActual = $this->Lapsos->find('all')->where(['periodo_escolar' => '2021-2022']);
 
-        if ($this->Auth->user('role') == 'Profesor'):
+        if ($this->Auth->user('role') == 'Profesor' || $this->Auth->user('role') == 'Profesor guía'):
             $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
             $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
             $objetivosProfesor = $this->Objetivos->find('all')->where(['profesor_id' => $profesor->id]);

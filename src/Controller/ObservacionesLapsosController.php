@@ -14,7 +14,7 @@ class ObservacionesLapsosController extends AppController
     {
 		if(isset($user['role']))
 		{
-			if ($user['role'] === 'Profesor')
+			if (substr($user['role'], 0, 8) === 'Profesor')
 			{
 				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete']))
 				{

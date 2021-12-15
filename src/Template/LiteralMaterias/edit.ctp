@@ -1,34 +1,68 @@
+<?php
+    $calificacionNumerica =
+        [
+            null => '',
+            '0' => '0',
+            '1' => '1',
+            '2' => '2',
+            '3' => '3',
+            '4' => '4',
+            '5' => '5',
+            '6' => '6',
+            '7' => '7',
+            '8' => '8',
+            '9' => '9',
+            '10' => '10',
+            '11' => '11',
+            '12' => '12',
+            '13' => '13',
+            '14' => '14',
+            '15' => '15',
+            '16' => '16',
+            '17' => '17',
+            '18' => '18',
+            '19' => '19',
+            '20' => '20',
+        ];
+?>
+<br />
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $literalMateria->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $literalMateria->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Literal Materias'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Lapsos'), ['controller' => 'Lapsos', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Lapso'), ['controller' => 'Lapsos', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Materias'), ['controller' => 'Materias', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Materia'), ['controller' => 'Materias', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Students'), ['controller' => 'Students', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Student'), ['controller' => 'Students', 'action' => 'add']) ?></li>
     </ul>
 </nav>
-<div class="literalMaterias form large-9 medium-8 columns content">
+<div class="literalLapsos form large-9 medium-8 columns content">
     <?= $this->Form->create($literalMateria) ?>
     <fieldset>
-        <legend><?= __('Edit Literal Materia') ?></legend>
+        <?php if ($tipo == 'Lit'): ?>
+            <legend><?= __('Apreciación y literal de Materia') ?></legend>
+        <?php else: ?>
+            <legend><?= __('Apreciación y calificación numérica de Materia') ?></legend>
+        <?php endif; ?>
         <?php
-            echo $this->Form->input('lapso_id', ['options' => $lapsos]);
-            echo $this->Form->input('materia_id', ['options' => $materias]);
-            echo $this->Form->input('student_id', ['options' => $students]);
-            echo $this->Form->input('calificacion_descriptiva');
-            echo $this->Form->input('literal');
-            echo $this->Form->input('registro_eliminado');
+            echo $this->Form->input('calificacion_descriptiva', ['label' => 'Apreciacion', 'options' => 
+                [
+                    '***'     => '',
+                    'Exc'   => 'Excelente',
+                    'M.B'   => 'Muy bien',
+                    'B'     => 'Bien',
+                    'R'     => 'Regular',
+                    'M'     => 'Mejorable'
+                ]]);
+                if ($tipo == 'Lit'):
+                    echo $this->Form->input('literal', ['label' => 'Literal de materia', 'options' => 
+                    [
+                        '***' => '',
+                        'A' => 'A',
+                        'B' => 'B',
+                        'C' => 'C',
+                        'D' => 'D',
+                        'E' => 'E',
+                    ]]);
+                else:
+                    echo $this->Form->input('literal', ['label' => 'Calificación númerica de materia', 'options' => $calificacionNumerica]);
+                endif;
         ?>
     </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
+    <?= $this->Form->button(__('Registrar')) ?>
     <?= $this->Form->end() ?>
 </div>

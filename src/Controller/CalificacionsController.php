@@ -15,7 +15,7 @@ class CalificacionsController extends AppController
     {
 		if(isset($user['role']))
 		{
-			if ($user['role'] === 'Profesor')
+			if (substr($user['role'], 0, 8) === 'Profesor')
 			{
 				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'actualizarParametros', 'registrarCalificaciones']))
 				{
@@ -40,13 +40,15 @@ class CalificacionsController extends AppController
         $this->loadModel('Objetivos');
         $this->loadModel('MateriasProfesors');
         $this->loadModel('ParametrosCargaCalificacions');
+        $this->loadModel('LiteralMaterias');
+        $this->loadModel('LiteralLapsos');
         $objetivos = new ObjetivosController();
 
         $vectorMaterias = [];
 
         $lapsos = $this->Lapsos->find('list', ['limit' => 200]);
 
-        if ($this->Auth->user('role') == 'Profesor')
+        if (substr($this->Auth->user('role'), 0, 8) == 'Profesor')
         {
             $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
             $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
@@ -79,7 +81,7 @@ class CalificacionsController extends AppController
         }
         else
         {
-            if ($this->Auth->user('role') == 'Profesor')
+            if (substr($this->Auth->user('role'), 0, 8) == 'Profesor')
             {
                 $objetivoProfesor = $this->Objetivos->find('all')->where(['profesor_id' => $profesor->id])->first();
                 if ($objetivoProfesor)
@@ -106,7 +108,17 @@ class CalificacionsController extends AppController
         ->where(['Calificacions.registro_eliminado' => false, 'Objetivos.lapso_id' => $lapsoBuscar, 'Objetivos.materia_id' => $materiaBuscar])
         ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
 
-        $this->set(compact('calificaciones', 'materias', 'lapsos', 'lapsoBuscar', 'materiaBuscar'));
+        $literalesMateria = $this->LiteralMaterias->find('All')
+        ->contain(['Students'])
+        ->where(['LiteralMaterias.registro_eliminado' => false, 'LiteralMaterias.lapso_id' => $lapsoBuscar, 'LiteralMaterias.materia_id' => $materiaBuscar])
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC']);
+
+        $literalesLapso = $this->LiteralLapsos->find('All')
+        ->contain(['Students'])
+        ->where(['LiteralLapsos.registro_eliminado' => false, 'LiteralLapsos.lapso_id' => $lapsoBuscar])
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC']);
+
+        $this->set(compact('calificaciones', 'materias', 'lapsos', 'lapsoBuscar', 'materiaBuscar', 'literalesMateria', 'literalesLapso'));
         $this->set('estudiantes', $this->paginate($estudiantes, ['limit' => 50]));    
     }
 
@@ -225,7 +237,7 @@ class CalificacionsController extends AppController
 
             $calificaciones = $this->Calificacions->find('All')
             ->contain(['Objetivos', 'Students'])
-            ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.materia_id' => $idMateria,  'Objetivos.lapso_id' => $idLapso, ])
+            ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.lapso_id' => $idLapso, 'Objetivos.materia_id' => $idMateria])
             ->order(['Objetivos.objetivo' => 'ASC']);
 
             foreach ($calificaciones as $calificacion):
@@ -241,33 +253,35 @@ class CalificacionsController extends AppController
 
         $calificaciones = $this->Calificacions->find('All')
         ->contain(['Objetivos', 'Students'])
-        ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.materia_id' => $idMateria,  'Objetivos.lapso_id' => $idLapso, ])
+        ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.lapso_id' => $idLapso, 'Objetivos.materia_id' => $idMateria])
         ->order(['Objetivos.objetivo' => 'ASC']);
 
         if ($calificaciones->count() == 0):
-            if ($this->Auth->user('role') == 'Profesor'):
+            if ($this->Auth->user('role') == 'Profesor' || $this->Auth->user('role') == 'Profesor guía'):
                 $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
                 $objetivosProfesor = $this->Objetivos->find('all')
                     ->where(['profesor_id' => $profesor->id, 'materia_id' => $idMateria, 'lapso_id' => $idLapso]);
-                foreach ($objetivosProfesor as $objetivo):
-                    $calificacion = $this->Calificacions->newEntity();
-                    $calificacion->objetivo_id = $objetivo->id;
-                    $calificacion->student_id = $idEstudiante;
-                    $calificacion->puntaje = 0;
-                    $calificacion->puntaje_112 = 0;
-                    $calificacion->observacion = '';
-                    if (!($this->Calificacions->save($calificacion))): 
-                        $this->Flash->error(__('La calificación no pudo ser creada'));
-                    endif;
-                endforeach;
+                if ($objetivosProfesor->count() > 0):
+                    foreach ($objetivosProfesor as $objetivo):
+                        $calificacion = $this->Calificacions->newEntity();
+                        $calificacion->objetivo_id = $objetivo->id;
+                        $calificacion->student_id = $idEstudiante;
+                        $calificacion->puntaje = 0;
+                        $calificacion->puntaje_112 = 0;
+                        $calificacion->observacion = '';
+                        if (!($this->Calificacions->save($calificacion))): 
+                            $this->Flash->error(__('La calificación no pudo ser creada'));
+                        endif;
+                    endforeach;
+                endif;
 
                 $calificaciones = $this->Calificacions->find('All')
                 ->contain(['Objetivos', 'Students'])
-                ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.materia_id' => $idMateria,  'Objetivos.lapso_id' => $idLapso, ])
+                ->where(['Calificacions.registro_eliminado' => false, 'Calificacions.student_id' => $idEstudiante, 'Objetivos.lapso_id' => $idLapso, 'Objetivos.materia_id' => $idMateria])
                 ->order(['Objetivos.objetivo' => 'ASC']);
             endif;
         endif;
-
+      
         $this->set(compact('idEstudiante', 'idMateria', 'idLapso', 'calificaciones', 'estudiante', 'materia', 'seccion', 'lapso'));
     }
 }

@@ -14,9 +14,9 @@ class ParametrosCargaCalificacionsController extends AppController
     {
 		if(isset($user['role']))
 		{
-			if ($user['role'] === 'Profesor')
+			if (substr($user['role'], 0, 8) === 'Profesor')
 			{
-				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'postParametrosCargaCalificaciones', 'calificacionesDescriptivas']))
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'postParametrosCargaCalificaciones', 'calificacionesDescriptivas', 'apreciacionLiteral']))
 				{
 					return true;
 				}
@@ -212,5 +212,13 @@ class ParametrosCargaCalificacionsController extends AppController
         $this->actualizarParametrosCargaCalificaciones($idLapso, $idMateria, $idEstudiante);
         
         return $this->redirect(['controller' => $controlador, 'action' => $accion]);
+    }
+    public function apreciacionLiteral($idLapso = null, $idMateria = null, $idEstudiante = null, $tipo = null, $controlador = null, $accion = null)
+    {
+        $this->autoRender = false;
+
+        $this->actualizarParametrosCargaCalificaciones($idLapso, $idMateria, $idEstudiante);
+        
+        return $this->redirect(['controller' => $controlador, 'action' => $accion, $tipo, $idLapso, $idMateria, $idEstudiante]);
     }
 }

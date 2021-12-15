@@ -49,7 +49,7 @@
             echo $this->Form->input('celular', ['label' => 'Nro. De teléfono celular: *', 'type' => 'text', 'required']);
             echo $this->Form->input('telefono_fijo', ['label' => 'Nro. De teléfono fijo: *', 'type' => 'text', 'required']);
             echo $this->Form->input('correo_electronico', ['label' => 'Correo electrónico: *', 'type' => 'email', 'required']);
-            echo $this->Form->input('numero_horas', ['label' => 'Número de horas: *', 'type' => 'number', 'required']);
+            echo $this->Form->input('numero_horas', ['label' => 'Número de horas: *', 'required']);
                 
             echo $this->Form->input('materias._ids', ['options' => $materias]);
         ?>

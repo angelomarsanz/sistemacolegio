@@ -67,6 +67,9 @@ class LapsosTable extends Table
         $this->hasMany('PruebaLapsos', [
             'foreignKey' => 'lapso_id'
         ]);
+        $this->hasMany('Proyectos', [
+            'foreignKey' => 'lapso_id'
+        ]);
     }
 
     /**

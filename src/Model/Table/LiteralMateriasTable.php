@@ -75,6 +75,9 @@ class LiteralMateriasTable extends Table
             ->allowEmpty('literal');
 
         $validator
+            ->allowEmpty('calificacion_numerica');
+
+        $validator
             ->boolean('registro_eliminado')
             ->allowEmpty('registro_eliminado');
 

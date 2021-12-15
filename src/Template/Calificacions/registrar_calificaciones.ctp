@@ -26,36 +26,41 @@
         '20' => '20',
     ];
 ?>
-<br />
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-    </ul>
-    <h4>Estudiante: <?= $estudiante->full_name ?></h4>
-    <h4>Materia: <?= $materia->full_name ?></h4>
-    <h4>Lapso: <?= $lapso->numero_lapso ?></h4>
-    <br />
-    <div class="calificacions form large-9 medium-8 columns content">
-        <?= $this->Form->create() ?>
-            <fieldset>
-                <legend><?= __('Registrar calificaciones') ?></legend>
-                <input type='hidden' name='id_estudiante' value=<?= $idEstudiante ?>>
-                <input type='hidden' name='id_materia' value=<?= $idMateria ?>>
-                <input type='hidden' name='id_lapso' value=<?= $idLapso ?>>
-                <table cellpadding="0" cellspacing="0">
-                    <tbody>
-                        <?php foreach ($calificaciones as $calificacion): ?>
-                            <td><?= $this->Form->input('nota_' . $calificacion->id, ['label' => 'N-' . $calificacion->objetivo->objetivo, 'id' => 'nota-' . $calificacion->id, 'options' => $notasBachiller, 'value' => $calificacion->puntaje]); ?></td>
-                            <td>&nbsp;&nbsp;&nbsp;</td>
-                            <td><?= $this->Form->input('nota112_' . $calificacion->id, ['label' => 'N-' . $calificacion->objetivo->objetivo . ' 112', 'id' => 'nota-' . $calificacion->id, 'options' => $notasBachiller, 'value' => $calificacion->puntaje_112]); ?></td>
-                            <td>&nbsp;&nbsp;&nbsp;</td>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </fieldset>
-            <?= $this->Form->button(__('Registrar')) ?>
-        <?= $this->Form->end() ?>
+<div class="row">
+    <div class="col-md-12">
+		<div class="page-header">
+            <?= $this->Html->link('Lista de calificaciones descriptivas de lapso', ['action' => 'index'], ['class' => 'btn btn-sm btn-default']); ?>
+	        <h3>Calificaciones del estudiante</h3>
+            <h4>Estudiante: <?= $estudiante->full_name ?></h4>
+            <h4>Materia: <?= $materia->full_name ?></h4>
+            <h4>Lapso: <?= $lapso->numero_lapso ?></h4>
+        </div>
     </div>
-</nav>
+</div>
+<?= $this->Form->create() ?>
+    <fieldset>
+        <input type='hidden' name='id_estudiante' value=<?= $idEstudiante ?>>
+        <input type='hidden' name='id_materia' value=<?= $idMateria ?>>
+        <input type='hidden' name='id_lapso' value=<?= $idLapso ?>>
+        <?php foreach ($calificaciones as $calificacion): ?>
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $this->Form->input('nota_' . $calificacion->id, ['label' => 'Calificación - ' . $calificacion->objetivo->objetivo, 'id' => 'nota-' . $calificacion->id, 'options' => $notasBachiller, 'value' => $calificacion->puntaje]); ?>
+                </div>
+                <div class="col-md-2">
+                    <?= $this->Form->input('nota112_' . $calificacion->id, ['label' => 'Art. 112', 'id' => 'nota-' . $calificacion->id, 'options' => $notasBachiller, 'value' => $calificacion->puntaje_112]); ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </fieldset>
+    <div class="row">
+        <div class="col-md-2">
+            <?= $this->Form->button(__('Registrar')) ?>
+        </div>
+    </div>
+<?= $this->Form->end() ?>
+<br />
+<br />
 <script>
     $(document).ready(function() 
     {

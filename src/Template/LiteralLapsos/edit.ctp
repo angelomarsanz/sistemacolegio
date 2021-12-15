@@ -1,31 +1,34 @@
+<br />
 <nav class="large-3 medium-4 columns" id="actions-sidebar">
     <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $literalLapso->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $literalLapso->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Literal Lapsos'), ['action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('List Lapsos'), ['controller' => 'Lapsos', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Lapso'), ['controller' => 'Lapsos', 'action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('List Students'), ['controller' => 'Students', 'action' => 'index']) ?></li>
-        <li><?= $this->Html->link(__('New Student'), ['controller' => 'Students', 'action' => 'add']) ?></li>
     </ul>
 </nav>
 <div class="literalLapsos form large-9 medium-8 columns content">
     <?= $this->Form->create($literalLapso) ?>
     <fieldset>
-        <legend><?= __('Edit Literal Lapso') ?></legend>
+        <legend><?= __('Apreciación y literal de Lapso') ?></legend>
         <?php
-            echo $this->Form->input('lapso_id', ['options' => $lapsos]);
-            echo $this->Form->input('student_id', ['options' => $students]);
-            echo $this->Form->input('calificacion_descriptiva');
-            echo $this->Form->input('literal');
-            echo $this->Form->input('registro_eliminado');
-        ?>
+            echo $this->Form->input('calificacion_descriptiva', ['label' => 'Apreciacion', 'options' => 
+            [
+                '***'     => '',
+                'Exc'   => 'Excelente',
+                'M.B'   => 'Muy bien',
+                'B'     => 'Bien',
+                'R'     => 'Regular',
+                'M'     => 'Mejorable'
+            ]]);
+            
+            echo $this->Form->input('literal', ['label' => 'Literal de lapso', 'options' => 
+            [
+                '***' => '',
+                'A' => 'A',
+                'B' => 'B',
+                'C' => 'C',
+                'D' => 'D',
+                'E' => 'E',
+            ]]);
+    ?>
     </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
+    <?= $this->Form->button(__('Registrar')) ?>
     <?= $this->Form->end() ?>
 </div>

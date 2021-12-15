@@ -26,7 +26,7 @@ class UsersController extends AppController
     {
         if(isset($user['role']))
 		{
-			if ($user['role'] === 'Representante' || $user['role'] === 'Jefe de nómina' || $user['role'] === 'Control de estudios' || $user['role'] === 'Profesor')
+			if ($user['role'] === 'Representante' || $user['role'] === 'Jefe de nómina' || $user['role'] === 'Control de estudios' || (substr($user['role'], 0, 8) === 'Profesor'))
 			{
 				if(in_array($this->request->action, ['home', 'view', 'edit', 'logout', 'wait']))
 				{

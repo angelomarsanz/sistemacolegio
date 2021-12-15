@@ -194,12 +194,16 @@
 								<li><?= $this->Html->link('Reporte becados: Beca completa, por hijos y especiales', ['controller' => 'Students', 'action' => 'reporteBecados']) ?></li>
 							</ul>
 						</li>					
-                    <?php elseif($current_user['role'] == 'Representante'): ?>
+                    <?php elseif ($current_user['role'] == 'Representante'): ?>
                         <li><?=  $this->Html->link('Actualizar datos', ['controller' => 'Guardiantransactions', 'action' => 'homeScreen']) ?></li>
-					<?php elseif($current_user['role'] == 'Profesor'): ?>
-                        <li><?=  $this->Html->link('Objetivos', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
-						<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
+					<?php elseif (substr($current_user['role'], 0, 8)  == 'Profesor'): ?>
+						<?php if ($current_user['role']  == 'Profesor' || $current_user['role']  == 'Profesor guía' || $current_user['role']  == 'Profesor complementario'): ?>
+							<li><?=  $this->Html->link('Objetivos', ['controller' => 'Objetivos', 'action' => 'index']) ?></li>
+						<?php elseif ($current_user['role']  == 'Profesor aula'): ?>
+                        	<li><?=  $this->Html->link('Proyectos', ['controller' => 'Proyectos', 'action' => 'index']) ?></li>
 						<?php endif; ?>
+							<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
+					<?php endif; ?>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li>

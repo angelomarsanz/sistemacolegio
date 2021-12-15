@@ -14,7 +14,7 @@ class ObservacionsController extends AppController
     {
 		if(isset($user['role']))
 		{
-			if ($user['role'] === 'Profesor')
+			if (substr($user['role'], 0, 8) === 'Profesor')
 			{
 				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete']))
 				{
@@ -53,7 +53,7 @@ class ObservacionsController extends AppController
 
             $observacionesMateria = $this->Observacions->find('All')
             ->contain(['Lapsos', 'Materias', 'Students'])
-            ->where(['Observacions.registro_eliminado' => false, 'Observacions.student_id' => $idEstudiante, 'Observacions.materia_id' => $idMateria, 'Observacions.lapso_id' => $idLapso])
+            ->where(['Observacions.registro_eliminado' => false, 'Observacions.lapso_id' => $idLapso, 'Observacions.materia_id' => $idMateria, 'Observacions.student_id' => $idEstudiante])
             ->order(['Observacions.tipo_observacion' => 'ASC']);
 
             $this->set(compact('idLapso', 'idMateria', 'idEstudiante', 'lapso', 'materia', 'seccion', 'estudiante'));

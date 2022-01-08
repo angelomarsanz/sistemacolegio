@@ -13,7 +13,7 @@
                 <?php echo $this->Form->input('lapso_id', ['label' => 'Lapso: *', 'options' => $lapsos, 'value' => $idLapso, 'required']);
                 echo $this->Form->input('materia_id', ['label' => 'Materia: *', 'options' => $materias, 'value' => $idMateria, 'required']);
                 echo $this->Form->input('student_id', ['label' => 'Estudiante: *', 'options' => $estudiantes, 'value' => $idEstudiante, 'required']);
-                echo $this->Form->input('tipo_observacion', ['label' => 'Tipo de calificación: *', 'options' => ['Conocimiento' => 'Conocimiento', 'Convivencia' => 'Convivencia', 'Desempeño' => 'Desempeño', 'Otros' => 'Otros'], 'required']); ?>
+                echo $this->Form->input('tipo_observacion', ['label' => 'Dimensión o tipo de calificación: *', 'required']); ?>
             </div>
         </div>
         <div class="row">

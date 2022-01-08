@@ -1,10 +1,10 @@
-<div class="container">
-    <div class="page-header">
-        <?= $this->Html->link('Agregar nueva opcion', ['controller' => 'OpcionesUsuarios', 'action' => 'add'], ['class' => 'btn btn-sm btn-default']); ?>
-        <h4><?= __('Opciones de usuario') ?></h4>
-    </div>
-    <div class="row">
-        <div class="col-md-12">        
+<div class="row">
+    <div class="col-md-12">
+        <div class="page-header">
+            <?= $this->Html->link('Agregar nueva opcion', ['controller' => 'OpcionesUsuarios', 'action' => 'add'], ['class' => 'btn btn-sm btn-default']); ?>
+            <h4><?= __('Opciones de usuario') ?></h4>
+        </div>
+        <div>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -32,17 +32,13 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12"> 
-            <div class="paginator">
-                <ul class="pagination">
-                    <?= $this->Paginator->prev('< ' . __('Anterior')) ?>
-                    <?= $this->Paginator->numbers() ?>
-                    <?= $this->Paginator->next(__('Siguiente') . ' >') ?>
-                </ul>
-                <p><?= $this->Paginator->counter() ?></p>
-            </div>
+        <div class="paginator">
+            <ul class="pagination">
+                <?= $this->Paginator->prev('< ' . __('Anterior')) ?>
+                <?= $this->Paginator->numbers() ?>
+                <?= $this->Paginator->next(__('Siguiente') . ' >') ?>
+            </ul>
+            <p><?= $this->Paginator->counter() ?></p>
         </div>
     </div>
 </div>

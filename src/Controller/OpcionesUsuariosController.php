@@ -10,6 +10,21 @@ use App\Controller\AppController;
  */
 class OpcionesUsuariosController extends AppController
 {
+    public function isAuthorized($user)
+    {
+		if(isset($user['role']))
+		{
+			if (substr($user['role'], 0, 8) === 'Profesor')
+			{
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete']))
+				{
+					return true;
+				}
+			}
+        }
+				
+        return parent::isAuthorized($user);
+    }
 
     /**
      * Index method
@@ -18,13 +33,12 @@ class OpcionesUsuariosController extends AppController
      */
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Users', 'Lapsos', 'Materias']
-        ];
-        $opcionesUsuarios = $this->paginate($this->OpcionesUsuarios);
+        $opcionesUsuario = $this->OpcionesUsuarios->find('All')
+            ->contain(['Users', 'Lapsos', 'Materias'])
+            ->where(['OpcionesUsuarios.registro_eliminado' => false, 'OpcionesUsuarios.user_id' => $this->Auth->user('id')])
+            ->order(['Lapsos.numero_lapso' => 'ASC', 'Materias.nombre_materia' => 'ASC', 'Materias.grado_materia' => 'ASC', 'OpcionesUsuarios.tipo_opcion' => 'ASC', 'OpcionesUsuarios.descripcion_opcion' => 'ASC']);
 
-        $this->set(compact('opcionesUsuarios'));
-        $this->set('_serialize', ['opcionesUsuarios']);
+            $this->set('opcionesUsuarios', $this->paginate($opcionesUsuario, ['limit' => 50]));  
     }
 
     /**
@@ -55,17 +69,37 @@ class OpcionesUsuariosController extends AppController
         if ($this->request->is('post')) {
             $opcionesUsuario = $this->OpcionesUsuarios->patchEntity($opcionesUsuario, $this->request->data);
             if ($this->OpcionesUsuarios->save($opcionesUsuario)) {
-                $this->Flash->success(__('The opciones usuario has been saved.'));
+                $this->Flash->success(__('La opción fue creada'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The opciones usuario could not be saved. Please, try again.'));
+                $this->Flash->error(__('No se pudo crear la opción'));
             }
         }
-        $users = $this->OpcionesUsuarios->Users->find('list', ['limit' => 200]);
+
+        $this->loadModel('Profesors');
+        $this->loadModel('MateriasProfesors');
+
+        if (substr($this->Auth->user('role'), 0, 8) == 'Profesor')
+        {
+            $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+            $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
+
+            if ($materiasProfesor->count() > 0):
+                foreach ($materiasProfesor as $materias):
+                    $vectorMaterias[] = $materias->materia_id;
+                endforeach;
+            endif;
+
+            $materias = $this->OpcionesUsuarios->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias]);
+        }
+        else
+        {
+            $materias = $this->Materias->find('list', ['limit' => 200]);
+        }
+
         $lapsos = $this->OpcionesUsuarios->Lapsos->find('list', ['limit' => 200]);
-        $materias = $this->OpcionesUsuarios->Materias->find('list', ['limit' => 200]);
-        $this->set(compact('opcionesUsuario', 'users', 'lapsos', 'materias'));
+        $this->set(compact('opcionesUsuario', 'lapsos', 'materias'));
         $this->set('_serialize', ['opcionesUsuario']);
     }
 
@@ -84,17 +118,37 @@ class OpcionesUsuariosController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $opcionesUsuario = $this->OpcionesUsuarios->patchEntity($opcionesUsuario, $this->request->data);
             if ($this->OpcionesUsuarios->save($opcionesUsuario)) {
-                $this->Flash->success(__('The opciones usuario has been saved.'));
+                $this->Flash->success(__('La opción fue actualizada'));
 
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The opciones usuario could not be saved. Please, try again.'));
+                $this->Flash->error(__('No se pudo actualizar la opción'));
             }
         }
-        $users = $this->OpcionesUsuarios->Users->find('list', ['limit' => 200]);
+
+        $this->loadModel('Profesors');
+        $this->loadModel('MateriasProfesors');
+
+        if (substr($this->Auth->user('role'), 0, 8) == 'Profesor')
+        {
+            $profesor = $this->Profesors->find('all')->where(['user_id' => $this->Auth->user('id')])->first();
+            $materiasProfesor = $this->MateriasProfesors->find('all')->where(['profesor_id' => $profesor->id]);
+
+            if ($materiasProfesor->count() > 0):
+                foreach ($materiasProfesor as $materias):
+                    $vectorMaterias[] = $materias->materia_id;
+                endforeach;
+            endif;
+
+            $materias = $this->OpcionesUsuarios->Materias->find('list', ['limit' => 200])->where(['id IN' => $vectorMaterias]);
+        }
+        else
+        {
+            $materias = $this->Materias->find('list', ['limit' => 200]);
+        }
+
         $lapsos = $this->OpcionesUsuarios->Lapsos->find('list', ['limit' => 200]);
-        $materias = $this->OpcionesUsuarios->Materias->find('list', ['limit' => 200]);
-        $this->set(compact('opcionesUsuario', 'users', 'lapsos', 'materias'));
+        $this->set(compact('opcionesUsuario', 'lapsos', 'materias'));
         $this->set('_serialize', ['opcionesUsuario']);
     }
 
@@ -109,7 +163,8 @@ class OpcionesUsuariosController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $opcionesUsuario = $this->OpcionesUsuarios->get($id);
-        if ($this->OpcionesUsuarios->delete($opcionesUsuario)) {
+        $opcionesUsuario->registro_eliminado = 1;
+        if ($this->OpcionesUsuarios->save($opcionesUsuario)) {
             $this->Flash->success(__('The opciones usuario has been deleted.'));
         } else {
             $this->Flash->error(__('The opciones usuario could not be deleted. Please, try again.'));

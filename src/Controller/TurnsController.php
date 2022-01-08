@@ -2068,4 +2068,262 @@ class TurnsController extends AppController
 		$this->set(compact('turn', 'vectorPagos', 'cajero'));
 		$this->set('_serialize', ['turn', 'vectorPagos', 'cajero']);
 	}	
+    public function reporteMensualContabilidad($id = null)
+    {
+		$turn = $this->Turns->get($id);
+            
+        if ($turn->status == 1)
+        {
+            $this->Flash->error(__('Este turno no ha sido cerrado'));
+            return $this->redirect(['controller' => 'users', 'action' => 'wait']);
+        }
+
+		$this->loadModel('Bills');
+		$this->loadModel('Concepts');
+		
+		$payment = new PaymentsController();
+					
+		$indicadorFacturasAnticipos = 0;
+		$indicadorServiciosEducativos = 0;
+		$indicadorReintegros = 0;
+		$indicadorCompras = 0;
+		$indicadorVueltoCompra = 0;
+		$indicadorNotasCredito = 0;
+		$indicadorNotasDebito = 0;
+		$indicadorFacturasRecibos = 0;
+		$indicadorSobrantes = 0;
+		$indicadorSobrantesRegistrados = 0;
+		$indicadorFacturasAnuladas = 0;
+		$indicadorRecibosAnulados = 0;
+		$codigoRetornoResultado = 0;
+		$indicadorDescuentosRecargosRegistrados = 0;
+							
+		$usuario = $this->Turns->Users->get($turn->user_id);
+	
+		$cajero = $usuario->first_name . ' ' . $usuario->surname;
+
+		$vectorPagos = json_decode($turn->vector_pagos, true);
+		$vectorTotalesRecibidos = json_decode($turn->vector_totales_recibidos, true);
+		$totalFormasPago = json_decode($turn->total_formas_pago, true);
+		
+		$totalGeneralSobrantes = $turn->total_general_sobrantes;
+		$totalGeneralReintegrosSobrantes = $turn->total_general_reintegros_sobrantes;
+		
+		if ($totalGeneralSobrantes > 0 || $totalGeneralReintegrosSobrantes > 0)
+		{
+			$indicadorSobrantesRegistrados = 1;
+		}
+		
+		$totalDescuentosRecargos = $turn->total_descuentos_recargos;
+		
+		if ($totalDescuentosRecargos != 0)
+		{
+			$indicadorDescuentosRecargosRegistrados = 1;
+		}
+		
+		$totalGeneralCompensado = $turn->total_general_compensado;
+		$totalGeneralFacturado = $turn->total_general_facturado;
+		$totalFacturasRecibos = $turn->total_facturas_recibos;
+		
+		if ($totalFacturasRecibos > 0)
+		{
+			$indicadorFacturasRecibos = 1;
+		}
+		
+		$tasaDolar = $turn->tasa_dolar;
+		$tasaEuro = $turn->tasa_euro;
+		
+		$documentosAnulados = $this->Bills->find('all', ['conditions' => ['annulled' => true, 'turn' => $id],
+			'order' => ['Bills.id' => 'ASC']]);
+			
+		$contadorAnulados = $documentosAnulados->count();
+		
+		if ($contadorAnulados > 0)
+		{
+			foreach ($documentosAnulados as $anulado)
+			{
+				if ($anulado->fiscal == 1)
+				{
+					$indicadorFacturasAnuladas = 1;
+				}
+				else
+				{
+					$indicadorRecibosAnulados = 1;
+				}
+			}
+		}
+							
+		$resultado = $payment->busquedaPagosContabilidad($id);
+		
+		$codigoRetornoResultado = $resultado['codigoRetorno'];
+		$facturas = $resultado['facturas'];
+		$pagosFacturas = $resultado['pagosFacturas'];
+			
+		if ($codigoRetornoResultado != 1)
+		{
+			foreach ($facturas as $factura)
+			{
+				if ($factura->tipo_documento == "Factura" || $factura->tipo_documento == "Recibo de anticipo" )
+				{
+					$indicadorFacturasAnticipos = 1;
+				}
+				elseif ($factura->tipo_documento == "Recibo de servicio educativo")
+				{
+					$indicadorServiciosEducativos = 1;
+				}
+				elseif ($factura->tipo_documento == "Recibo de reintegro")
+				{
+					$indicadorReintegros = 1;									
+				}
+				elseif ($factura->tipo_documento == "Recibo de compra")
+				{
+					$indicadorCompras = 1;
+				}
+				elseif ($factura->tipo_documento == "Recibo de vuelto de compra")
+				{
+					$indicadorVueltoCompra = 1;
+				}
+				elseif ($factura->tipo_documento == "Nota de crédito")
+				{
+					$indicadorNotasCredito = 1;
+				}
+				elseif ($factura->tipo_documento == "Nota de débito")
+				{
+					$indicadorNotasDebito = 1;
+				}
+				elseif ($factura->tipo_documento == "Recibo de sobrante")
+				{
+					$indicadorSobrantes = 1;
+					if ($indicadorSobrantesRegistrados == 0)
+					{
+						$sobranteMenosReintegro = $factura->amount_paid - $factura->reintegro_sobrante;
+						$totalGeneralSobrantes += $sobranteMenosReintegro;
+						$totalGeneralReintegrosSobrantes += $factura->reintegro_sobrante;
+					}
+				}
+								
+				if ($factura->amount != 0)
+				{
+					if ($indicadorDescuentosRecargosRegistrados == 0)
+					{
+						$totalDescuentosRecargos += $factura->amount;
+					}
+				}
+			}
+		}
+	
+		$soloFacturas = $this->Bills->find('all', ['conditions' => ['Bills.turn' => $id, 'Bills.annulled' => 0],
+			'order' => ['Bills.school_year' => 'ASC']]);
+
+		$soloConceptos = $this->Concepts->find('all', ['conditions' => ['Concepts.annulled' => 0],
+			'select' => ['Concepts.bill_id', 'Concepts.concept', 'Concepts.amount']]);
+
+		$vectorConceptos = [];
+
+		foreach ($soloFacturas as $factura)
+		{
+			if ($factura->saldo_compensado_dolar > 0)
+			{
+				$montoCompensado = round($factura->saldo_compensado_dolar * $factura->tasa_cambio, 2);
+			}
+			else
+			{
+				$montoCompensado = 0;
+			}
+
+			foreach ($soloConceptos as $concepto)
+			{
+				if ($concepto->bill_id == $factura->id)
+				{
+					if ($montoCompensado > 0)
+					{
+						if ($concepto->amount >= $montoCompensado)
+						{
+							$amountConcept = $concepto->amount - $montoCompensado;
+							$montoCompensado = 0;
+						}
+						else
+						{
+							$amountConcept = 0;
+							$montoCompensado = $montoCompensado - $concepto->amount;
+						}
+					}
+					else
+					{
+						$amountConcept = $concepto->amount;
+					}
+
+					$vectorConceptos[] = 
+						[
+							'idFactura' => $concepto->bill_id,
+							'concepto' 	=> $concepto->concept,
+							'monto' => $amountConcept,
+							'observacion' => $concepto->observation
+						];
+				}
+			}
+		}
+
+															
+		$this->set(compact
+			('turn',
+			'facturas',
+			'vectorPagos',
+			'cajero',
+			'vectorTotalesRecibidos',
+			'totalFormasPago',
+			'totalDescuentosRecargos',
+			'totalGeneralCompensado',
+			'totalGeneralFacturado',
+			'totalFacturasRecibos',
+			'tasaDolar',
+			'tasaEuro',
+			'indicadorFacturasAnticipos',
+			'indicadorServiciosEducativos',
+			'indicadorReintegros',
+			'indicadorCompras',
+			'indicadorVueltoCompra',
+			'indicadorNotasCredito',
+			'indicadorNotasDebito',
+			'indicadorFacturasRecibos',
+			'indicadorSobrantes',
+			'indicadorFacturasAnuladas',
+			'indicadorRecibosAnulados',
+			'documentosAnulados',
+			'totalGeneralSobrantes',
+			'totalGeneralReintegrosSobrantes',
+			'soloFacturas',
+			'vectorConceptos'
+		));	
+			
+		$this->set('_serialize', 
+			['turn',
+			'facturas',
+			'vectorPagos', 
+			'cajero', 
+			'vectorTotalesRecibidos', 
+			'totalFormasPago', 
+			'totalDescuentosRecargos',
+			'totalGeneralCompensado', 
+			'totalGeneralFacturado', 
+			'totalFacturasRecibos',
+			'tasaDolar', 
+			'tasaEuro',
+			'indicadorFacturasAnticipos',
+			'indicadorServiciosEducativos',
+			'indicadorReintegros',
+			'indicadorCompras',
+			'indicadorNotasCredito',
+			'indicadorNotasDebito',
+			'indicadorFacturasRecibos',
+			'indicadorSobrantes',
+			'indicadorFacturasAnuladas',
+			'indicadorRecibosAnulados',
+			'documentosAnulados',
+			'totalGeneralSobrantes',
+			'totalGeneralReintegrosSobrantes',
+			'soloFacturas',
+			'vectorConceptos'
+		]);	
+	}
 }

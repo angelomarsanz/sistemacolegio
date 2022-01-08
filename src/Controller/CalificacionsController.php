@@ -42,6 +42,8 @@ class CalificacionsController extends AppController
         $this->loadModel('ParametrosCargaCalificacions');
         $this->loadModel('LiteralMaterias');
         $this->loadModel('LiteralLapsos');
+        $this->loadModel('RasgosPersonalidads');
+        $this->loadModel('OpcionesUsuarios');
         $objetivos = new ObjetivosController();
 
         $vectorMaterias = [];
@@ -106,19 +108,29 @@ class CalificacionsController extends AppController
         $calificaciones = $this->Calificacions->find('All')
         ->contain(['Objetivos', 'Students'])
         ->where(['Calificacions.registro_eliminado' => false, 'Objetivos.lapso_id' => $lapsoBuscar, 'Objetivos.materia_id' => $materiaBuscar])
-        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Students.type_of_identification' => 'ASC', 'Students.identity_card' => 'ASC', 'Objetivos.objetivo' => 'ASC']);
 
         $literalesMateria = $this->LiteralMaterias->find('All')
         ->contain(['Students'])
         ->where(['LiteralMaterias.registro_eliminado' => false, 'LiteralMaterias.lapso_id' => $lapsoBuscar, 'LiteralMaterias.materia_id' => $materiaBuscar])
-        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC']);
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Students.type_of_identification' => 'ASC', 'Students.identity_card' => 'ASC']);
 
         $literalesLapso = $this->LiteralLapsos->find('All')
         ->contain(['Students'])
         ->where(['LiteralLapsos.registro_eliminado' => false, 'LiteralLapsos.lapso_id' => $lapsoBuscar])
-        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'type_of_identification' => 'ASC', 'identity_card' => 'ASC']);
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Students.type_of_identification' => 'ASC', 'Students.identity_card' => 'ASC']);
 
-        $this->set(compact('calificaciones', 'materias', 'lapsos', 'lapsoBuscar', 'materiaBuscar', 'literalesMateria', 'literalesLapso'));
+        $opcionesUsuario = $this->OpcionesUsuarios->find('All', ['limit' => 3])
+        ->contain(['Users', 'Lapsos', 'Materias'])
+        ->where(['OpcionesUsuarios.registro_eliminado' => false, 'OpcionesUsuarios.user_id' => $this->Auth->user('id'), 'OpcionesUsuarios.lapso_id' => $lapsoBuscar, 'OpcionesUsuarios.materia_id' => $materiaBuscar, 'OpcionesUsuarios.tipo_opcion' => "Rasgos de personalidad"])
+        ->order(['OpcionesUsuarios.id' => 'ASC']);
+
+        $rasgosPersonalidad = $this->RasgosPersonalidads->find('All')
+        ->contain(['Lapsos', 'Materias', 'Students', 'OpcionesUsuarios'])
+        ->where(['RasgosPersonalidads.registro_eliminado' => false, 'RasgosPersonalidads.lapso_id' => $lapsoBuscar, 'RasgosPersonalidads.materia_id' => $materiaBuscar, 'OpcionesUsuarios.tipo_opcion' => 'Rasgos de personalidad'])
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Students.type_of_identification' => 'ASC', 'Students.identity_card' => 'ASC', 'OpcionesUsuarios.id' => 'ASC']);
+
+        $this->set(compact('calificaciones', 'materias', 'lapsos', 'lapsoBuscar', 'materiaBuscar', 'literalesMateria', 'literalesLapso', 'opcionesUsuario', 'rasgosPersonalidad'));
         $this->set('estudiantes', $this->paginate($estudiantes, ['limit' => 50]));    
     }
 

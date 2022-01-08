@@ -81,6 +81,10 @@ class UsersTable extends Table
         $this->hasMany('ParametrosCargaCalificacions', [
             'foreignKey' => 'user_id'
         ]);
+        $this->hasMany('OpcionesUsuarios', [
+            'foreignKey' => 'user_id'
+        ]);
+
     }
 
     /**

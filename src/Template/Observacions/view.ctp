@@ -22,7 +22,7 @@
                     <td><?= $observacion->has('student') ? $this->Html->link($observacion->student->full_name, ['controller' => 'Students', 'action' => 'view', $observacion->student->id]) : '' ?></td>
                 </tr>
                 <tr>
-                    <th scope="row"><?= __('Tipo:') ?>&nbsp;&nbsp;&nbsp;</th>
+                    <th scope="row"><?= __('Dimensión o tipo de calificación:') ?>&nbsp;&nbsp;&nbsp;</th>
                     <td><?= h($observacion->tipo_observacion) ?></td>
                 </tr>
             </table>

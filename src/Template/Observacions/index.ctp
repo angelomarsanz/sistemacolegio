@@ -10,7 +10,7 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">Tipo&nbsp;&nbsp;&nbsp;</th>
+                        <th scope="col">Dimensión o tipo de califación&nbsp;&nbsp;&nbsp;</th>
                         <th scope="col">Calificacion descriptiva&nbsp;&nbsp;&nbsp;</th>
                         <th scope="col" class="actions"><?= __('Acciones') ?>&nbsp;&nbsp;&nbsp;</th>
                     </tr>

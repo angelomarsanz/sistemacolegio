@@ -14,11 +14,11 @@
                     <td><?= $observacionesLapso->has('lapso') ? $this->Html->link($observacionesLapso->lapso->id, ['controller' => 'Lapsos', 'action' => 'view', $observacionesLapso->lapso->id]) : '' ?></td>
                 </tr>
                 <tr>
-                    <th scope="row"><?= __('Student') ?>&nbsp;&nbsp;&nbsp;</th>
+                    <th scope="row"><?= __('Estudiante:') ?>&nbsp;&nbsp;&nbsp;</th>
                     <td><?= $observacionesLapso->has('student') ? $this->Html->link($observacionesLapso->student->full_name, ['controller' => 'Students', 'action' => 'view', $observacionesLapso->student->id]) : '' ?></td>
                 </tr>
                 <tr>
-                    <th scope="row"><?= __('Tipo Observacion') ?>&nbsp;&nbsp;&nbsp;</th>
+                    <th scope="row"><?= __('Dimensión o tipo de calificación') ?>&nbsp;&nbsp;&nbsp;</th>
                     <td><?= h($observacionesLapso->tipo_observacion) ?></td>
                 </tr>
             </table>

@@ -202,7 +202,10 @@
 						<?php elseif ($current_user['role']  == 'Profesor aula'): ?>
                         	<li><?=  $this->Html->link('Proyectos', ['controller' => 'Proyectos', 'action' => 'index']) ?></li>
 						<?php endif; ?>
-							<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
+						<?php if ($current_user['role']  == 'Profesor' || $current_user['role']  == 'Profesor guía'): ?>
+							<li><?=  $this->Html->link('Opciones', ['controller' => 'OpcionesUsuarios', 'action' => 'index']) ?></li>
+						<?php endif; ?>
+						<li><?=  $this->Html->link('Calificaciones', ['controller' => 'Calificacions', 'action' => 'index']) ?></li>
 					<?php endif; ?>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

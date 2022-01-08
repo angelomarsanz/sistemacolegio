@@ -38,7 +38,7 @@
 							<td class="actions">
 								<?php 
 									if ($turn->status == 0):
-										echo $this->Html->link('Reporte contador', ['action' => 'reporteContador', $turn->id], ['class' => 'btn btn-info', 'disabled' => 'disabled']);
+										echo $this->Html->link('Reporte contador', ['action' => 'reporteMensualContabilidad', $turn->id], ['class' => 'btn btn-info', 'disabled' => 'disabled']);
 									endif;
 								?>
 							</td>

@@ -10,6 +10,20 @@ use App\Controller\AppController;
  */
 class RasgosPersonalidadsController extends AppController
 {
+    public function isAuthorized($user)
+    {
+		if(isset($user['role']))
+		{
+			if (substr($user['role'], 0, 8) === 'Profesor')
+			{
+				if(in_array($this->request->action, ['index', 'view', 'add', 'edit', 'delete', 'verificarRasgos', 'cargarRasgos']))
+				{
+					return true;
+				}
+			}
+        }
+        return parent::isAuthorized($user);
+    }
 
     /**
      * Index method
@@ -118,5 +132,59 @@ class RasgosPersonalidadsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+    public function verificarRasgos($idLapso = null, $idMateria = null, $idEstudiante = null, $tipoOpcion = null)
+    {
+        $this->autoRender = false;
+
+        $opcionesUsuario = $this->RasgosPersonalidads->OpcionesUsuarios->find('All', ['limit' => 3])
+        ->contain(['Users', 'Lapsos', 'Materias'])
+        ->where(['OpcionesUsuarios.registro_eliminado' => false, 'OpcionesUsuarios.user_id' => $this->Auth->user('id'), 'OpcionesUsuarios.lapso_id' => $idLapso, 'OpcionesUsuarios.materia_id' => $idMateria, 'OpcionesUsuarios.tipo_opcion' => $tipoOpcion])
+        ->order(['OpcionesUsuarios.descripcion_opcion' => 'ASC']);
+
+        if ($opcionesUsuario->count() == 0):
+            $this->Flash->success(__('Estimado profesor, primero debe establecer los tres rasgos de personalidad que evaluará en este lapso. Por favor agregue el primero y después los otros dos'));
+            return $this->redirect(['controller' => 'OpcionesUsuarios', 'action' => 'add']);
+        endif;
+
+        $rasgosPersonalidad = $this->RasgosPersonalidads->find('All')
+        ->contain(['Lapsos', 'Materias', 'Students', 'OpcionesUsuarios'])
+        ->where(['RasgosPersonalidads.registro_eliminado' => false, 'RasgosPersonalidads.lapso_id' => $idLapso, 'RasgosPersonalidads.materia_id' => $idMateria, 'OpcionesUsuarios.tipo_opcion' => 'Rasgos de personalidad'])
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Students.type_of_identification' => 'ASC', 'Students.identity_card' => 'ASC', 'OpcionesUsuarios.descripcion_opcion' => 'ASC']);
+
+        if ($rasgosPersonalidad->count() == 0):
+            foreach ($opcionesUsuario as $opcion):
+                $rasgosPer = $this->RasgosPersonalidads->newEntity();
+                $rasgosPer->lapso_id = $idLapso;
+                $rasgosPer->materia_id = $idMateria;
+                $rasgosPer->student_id = $idEstudiante;
+                $rasgosPer->opciones_usuario_id = $opcion->id;
+                $rasgosPer->calificacion = '*';
+                if (!($this->RasgosPersonalidads->save($rasgosPer))): 
+                    $this->Flash->error(__('El rasgo no pudo ser registrado'));
+                endif;
+            endforeach;
+        endif;
+        return $this->redirect(['action' => 'cargarRasgos', $idLapso, $idMateria, $idEstudiante, $tipoOpcion]);
+    }
+    public function cargarRasgos($idLapso = null, $idMateria = null, $idEstudiante = null, $tipoOpcion = null)
+    {
+        $rasgosPersonalidad = $this->RasgosPersonalidads->find('All')
+        ->contain(['Lapsos', 'Materias', 'Students', 'OpcionesUsuarios'])
+        ->where(['RasgosPersonalidads.registro_eliminado' => false, 'RasgosPersonalidads.lapso_id' => $idLapso, 'RasgosPersonalidads.materia_id' => $idMateria, 'OpcionesUsuarios.tipo_opcion' => 'Rasgos de personalidad'])
+        ->order(['Students.surname' => 'ASC', 'Students.first_name' => 'ASC', 'Students.type_of_identification' => 'ASC', 'Students.identity_card' => 'ASC', 'OpcionesUsuarios.id' => 'ASC']);
+
+        if ($this->request->is('post')):
+            foreach ($rasgosPersonalidad as $rasgo):
+                $rasgoGet = $this->RasgosPersonalidads->get($rasgo->id);
+                $rasgoGet->calificacion = $_POST['rasgo_' . $rasgo->id];
+                if (!($this->RasgosPersonalidads->save($rasgoGet))): 
+                    $this->Flash->error(__('La calificación no pudo ser actualizada'));
+                endif;
+            endforeach;
+            return $this->redirect(['controller' => 'Calificacions', 'action' => 'index']);
+        endif;
+
+        $this->set(compact('idEstudiante', 'idMateria', 'idLapso', 'rasgosPersonalidad'));
     }
 }

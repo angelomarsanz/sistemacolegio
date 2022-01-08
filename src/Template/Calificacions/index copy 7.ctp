@@ -30,24 +30,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <?php $contadorEstudiantes = 1;
-        $descripcionRasgo1 = '';
-        $descripcionRasgo2 = '';
-        $descripcionRasgo3 = '';
-        if ($opcionesUsuario->count() > 0):
-            $contadorRasgosDescripcion = 1;
-            foreach ($opcionesUsuario as $opcion):
-                if ($contadorRasgosDescripcion == 1):
-                    $descripcionRasgo1 = $opcion->descripcion_opcion;
-                elseif ($contadorRasgosDescripcion == 2):
-                    $descripcionRasgo2 = $opcion->descripcion_opcion;
-                else:
-                    $descripcionRasgo3 = $opcion->descripcion_opcion;
-                endif;
-                $contadorRasgosDescripcion++;
-            endforeach;
-        endif; ?>
-
+        <?php $contadorEstudiantes = 1 ?>
         <div>
             <table class="table table-striped table-hover">
                 <thead>
@@ -82,9 +65,9 @@
                             <th scope="col">N5</th>
                             <th scope="col">N112</th>
                             <th scope="col">NPon</th>
-                            <th scope="col"><span title=<?= $descripcionRasgo1 ?>>R</span></th>
-                            <th scope="col"><span title=<?= $descripcionRasgo2 ?>>A</span></th>
-                            <th scope="col"><span title=<?= $descripcionRasgo3 ?>>S</span></th>
+                            <th scope="col"><span title=''>R</span></th>
+                            <th scope="col"><span title=''>A</span></th>
+                            <th scope="col"><span title=''>S</span></th>
                             <th scope="col">AJ</th>
                             <th scope="col">NAJ</th>
                             <th scope="col">N70%</th>
@@ -118,9 +101,11 @@
                         $div5 = 0;
                         $divisorNotas = 1;
                         $nPon = 0;
-                        $rasgo1 = '*';
-                        $rasgo2 = '*';
-                        $rasgo3 = '*';
+                        if ($opcionesUsuario->count() > 0):
+                            foreach ($opcionesUsuario as $opcion):
+                                '$ras' . $opcion->id = '*';
+                            endforeach;    
+                        endif;
                         $aj = 0;
                         $nAj = 0;
                         $n70 = 0;
@@ -157,20 +142,12 @@
                         endif;
 
                         if ($rasgosPersonalidad->count() > 0):
-                            $contadorRasgos = 1;
                             $contadorA = 0;
                             $contadorB = 0;
                             $contadorC = 0;
                             foreach ($rasgosPersonalidad as $rasgo):
                                 if ($rasgo->student_id == $estudiante->id):
-                                    if ($contadorRasgos == 1):
-                                        $rasgo1 = $rasgo->calificacion;
-                                    elseif ($contadorRasgos == 2):
-                                        $rasgo2 = $rasgo->calificacion;
-                                    else:
-                                        $rasgo3 = $rasgo->calificacion;
-                                    endif;
-                                    $contadorRasgos++;                                  
+                                    '$ras' . $rasgo->id = $rasgo->calificacion;
                                     if ($rasgo->calificacion == 'A'):
                                         $contadorA++;
                                     elseif ($rasgo->calificacion == 'B'):
@@ -180,10 +157,12 @@
                                     endif;
                                 endif;
                             endforeach;
-                            if ($contadorA > 1):
-                                $aj = 2;
-                            elseif ($contadorB > 1):
-                                $aj = 1;
+                            if ($rasgosEstudiante != ''):
+                                if ($contadorA > 1):
+                                    $aj = 2;
+                                elseif ($contadorB > 1):
+                                    $aj = 1;
+                                endif;
                             endif;
                         endif;
 
@@ -309,17 +288,23 @@
                                 <td><?= number_format($nota112Objetivo5, 2, ",", ".") ?></td>
                                 <td><?= number_format($nPon, 2, ",", ".") ?></td>
 
-                                <td>
-                                    <?= $this->Html->link(__($rasgo1), ['controller' => 'RasgosPersonalidads', 'action' => 'verificarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
-                                </td>
-
-                                <td>
-                                    <?= $this->Html->link(__($rasgo2), ['controller' => 'RasgosPersonalidads', 'action' => 'verificarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
-                                </td>
-
-                                <td>
-                                    <?= $this->Html->link(__($rasgo3), ['controller' => 'RasgosPersonalidads', 'action' => 'verificarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
-                                </td>
+                                <?php if ($opcionesUsuario->count() > 0): ?>
+                                    <?php foreach ($opcionesUsuario as $opcion): ?>
+                                        <td>
+                                            <?= $this->Html->link(__('$ras' . $opcion->id), ['controller' => 'RasgosPersonalidads', 'action' => 'verificarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
+                                        </td>
+                                    <?php endforeach; ?>  
+                                <?php else: ?>
+                                    <td>
+                                        <?= $this->Html->link(__('*'), ['controller' => 'RasgosPersonalidads', 'action' => 'verificarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
+                                    </td>
+                                    <td>
+                                        <?= $this->Html->link(__('*'), ['controller' => 'RasgosPersonalidads', 'action' => 'cargarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
+                                    </td>
+                                    <td>
+                                        <?= $this->Html->link(__('*'), ['controller' => 'RasgosPersonalidads', 'action' => 'cargarRasgos', $lapsoBuscar,  $materiaBuscar, $estudiante->id, 'Rasgos de personalidad']) ?>
+                                    </td>
+                                <?php endif; ?>
 
                                 <td><?= number_format($aj, 2, ",", ".") ?></td>
                                 <td><?= number_format($nAj, 2, ",", ".") ?></td>

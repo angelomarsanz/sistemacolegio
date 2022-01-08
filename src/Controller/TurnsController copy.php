@@ -139,6 +139,10 @@ class TurnsController extends AppController
 				{
 					return $this->redirect(['controller' => 'bills', 'action' => 'notaContable']);
 				}
+				elseif ($menuOption == 'Papel fiscal')
+				{
+					return $this->redirect(['controller' => 'bills', 'action' => 'anularPapelFiscal', $result[0]['id'], $result[0]['turn']]);
+				}
 				else
                 {
                     return $this->redirect(['controller' => 'bills', 'action' => 'createInvoice', $menuOption, $result[0]['id'], $result[0]['turn']]);
@@ -611,7 +615,7 @@ class TurnsController extends AppController
 						'nroFactura' => $factura->bill_number,
 						'tipoDocumento' => $factura->tipo_documento,
 						'facturaDeAnticipo' => $facturaDeAnticipo,
-						'familia' => $factura->parentsandguardian->family,
+						'familia' => $factura->parentsandguardian->client,
 						'tasaDolar' => $factura->tasa_cambio,
 						'tasaEuro' => $factura->tasa_euro,
 						'tasaDolarEuro' => $tasaDolarEuroFactura,
@@ -839,7 +843,7 @@ class TurnsController extends AppController
 							$vectorTotalesRecibidos['Total a recibir de ' . $this->Auth->user('first_name') . ' ' . $this->Auth->user('surname')]['Zelle $'] -= $pago->amount;
 						}
 					}
-					elseif ($pago->banco_receptor == "Colombia" && $pago->moneda == "P")
+					elseif ($pago->banco_receptor == "Euros" && $pago->moneda == "P")
 					{
 						$vectorPagos[$pago->bill->id]['euros'] += $pago->amount;
 						$vectorPagos[$pago->bill->id]['totalCobradoDolar'] += round($pago->amount / $pago->bill->tasa_euro, 2);
@@ -1546,7 +1550,9 @@ class TurnsController extends AppController
             return $this->redirect(['controller' => 'users', 'action' => 'wait']);
         }
 
-		$this->loadModel('Bills');		
+		$this->loadModel('Bills');
+		$this->loadModel('Concepts');
+		
 		$payment = new PaymentsController();
 					
 		$indicadorFacturasAnticipos = 0;
@@ -1677,6 +1683,59 @@ class TurnsController extends AppController
 				}
 			}
 		}
+	
+		$soloFacturas = $this->Bills->find('all', ['conditions' => ['Bills.turn' => $id, 'Bills.annulled' => 0],
+			'order' => ['Bills.school_year' => 'ASC']]);
+
+		$soloConceptos = $this->Concepts->find('all', ['conditions' => ['Concepts.annulled' => 0],
+			'select' => ['Concepts.bill_id', 'Concepts.concept', 'Concepts.amount']]);
+
+		$vectorConceptos = [];
+
+		foreach ($soloFacturas as $factura)
+		{
+			if ($factura->saldo_compensado_dolar > 0)
+			{
+				$montoCompensado = round($factura->saldo_compensado_dolar * $factura->tasa_cambio, 2);
+			}
+			else
+			{
+				$montoCompensado = 0;
+			}
+
+			foreach ($soloConceptos as $concepto)
+			{
+				if ($concepto->bill_id == $factura->id)
+				{
+					if ($montoCompensado > 0)
+					{
+						if ($concepto->amount >= $montoCompensado)
+						{
+							$amountConcept = $concepto->amount - $montoCompensado;
+							$montoCompensado = 0;
+						}
+						else
+						{
+							$amountConcept = 0;
+							$montoCompensado = $montoCompensado - $concepto->amount;
+						}
+					}
+					else
+					{
+						$amountConcept = $concepto->amount;
+					}
+
+					$vectorConceptos[] = 
+						[
+							'idFactura' => $concepto->bill_id,
+							'concepto' 	=> $concepto->concept,
+							'monto' => $amountConcept,
+							'observacion' => $concepto->observation
+						];
+				}
+			}
+		}
+
 															
 		$this->set(compact
 			('turn',
@@ -1704,7 +1763,10 @@ class TurnsController extends AppController
 			'indicadorRecibosAnulados',
 			'documentosAnulados',
 			'totalGeneralSobrantes',
-			'totalGeneralReintegrosSobrantes'));	
+			'totalGeneralReintegrosSobrantes',
+			'soloFacturas',
+			'vectorConceptos'
+		));	
 			
 		$this->set('_serialize', 
 			['turn',
@@ -1731,7 +1793,10 @@ class TurnsController extends AppController
 			'indicadorRecibosAnulados',
 			'documentosAnulados',
 			'totalGeneralSobrantes',
-			'totalGeneralReintegrosSobrantes']);	
+			'totalGeneralReintegrosSobrantes',
+			'soloFacturas',
+			'vectorConceptos'
+		]);	
 	}
 	
     public function excelDocumentos($id = null)
@@ -1783,7 +1848,7 @@ class TurnsController extends AppController
 				'nroFactura' => $factura->bill_number,
 				'nroControl' => $factura->control_number,
 				'tipoDocumento' => $factura->tipo_documento,
-				'familia' => $factura->parentsandguardian->family,
+				'familia' => $factura->parentsandguardian->client,
 				'tasaDolar' => $factura->tasa_cambio,
 				'tasaEuro' => $factura->tasa_euro,
 				'tasaDolarEuro' => $factura->tasa_dolar_euro,
@@ -1837,7 +1902,7 @@ class TurnsController extends AppController
 				$vectorPagos[$pago->bill->id]['zelleDolar'] += $pago->amount;
 				$vectorPagos[$pago->bill->id]['totalCobradoDolar'] += $pago->amount;
 			}
-			elseif ($pago->banco_receptor == "Colombia" && $pago->moneda == "P")
+			elseif ($pago->banco_receptor == "Euros" && $pago->moneda == "P")
 			{
 				$vectorPagos[$pago->bill->id]['euros'] += $pago->amount;
 				$vectorPagos[$pago->bill->id]['totalCobradoDolar'] += round($pago->amount / $pago->bill->tasa_euro, 2);
@@ -1931,7 +1996,7 @@ class TurnsController extends AppController
 						'nroFactura' => $factura->bill_number,
 						'nroControl' => $factura->control_number,
 						'tipoDocumento' => $factura->tipo_documento,
-						'familia' => $factura->parentsandguardian->family,
+						'familia' => $factura->parentsandguardian->client,
 						'tasaDolar' => $factura->tasa_cambio,
 						'tasaEuro' => $factura->tasa_euro,
 						'tasaDolarEuro' => $factura->tasa_dolar_euro,
@@ -1979,7 +2044,7 @@ class TurnsController extends AppController
 					{
 						$vectorPagos[$contador]['zelleDolar'] += $pago->amount;
 					}
-					elseif ($pago->banco_receptor == "Colombia" && $pago->moneda == "P")
+					elseif ($pago->banco_receptor == "Euros" && $pago->moneda == "P")
 					{
 						$vectorPagos[$contador]['euros'] += $pago->amount;
 					}

@@ -37,7 +37,8 @@
                         echo $this->Form->input('first_name', ['label' => 'Primer nombre: *', 'required' => true]);
                         echo $this->Form->input('number_of_brothers', ['label' => 'Tipo (Alumno nuevo): *', 'required' => true, 'options' => 
                             [null => " ",
-                            1 => 'Alumno nuevo ' . $currentYear . '-' . $nextYear]]);                        
+                            0 => 'Alumno nuevo '.$anoInscripcion.'-'.$anoInscripcionMasUno,
+                            1 => 'Alumno nuevo '.$anoInscripcionMasUno.'-'.$anoInscripcionMasDos]]);                        
                         
                         echo $this->Form->input('level_of_study', 
                             [

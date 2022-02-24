@@ -141,7 +141,7 @@
                     <div class="panel panel-default pre-scrollable" style="height:210px;">
                         <div class="panel-body">
                             <div class="table-responsive">          
-                                <table class="table table-striped table-hover" >
+                                <table class="table table-striped table-hover estado-cuenta" >
                                     <thead>
                                         <tr>
 											<th scope="col" style="width:5%"></th>
@@ -170,6 +170,7 @@
 									<button id="mark-quotas" class="btn btn-success" disabled>Cobrar</button>
 									<button id="uncheck-quotas" class="btn btn-success" disabled>Reversar</button>  
 									<button id="adjust-fee" class="btn btn-success" disabled>Ajustar</button>
+									<button id="imprimir-estado-cuenta" class="btn btn-success">Imprimir estado de cuenta</button>
 								</p>
 							</div>
 							<div id="botones-notas" class="noverScreen">
@@ -2872,15 +2873,16 @@
 
 							if (paidOut == true)
 							{
+								/*
 								if (montoDolar === null)
-								{
+								{*/
 									montoDolar = 0;
 									montoPendienteDolar = 0;
 									montoAPagarDolar = 0;
 									montoAPagarEuro = 0;
 									montoAPagarBolivar = 0;
 									indicadorImpresion = 1;
-								}
+								/*}
 								else
 								{						
 									if (transactionType == "Mensualidad")
@@ -2960,7 +2962,7 @@
 											indicadorImpresion = 1;
 										}									
 									}
-								}
+								}*/
 							}
 							else if (transactionType != 'Mensualidad')
 							{
@@ -3910,6 +3912,19 @@
 			diferenciaBolivares = 22.5;
 			uploadTransactions();
 		});
+
+		$("#imprimir-estado-cuenta").click(function(){
+        
+        $(".estado-cuenta").table2excel({
+    
+            exclude: ".noExl",
+        
+            name: "",
+        
+            filename: "estado-cuenta" 
+    
+        });
+    });
 		
     }); 
 

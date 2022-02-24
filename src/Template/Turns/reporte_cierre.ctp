@@ -386,7 +386,7 @@
 										<th>&nbsp;</th>
 									</tr>	
 									<tr>
-										<th style="font-size: 14px; line-height: 16px;"><b>Pago de Matrícula 2021:</b></th>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Matrícula Año Escolar Actual' ?></b></th>
 									</tr>
 								</thead>
 							</table>
@@ -410,16 +410,17 @@
 									</tr>
 								</thead>
 								<tbody>				
-									<?php $contadorMatricula2021 = 0;
-									$totalMatricula2021 = 0; 
+									<?php $contadorMatriculaActual = 0;
+									$totalMatriculaActual = 0; 
+									$actualAnoEscolar = $schools->current_school_year;
 									foreach ($soloFacturas as $factura):
-										if ($factura->school_year == 'Año escolar 2021-2022'):
+										if (substr($factura->school_year, 12, 4) == $actualAnoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
-													if ($concepto['concepto'] == 'Matrícula 2021'): 
-														$contadorMatricula2021++; ?>
+													if ($concepto['concepto'] == 'Matrícula '.$actualAnoEscolar): 
+														$contadorMatriculaActual++; ?>
 														<tr>
-															<td style="text-align: center;"><?= $contadorMatricula2021; ?></td>
+															<td style="text-align: center;"><?= $contadorMatriculaActual; ?></td>
 															<td style="text-align: center;"><?= $factura->bill_number; ?></td>
 															<td style="text-align: center;"><?= $factura->control_number; ?></td>
 															<td style="text-align: center;"><?= $factura->identification; ?></td>
@@ -428,7 +429,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
-														<?php $totalMatricula2021 = $totalMatricula2021 + $concepto['monto'];
+														<?php $totalMatriculaActual = $totalMatriculaActual + $concepto['monto'];
 													endif;
 												endif;
 											endforeach;
@@ -441,7 +442,7 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td style="text-align: center;"><?= number_format($totalMatricula2021, 2, ",", "."); ?></td>
+										<td style="text-align: center;"><?= number_format($totalMatriculaActual, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
 								</tbody>
@@ -459,7 +460,7 @@
 										<th>&nbsp;</th>
 									</tr>	
 									<tr>
-										<th style="font-size: 14px; line-height: 16px;"><b>Pago de Mensualidades 2021:</b></th>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Mensualidades Año Escolar Actual' ?></b></th>
 									</tr>
 								</thead>
 							</table>
@@ -483,16 +484,17 @@
 									</tr>
 								</thead>
 								<tbody>				
-									<?php $contadorMensualidades2021 = 0;
-									$totalMensualidades2021 = 0; 
+									<?php $contadorMensualidadesActual = 0;
+									$totalMensualidadesActual = 0; 
+									$actualAnoEscolar = $schools->current_school_year;
 									foreach ($soloFacturas as $factura):
-										if ($factura->school_year == 'Año escolar 2021-2022'):
+										if (substr($factura->school_year, 12, 4) == $actualAnoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
-													if ($concepto['concepto'] != 'Matrícula 2021'): 
-														$contadorMensualidades2021++; ?>
+													if ($concepto['concepto'] != 'Matrícula '.$actualAnoEscolar): 
+														$contadorMensualidadesActual++; ?>
 														<tr>
-															<td style="text-align: center;"><?= $contadorMensualidades2021; ?></td>
+															<td style="text-align: center;"><?= $contadorMensualidadesActual; ?></td>
 															<td style="text-align: center;"><?= $factura->bill_number; ?></td>
 															<td style="text-align: center;"><?= $factura->control_number; ?></td>
 															<td style="text-align: center;"><?= $factura->identification; ?></td>
@@ -501,7 +503,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
-														<?php $totalMensualidades2021 = $totalMensualidades2021 + $concepto['monto'];
+														<?php $totalMensualidadesActual = $totalMensualidadesActual + $concepto['monto'];
 													endif;
 												endif;
 											endforeach;
@@ -514,7 +516,81 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td style="text-align: center;"><?= number_format($totalMensualidades2021, 2, ",", "."); ?></td>
+										<td style="text-align: center;"><?= number_format($totalMensualidadesActual, 2, ",", "."); ?></td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="saltopagina">
+					<div class="row">
+						<div class="col-md-12">					
+							<table>
+								<thead>
+									<tr>
+										<th>&nbsp;</th>
+									</tr>	
+									<tr>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Matrícula Próximo Año Escolar' ?></b></th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="row">
+						<div class="col-md-12">					
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th style="text-align: center;"><b>Nro.</b></th>
+										<th style="text-align: center;"><b>Nro. Factura</b></th>
+										<th style="text-align: center;"><b>Nro. Control</b></th>
+										<th style="text-align: center;"><b>Cedula/Rif</b></th>
+										<th style="text-align: center;"><b>Nombre o razón social</b></th>
+										<th style="text-align: center;"><b>Concepto</b></th>
+										<th style="text-align: center;"><b>Monto Bs.</b></th>
+										<th style="text-align: center;"><b>Observación</b></th>
+									</tr>
+								</thead>
+								<tbody>				
+									<?php $contadorMatriculaProximo = 0;
+									$totalMatriculaProximo = 0; 
+									$proximoAñoEscolar = $schools->current_school_year + 1;
+									foreach ($soloFacturas as $factura):
+										if (substr($factura->school_year, 12, 4) == $proximoAñoEscolar):
+											foreach ($vectorConceptos as $concepto):
+												if ($concepto['idFactura'] == $factura->id):
+													if ($concepto['concepto'] == 'Matrícula '.$proximoAñoEscolar): 
+														$contadorMatriculaProximo++; ?>
+														<tr>
+															<td style="text-align: center;"><?= $contadorMatriculaProximo; ?></td>
+															<td style="text-align: center;"><?= $factura->bill_number; ?></td>
+															<td style="text-align: center;"><?= $factura->control_number; ?></td>
+															<td style="text-align: center;"><?= $factura->identification; ?></td>
+															<td style="text-align: center;"><?= $factura->client; ?></td>
+															<td style="text-align: center;"><?= $concepto['concepto']; ?></td>
+															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
+															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
+														</tr>
+														<?php $totalMatriculaProximo = $totalMatriculaProximo + $concepto['monto'];
+													endif;
+												endif;
+											endforeach;
+										endif;
+									endforeach ?>
+									<tr>
+										<td><b>Totales</b></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="text-align: center;"><?= number_format($totalMatriculaProximo, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
 								</tbody>
@@ -532,7 +608,7 @@
 										<th>&nbsp;</th>
 									</tr>	
 									<tr>
-										<th style="font-size: 14px; line-height: 16px;"><b>Pago de Mensualidades 2020:</b></th>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Mensualidades Próximo Año Escolar' ?></b></th>
 									</tr>
 								</thead>
 							</table>
@@ -556,24 +632,27 @@
 									</tr>
 								</thead>
 								<tbody>				
-									<?php $contadorMensualidades2020 = 0;
-									$totalMensualidades2020 = 0; 
+									<?php $contadorMensualidadesProximo = 0;
+									$totalMensualidadesProximo = 0;
+									$proximoAñoEscolar = $schools->current_school_year + 1; 
 									foreach ($soloFacturas as $factura):
-										if ($factura->school_year == 'Año escolar 2020-2021'):
+										if (substr($factura->school_year, 12, 4) == $proximoAñoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
-													$contadorMensualidades2020++; ?>
-													<tr>
-														<td style="text-align: center;"><?= $contadorMensualidades2020; ?></td>
-														<td style="text-align: center;"><?= $factura->bill_number; ?></td>
-														<td style="text-align: center;"><?= $factura->control_number; ?></td>
-														<td style="text-align: center;"><?= $factura->identification; ?></td>
-														<td style="text-align: center;"><?= $factura->client; ?></td>
-														<td style="text-align: center;"><?= $concepto['concepto']; ?></td>
-														<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
-														<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
-													</tr>
-													<?php $totalMensualidades2020 = $totalMensualidades2020 + $concepto['monto'];
+													if ($concepto['concepto'] != 'Matrícula '.$proximoAñoEscolar): 
+														$contadorMensualidadesProximo++; ?>
+														<tr>
+															<td style="text-align: center;"><?= $contadorMensualidadesProximo; ?></td>
+															<td style="text-align: center;"><?= $factura->bill_number; ?></td>
+															<td style="text-align: center;"><?= $factura->control_number; ?></td>
+															<td style="text-align: center;"><?= $factura->identification; ?></td>
+															<td style="text-align: center;"><?= $factura->client; ?></td>
+															<td style="text-align: center;"><?= $concepto['concepto']; ?></td>
+															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
+															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
+														</tr>
+														<?php $totalMensualidadesProximo = $totalMensualidadesProximo + $concepto['monto'];
+													endif;
 												endif;
 											endforeach;
 										endif;
@@ -585,7 +664,155 @@
 										<td></td>
 										<td></td>
 										<td></td>
-										<td style="text-align: center;"><?= number_format($totalMensualidades2020, 2, ",", "."); ?></td>
+										<td style="text-align: center;"><?= number_format($totalMensualidadesProximo, 2, ",", "."); ?></td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="saltopagina">
+					<div class="row">
+						<div class="col-md-12">					
+							<table>
+								<thead>
+									<tr>
+										<th>&nbsp;</th>
+									</tr>	
+									<tr>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Matrícula Años Anteriores' ?></b></th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="row">
+						<div class="col-md-12">					
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th style="text-align: center;"><b>Nro.</b></th>
+										<th style="text-align: center;"><b>Nro. Factura</b></th>
+										<th style="text-align: center;"><b>Nro. Control</b></th>
+										<th style="text-align: center;"><b>Cedula/Rif</b></th>
+										<th style="text-align: center;"><b>Nombre o razón social</b></th>
+										<th style="text-align: center;"><b>Concepto</b></th>
+										<th style="text-align: center;"><b>Monto Bs.</b></th>
+										<th style="text-align: center;"><b>Observación</b></th>
+									</tr>
+								</thead>
+								<tbody>				
+									<?php $contadorMatriculaAnterior = 0;
+									$totalMatriculaAnterior = 0; 
+									$actualAñoEscolar = $schools->current_school_year;
+									foreach ($soloFacturas as $factura):
+										if (substr($factura->school_year, 12, 4) < $actualAñoEscolar):
+											foreach ($vectorConceptos as $concepto):
+												if ($concepto['idFactura'] == $factura->id):
+													if (substr($concepto['concepto'], 0, 8) == 'Matrícul'): 
+														$contadorMatriculaAnterior++; ?>
+														<tr>
+															<td style="text-align: center;"><?= $contadorMatriculaAnterior; ?></td>
+															<td style="text-align: center;"><?= $factura->bill_number; ?></td>
+															<td style="text-align: center;"><?= $factura->control_number; ?></td>
+															<td style="text-align: center;"><?= $factura->identification; ?></td>
+															<td style="text-align: center;"><?= $factura->client; ?></td>
+															<td style="text-align: center;"><?= $concepto['concepto']; ?></td>
+															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
+															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
+														</tr>
+														<?php $totalMatriculaAnterior = $totalMatriculaAnterior + $concepto['monto'];
+													endif;
+												endif;
+											endforeach;
+										endif;
+									endforeach ?>
+									<tr>
+										<td><b>Totales</b></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="text-align: center;"><?= number_format($totalMatriculaAnterior, 2, ",", "."); ?></td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<div class="row">
+						<div class="col-md-12">					
+							<table>
+								<thead>
+									<tr>
+										<th>&nbsp;</th>
+									</tr>	
+									<tr>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Mensualidades Años Anteriores' ?></b></th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="row">
+						<div class="col-md-12">					
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th style="text-align: center;"><b>Nro.</b></th>
+										<th style="text-align: center;"><b>Nro. Factura</b></th>
+										<th style="text-align: center;"><b>Nro. Control</b></th>
+										<th style="text-align: center;"><b>Cedula/Rif</b></th>
+										<th style="text-align: center;"><b>Nombre o razón social</b></th>
+										<th style="text-align: center;"><b>Concepto</b></th>
+										<th style="text-align: center;"><b>Monto Bs.</b></th>
+										<th style="text-align: center;"><b>Observación</b></th>
+									</tr>
+								</thead>
+								<tbody>				
+									<?php $contadorMensualidadesAnterior = 0;
+									$totalMensualidadesAnterior = 0;
+									$actualAñoEscolar = $schools->current_school_year; 
+									foreach ($soloFacturas as $factura):
+										if (substr($factura->school_year, 13, 4) < $actualAñoEscolar):
+											foreach ($vectorConceptos as $concepto):
+												if ($concepto['idFactura'] == $factura->id):
+													// if (substr($concepto['concepto'], 0, 8) != 'Matrícul'):
+														$contadorMensualidadesAnterior++; ?>
+														<tr>
+															<td style="text-align: center;"><?= $contadorMensualidadesAnterior; ?></td>
+															<td style="text-align: center;"><?= $factura->bill_number; ?></td>
+															<td style="text-align: center;"><?= $factura->control_number; ?></td>
+															<td style="text-align: center;"><?= $factura->identification; ?></td>
+															<td style="text-align: center;"><?= $factura->client; ?></td>
+															<td style="text-align: center;"><?= $concepto['concepto']; ?></td>
+															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
+															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
+														</tr>
+														<?php $totalMensualidadesAnterior = $totalMensualidadesAnterior + $concepto['monto'];
+													// endif;
+												endif;
+											endforeach;
+										endif;
+									endforeach ?>
+									<tr>
+										<td><b>Totales</b></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td style="text-align: center;"><?= number_format($totalMensualidadesAnterior, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
 								</tbody>

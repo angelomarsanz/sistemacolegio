@@ -785,11 +785,14 @@ class StudentsController extends AppController
 		$indicadorError = 0;
 		
         $currentDate = Time::now();
-		
-		$currentYear = $currentDate->year;
-		$lastYear = $currentDate->year - 1;
-		$nextYear = $currentDate->year + 1;
-		
+
+		$this->loadModel('Schools');
+        $school = $this->Schools->get(2);
+
+		$anoInscripcion = $school->current_year_registration;
+		$anoInscripcionMasUno = $school->current_year_registration + 1;
+		$anoInscripcionMasDos = $school->current_year_registration + 2;
+	
         $student = $this->Students->newEntity();
         if ($this->request->is('post')) 
         {
@@ -867,17 +870,13 @@ class StudentsController extends AppController
 
 				$student->number_of_brothers = 0;
 
-				$student->balance = 0;			
-
+				$student->balance = 0;	
 				
-				if ($incomeType < 2)
-				{
+				if ($incomeType < 2):
 					$student->new_student = 1;
-				}
-				else
-				{
-					$student->new_student = 0;		
-				}
+				else:
+					$student->new_student = 0;
+				endif;
 
 				if ($student->tipo_descuento == null)
 				{
@@ -898,11 +897,11 @@ class StudentsController extends AppController
 						
 						if ($incomeType == 0)
 						{
-							$indicadorError = $studentTransactions->createQuotasNew($row->id, $lastYear);
+							$indicadorError = $studentTransactions->createQuotasNew($row->id, $anoInscripcion);
 						}
 						elseif ($incomeType == 1)
 						{
-							$indicadorError = $studentTransactions->createQuotasNew($row->id, $currentYear);
+							$indicadorError = $studentTransactions->createQuotasNew($row->id, $anoInscripcionMasUno);
 						}
 						else
 						{
@@ -925,7 +924,7 @@ class StudentsController extends AppController
         
         $parentsandguardian = $this->Students->Parentsandguardians->get($idParentsandguardians);
 
-        $this->set(compact('student', 'currentYear', 'nextYear', 'lastYear', 'idParentsandguardians'));
+        $this->set(compact('student', 'anoInscripcion', 'anoInscripcionMasUno', 'anoInscripcionMasDos', 'idParentsandguardians'));
         $this->set('_serialize', ['student']);
     }
 
@@ -3708,6 +3707,7 @@ class StudentsController extends AppController
 							{
 								if ($studentTransaction->paid_out == 0)
 								{
+									
 									$wholeYear = 1;
 									
 									if ($soloAnoMes <= $yearMonthUntil)
@@ -3761,9 +3761,11 @@ class StudentsController extends AppController
 											$totalMoroso += $saldoCuota;
 										}
 									}
+									
 								}
 								else
 								{
+									/*
 									foreach ($mesesTarifas as $mesesTarifa)
 									{
 										if ($mesesTarifa["anoMes"] == $yearMonth)
@@ -3823,6 +3825,7 @@ class StudentsController extends AppController
 											}
 										}
 									}
+									*/
 								}
 							}	
 						}	

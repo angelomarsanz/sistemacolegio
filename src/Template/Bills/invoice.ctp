@@ -104,7 +104,7 @@ $tiempoActual = Time::now();
 		<br />
 		<div>
 			<?php if ($bill->annulled == 1): ?>
-				<h1 style="text-align:center;">Factura Anulada</h1>
+				<h1 style="text-align:center;">Factura Anulada el <?= $bill->date_annulled->format('d-m-Y') ?></h1>
 			<?php endif; ?>
 			<table style="width:100%">
 				<tbody>

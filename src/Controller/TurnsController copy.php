@@ -2067,5 +2067,37 @@ class TurnsController extends AppController
 										
 		$this->set(compact('turn', 'vectorPagos', 'cajero'));
 		$this->set('_serialize', ['turn', 'vectorPagos', 'cajero']);
-	}	
+	}
+ 
+	public function resumenMensualContabilidadPrevio()
+    {
+        if ($this->request->is('post')) 
+        {
+			return $this->redirect(['controller' => 'Turns', 'action' => 'resumenMensualContabilidad', $_POST['month'], $_POST['year']]);
+		}
+    }
+ 
+    public function resumenMensualContabilidad($mes = null, $ano = null)
+    {     
+		$this->loadModel('Bills');
+		
+		$facturas = $this->Bills->find('all', ['conditions' => 
+			[['MONTH(date_and_time)' => $mes], 
+			['YEAR(date_and_time)' => $ano]],
+			'order' => ['id' => 'ASC'] ]);
+
+		$vectorFacturas = [];
+		foreach ($facturas as $factura)
+		{
+			$vectorFacturas[$factura->date_and_time->day][] = ['nroFactura' => $factura->bill_number, 'nroControl' => $factura->control_number];
+		}
+		
+        $turnos = $this->Turns->find('all', ['conditions' => 
+            [['MONTH(start_date)' => $mes], 
+            ['YEAR(start_date)' => $ano],
+            ['status' => 0]],
+            'order' => ['id' => 'ASC'] ]);
+            												
+		$this->set(compact('turnos', 'mes', 'ano', 'vectorFacturas'));			
+	}
 }

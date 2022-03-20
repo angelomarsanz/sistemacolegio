@@ -2139,4 +2139,64 @@ class TurnsController extends AppController
 		            												
 		$this->set(compact('mes', 'ano', 'documentosFiscales'));			
 	}
+    public function resumenMensualSeniat($mes = null, $ano = null)
+    {     
+		$this->loadModel('Bills');
+		$this->loadModel('Payments');
+
+        $facturasMes = $this->Bills->find('all')
+			->where(['Bills.fiscal' => 1, 'Bills.tipo_documento' => 'Factura', 'MONTH(Bills.date_and_time)' => $mes, 'YEAR(Bills.date_and_time)' => $ano])
+            ->order(['Bills.id' => 'ASC'])
+			->select(
+				['Bills.id',
+				'Bills.date_and_time',
+				'Bills.bill_number',
+				'Bills.control_number',
+				'Bills.fiscal',
+				'Bills.tipo_documento',
+				'Bills.annulled',
+				'Bills.amount_paid',
+				'Bills.amount',
+				'Bills.saldo_compensado_dolar',
+				'Bills.moneda_id',
+				'Bills.tasa_cambio'
+				]);
+        
+		$documentosFiscales = [];
+		$fechaAnterior = '';
+		$fechaActual = '';
+		$contadorRegistros = 0;
+		
+		foreach ($facturasMes as $factura)
+		{
+			$fechaActual = $factura->date_and_time->format('d/m/Y');
+			if ($contadorRegistros == 0 || $fechaAnterior != $fechaActual)
+			{
+				$fechaAnterior = $fechaActual;
+				$documentosFiscales[$fechaActual] = [];
+			}
+			$contadorRegistros++;
+			$montoCompensadoBolivares = round($factura->saldo_compensado_dolar * $factura->tasa_cambio, 2); 
+			$montoNetoFactura = round($factura->amount_paid + $factura->amount_paid - $montoCompensadoBolivares, 2); 
+			$documentosFiscales[$fechaActual][] = 
+				[
+					'id' 				=> $factura->id,
+					'fecha_hora' 		=> $fechaActual,
+					'numero_factura'	=> $factura->bill_number,
+					'numero_control' 	=> $factura->control_number,
+					'fiscal' 			=> $factura->fiscal,
+					'tipo_documento' 	=> $factura->tipo_documento,
+					'anulado' 			=> $factura->annulled,
+					'monto' 			=> $montoNetoFactura,
+				];
+			/*
+			if ($contadorRegistros > 4)
+			{
+				break;
+			}
+			*/
+		}
+		            												
+		$this->set(compact('mes', 'ano', 'documentosFiscales'));			
+	}
 }

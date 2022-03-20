@@ -64,7 +64,7 @@
 							<table>
 								<thead>
 									<tr>
-										<th style="font-size: 18px; line-height: 20px;"><b>RELACIÓN DE VENTAS POR MONEDA DEL <?= '01/'.$mes.'/'.$ano ?> AL <?= $diasMeses[$mes].'/'.$mes.'/'.$ano ?></b></th>
+										<th style="font-size: 18px; line-height: 20px;"><b>RELACIÓN DE VENTAS DEL <?= '01/'.$mes.'/'.$ano ?> AL <?= $diasMeses[$mes].'/'.$mes.'/'.$ano ?></b></th>
 									</tr>
 								</thead>
 							</table>
@@ -81,35 +81,23 @@
 										<th><b>Fecha</b></th>
 										<th><b>Factura (control) desde</b></th>
 										<th><b>Factura (control) hasta</b></th>
-										<th style="text-align: center;"><b>Bolívares</b></th>
-										<th style="text-align: center;"><b>Dólares</b></th>
-										<th style="text-align: center;"><b>Pesos</b></th>
+										<th style="text-align: center;"><b>Monto en Bolívares</b></th>
 									</tr>
 								</thead>
 								<tbody>
 									<?php 
-									$pagosBolivaresTotal = 0;
-									$pagosDolaresTotal = 0;
-									$pagosPesosTotal = 0;
+									$montoBolivaresTotal = 0;
 									foreach ($documentosFiscales as $indice => $dia):
 										$primerElemento 	= reset($dia);
 										$primeraFacturaDia 	= $primerElemento['numero_factura'] . ' (' . $primerElemento['numero_control'] . ')';
 										$ultimoElemento 	= end($dia);
 										$ultimaFacturaDia 	= $ultimoElemento['numero_factura'] . ' (' . $ultimoElemento['numero_control'] . ')';
-										$pagosBolivaresDia 	= 0;
-										$pagosDolaresDia	= 0;
-										$pagosPesosDia 		= 0;	
-										foreach ($dia as $pago):
-											if ($pago['anulado'] == 0):
-												if ($pago['moneda'] == 'Bs.' && $pago['monto'] > 0):
-													$pagosBolivaresDia += $pago['monto'];
-													$pagosBolivaresTotal += $pago['monto'];
-												elseif ($pago['moneda'] == '$' && $pago['monto'] > 0):
-													$pagosDolaresDia += $pago['monto'];
-													$pagosDolaresTotal += $pago['monto'];
-												elseif ($pago['moneda'] == 'P' && $pago['monto'] > 0):
-													$pagosPesosDia += $pago['monto'];
-													$pagosPesosTotal += $pago['monto'];
+										$MontoBolivaresDia 	= 0;
+										foreach ($dia as $monto):
+											if ($monto['anulado'] == 0):
+												if ($monto['monto'] > 0):
+													$montoBolivaresDia += $pago['monto'];
+													$montoBolivaresTotal += $pago['monto'];
 												endif;
 											endif;
 										endforeach; ?>
@@ -118,8 +106,6 @@
 											<td><?= $primeraFacturaDia ?></td>
 											<td><?= $ultimaFacturaDia ?></td>
 											<td style="text-align: center;"><?= number_format($pagosBolivaresDia, 2, ",", ".") ?></td>
-											<td style="text-align: center;"><?= number_format($pagosDolaresDia, 2, ",", ".") ?></td>
-											<td style="text-align: center;"><?= number_format($pagosPesosDia, 2, ",", ".") ?></td>	
 										</tr>
 									<?php
 									endforeach; ?>
@@ -130,8 +116,6 @@
 										<td></td>
 										<td><b>Totales</b></td>
 										<td style="text-align: center;"><b><?= number_format($pagosBolivaresTotal, 2, ",", ".") ?></b></td>
-										<td style="text-align: center;"><b><?= number_format($pagosDolaresTotal, 2, ",", ".") ?></b></td>
-										<td style="text-align: center;"><b><?= number_format($pagosPesosTotal, 2, ",", ".") ?></b></td>	
 									</tr>
 								</tfoot>
 							</table>

@@ -112,7 +112,7 @@
                 </div>
             </div>
             <br />
-            <div class="row panel panel-default">
+            <div class="row panel panel-default estado-cuenta">
                 <div class="col-md-3">
                     <br />
                     <p><b>Alumnos relacionados:</b></p>
@@ -141,18 +141,18 @@
                     <div class="panel panel-default pre-scrollable" style="height:210px;">
                         <div class="panel-body">
                             <div class="table-responsive">          
-                                <table class="table table-striped table-hover estado-cuenta" >
+                                <table class="table table-striped table-hover" >
                                     <thead>
                                         <tr>
-											<th scope="col" style="width:5%"></th>
+											<th scope="col" style="width:5%" class="noExl"></th>
                                             <th scope="col" style="font-size: 11px; width:15%">Concepto</th>
-											<th scope="col" style="font-size: 11px; width:15%">Cuota($)</th>
-                                            <th scope="col" style="font-size: 11px; width:15%">Abonado($)</th>
+											<th scope="col" style="font-size: 11px; width:15%" class="noExl">Cuota($)</th>
+                                            <th scope="col" style="font-size: 11px; width:15%" class="noExl">Abonado($)</th>
 											<th scope="col" style="font-size: 11px; width:10%">Pendiente($)</th>
 											<th scope="col" style="font-size: 11px; width:10%">A pagar($)</th>
 											<th scope="col" style="color: blue; font-size: 10px; width:10%">A pagar(P)</th>
 											<th scope="col" style="color: red; font-size: 10px; width:10%">A pagar(Bs.)</th>
-											<th scope="col" style="font-size: 11px; width:10%">Observación</th>
+											<th scope="col" style="font-size: 11px; width:10%" class="noExl">Observación</th>
 											<th scope="col" class="noverScreen"></th>
                                         </tr>
                                     </thead>
@@ -563,6 +563,7 @@
     var totalBalance = 0;
 	var totalBalanceEuros = 0;
 	var totalBalanceBolivares = 0;
+	
 	var saldoPagosRealizados = 0;
 	var discountMode = '';
 	var discountAmount = 0;
@@ -1396,10 +1397,10 @@
                         {
 							studentBalance = studentBalance + item['dbMontoAPagarDolar'];
 							detailLine += "<tr id=tra" + item['dbId'] + "> \
-								<td style='background-color:#c2c2d6;'><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " checked='checked' disabled></td> \
+								<td style='background-color:#c2c2d6;' class='noExl'><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " checked='checked' disabled></td> \
 								<td style='background-color:#c2c2d6;'>" + item['dbMonthlyPayment'] + "</td> \
-								<td style='background-color:#c2c2d6;'><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + " disabled></td> \
-								<td style='background-color:#c2c2d6;'><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
+								<td style='background-color:#c2c2d6;' class='noExl'><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + " disabled></td> \
+								<td style='background-color:#c2c2d6;' class='noExl'><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
 		
 							if (item['dbMontoPendienteDolar'] < 0)
 							{
@@ -1407,7 +1408,7 @@
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarDolar']) + "</td> \
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarEuro']) + "</td> \
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarBolivar']) + "</td> \
-												<td style='background-color:#c2c2d6; color: red;'>Hacer NC</td> \
+												<td style='background-color:#c2c2d6; color: red;' class='noExl'>Hacer NC</td> \
 												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 							else
@@ -1416,7 +1417,7 @@
 												<td style='background-color:#c2c2d6;'>" + formatoNumero(item['dbMontoAPagarDolar']) + "</td> \
 												<td style='background-color:#c2c2d6; color: blue;'>" + formatoNumero(item['dbMontoAPagarEuro']) + "</td> \
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarBolivar']) + "</td> \
-												<td style='background-color:#c2c2d6;'>" + item['dbObservation'] + "</td> \
+												<td style='background-color:#c2c2d6;' class='noExl'>" + item['dbObservation'] + "</td> \
 												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 							
@@ -1436,10 +1437,10 @@
 								indicatorPaid = 1;                            
 							}
 							detailLine += "<tr id=tra" + item['dbId'] + "> \
-								<td><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " disabled></td> \
+								<td class='noExl'><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " disabled></td> \
 								<td>" + item['dbMonthlyPayment'] + "</td> \
-								<td><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + "></td> \
-								<td><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
+								<td class='noExl'><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + "></td> \
+								<td class='noExl'><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
 		
 							if (item['dbMontoPendienteDolar'] < 0)
 							{
@@ -1447,8 +1448,8 @@
 												<td style='color: red;'>" + item['dbMontoAPagarDolar'] + "</td> \
 												<td style='color: red;'>" + item['dbMontoAPagarEuro'] + "</td> \
 												<td style='color: red;'>" + item['dbMontoAPagarBolivar'] + "</td> \
-												<td style='color: red;'>Hacer NC</td> \
-												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
+												<td style='color: red;' class='noExl'>Hacer NC</td> \
+												<td class='noExl'><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 							else
 							{
@@ -1456,8 +1457,8 @@
 												<td>" + formatoNumero(item['dbMontoAPagarDolar']) + "</td> \
 												<td style='color: blue;'>" + formatoNumero(item['dbMontoAPagarEuro']) + "</td> \
 												<td style='color: red;'>" + formatoNumero(item['dbMontoAPagarBolivar']) + "</td> \
-												<td>" + item['dbObservation'] + "</td> \
-												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
+												<td class='noExl'>" + item['dbObservation'] + "</td> \
+												<td class='noExl'><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 						}
                     }
@@ -2972,7 +2973,8 @@
 								montoAPagarBolivar = dosDecimales(montoAPagarDolar * dollarExchangeRate);	
 							}
 							else
-							{								
+							{
+								/*								
 								if (anoEscolarMensualidad == anoEscolarActual)
 								{
 									tarifaDolar = dosDecimales(tarifaDolar * discountFamily);
@@ -2981,7 +2983,8 @@
 								{
 									tarifaDolar = dosDecimales(tarifaDolar * descuentoAnoAnterior);
 								}
-								
+								*/
+
 								montoPendienteDolar = dosDecimales(tarifaDolar - montoDolar);
 								montoAPagarDolar = montoPendienteDolar;
 								montoAPagarEuro = dosDecimales(montoAPagarDolar * tasaDolarEuro);
@@ -3919,9 +3922,9 @@
     
             exclude: ".noExl",
         
-            name: "",
+            name: "estado_cuenta",
         
-            filename: "estado-cuenta" 
+            filename: "estado_cuenta" 
     
         });
     });

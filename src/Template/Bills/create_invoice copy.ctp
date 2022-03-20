@@ -112,7 +112,7 @@
                 </div>
             </div>
             <br />
-            <div class="row panel panel-default">
+            <div class="row panel panel-default estado-cuenta">
                 <div class="col-md-3">
                     <br />
                     <p><b>Alumnos relacionados:</b></p>
@@ -144,15 +144,15 @@
                                 <table class="table table-striped table-hover" >
                                     <thead>
                                         <tr>
-											<th scope="col" style="width:5%"></th>
+											<th scope="col" style="width:5%" class="noExl"></th>
                                             <th scope="col" style="font-size: 11px; width:15%">Concepto</th>
-											<th scope="col" style="font-size: 11px; width:15%">Cuota($)</th>
-                                            <th scope="col" style="font-size: 11px; width:15%">Abonado($)</th>
+											<th scope="col" style="font-size: 11px; width:15%" class="noExl">Cuota($)</th>
+                                            <th scope="col" style="font-size: 11px; width:15%" class="noExl">Abonado($)</th>
 											<th scope="col" style="font-size: 11px; width:10%">Pendiente($)</th>
 											<th scope="col" style="font-size: 11px; width:10%">A pagar($)</th>
 											<th scope="col" style="color: blue; font-size: 10px; width:10%">A pagar(P)</th>
 											<th scope="col" style="color: red; font-size: 10px; width:10%">A pagar(Bs.)</th>
-											<th scope="col" style="font-size: 11px; width:10%">Observación</th>
+											<th scope="col" style="font-size: 11px; width:10%" class="noExl">Observación</th>
 											<th scope="col" class="noverScreen"></th>
                                         </tr>
                                     </thead>
@@ -170,6 +170,7 @@
 									<button id="mark-quotas" class="btn btn-success" disabled>Cobrar</button>
 									<button id="uncheck-quotas" class="btn btn-success" disabled>Reversar</button>  
 									<button id="adjust-fee" class="btn btn-success" disabled>Ajustar</button>
+									<button id="imprimir-estado-cuenta" class="btn btn-success">Imprimir estado de cuenta</button>
 								</p>
 							</div>
 							<div id="botones-notas" class="noverScreen">
@@ -562,6 +563,7 @@
     var totalBalance = 0;
 	var totalBalanceEuros = 0;
 	var totalBalanceBolivares = 0;
+	
 	var saldoPagosRealizados = 0;
 	var discountMode = '';
 	var discountAmount = 0;
@@ -1395,10 +1397,10 @@
                         {
 							studentBalance = studentBalance + item['dbMontoAPagarDolar'];
 							detailLine += "<tr id=tra" + item['dbId'] + "> \
-								<td style='background-color:#c2c2d6;'><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " checked='checked' disabled></td> \
+								<td style='background-color:#c2c2d6;' class='noExl'><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " checked='checked' disabled></td> \
 								<td style='background-color:#c2c2d6;'>" + item['dbMonthlyPayment'] + "</td> \
-								<td style='background-color:#c2c2d6;'><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + " disabled></td> \
-								<td style='background-color:#c2c2d6;'><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
+								<td style='background-color:#c2c2d6;' class='noExl'><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + " disabled></td> \
+								<td style='background-color:#c2c2d6;' class='noExl'><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
 		
 							if (item['dbMontoPendienteDolar'] < 0)
 							{
@@ -1406,7 +1408,7 @@
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarDolar']) + "</td> \
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarEuro']) + "</td> \
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarBolivar']) + "</td> \
-												<td style='background-color:#c2c2d6; color: red;'>Hacer NC</td> \
+												<td style='background-color:#c2c2d6; color: red;' class='noExl'>Hacer NC</td> \
 												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 							else
@@ -1415,7 +1417,7 @@
 												<td style='background-color:#c2c2d6;'>" + formatoNumero(item['dbMontoAPagarDolar']) + "</td> \
 												<td style='background-color:#c2c2d6; color: blue;'>" + formatoNumero(item['dbMontoAPagarEuro']) + "</td> \
 												<td style='background-color:#c2c2d6; color: red;'>" + formatoNumero(item['dbMontoAPagarBolivar']) + "</td> \
-												<td style='background-color:#c2c2d6;'>" + item['dbObservation'] + "</td> \
+												<td style='background-color:#c2c2d6;' class='noExl'>" + item['dbObservation'] + "</td> \
 												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 							
@@ -1435,10 +1437,10 @@
 								indicatorPaid = 1;                            
 							}
 							detailLine += "<tr id=tra" + item['dbId'] + "> \
-								<td><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " disabled></td> \
+								<td class='noExl'><input type='checkbox' id=tr" + item['dbId'] + " name='" + item['dbMonthlyPayment'] + "' value=" + item['dbMontoPendienteDolar'] + " disabled></td> \
 								<td>" + item['dbMonthlyPayment'] + "</td> \
-								<td><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + "></td> \
-								<td><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
+								<td class='noExl'><input type='text' id=am" + item['dbId'] + " class='form-control modifiable-fee alternative-decimal-separator' value=" + formatoNumero(item['dbTarifaDolar']) + "></td> \
+								<td class='noExl'><input type='text' class='form-control amount-paid' value=" + formatoNumero(item['dbMontoAbonadoDolar']) + " disabled></td>";
 		
 							if (item['dbMontoPendienteDolar'] < 0)
 							{
@@ -1446,8 +1448,8 @@
 												<td style='color: red;'>" + item['dbMontoAPagarDolar'] + "</td> \
 												<td style='color: red;'>" + item['dbMontoAPagarEuro'] + "</td> \
 												<td style='color: red;'>" + item['dbMontoAPagarBolivar'] + "</td> \
-												<td style='color: red;'>Hacer NC</td> \
-												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
+												<td style='color: red;' class='noExl'>Hacer NC</td> \
+												<td class='noExl'><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 							else
 							{
@@ -1455,8 +1457,8 @@
 												<td>" + formatoNumero(item['dbMontoAPagarDolar']) + "</td> \
 												<td style='color: blue;'>" + formatoNumero(item['dbMontoAPagarEuro']) + "</td> \
 												<td style='color: red;'>" + formatoNumero(item['dbMontoAPagarBolivar']) + "</td> \
-												<td>" + item['dbObservation'] + "</td> \
-												<td><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
+												<td class='noExl'>" + item['dbObservation'] + "</td> \
+												<td class='noExl'><input type='number' class='form-control original-amount noverScreen' value=" + item['dbTarifaDolar'] + "></td><td></td></tr>";
 							}
 						}
                     }
@@ -2004,6 +2006,11 @@
 					{
 						biggestYearFrom = parseInt(item['dbMonthlyPayment'].substring(10, 14));
 					}
+					else if (item['dbMonthlyPayment'].substring(0, 3) == "Sep")
+					{
+						biggestYearFrom = parseInt(item['dbMonthlyPayment'].substring(4, 8));
+					}
+
 					if (item['dbScholarship'] == 1 || item['dbDescuentoAlumno'] < 1)
 					{
 						cuotasAlumnoBecado++;
@@ -2243,31 +2250,11 @@
 			sobrante = 0;
 		}
 		
-		porPagarEuros = dosDecimales(porPagar * tasaDolarEuro);
-		sobranteEuros = dosDecimales(sobrante * tasaDolarEuro);
+		porPagarEuros = dosDecimales(parseFloat(porPagar.toFixed(2)) * tasaDolarEuro);
+		sobranteEuros = dosDecimales(parseFloat(sobrante.toFixed(2)) * tasaDolarEuro);
 			
-		if (deudaMenosPagadoBolivares > 0)
-		{
-			porPagarBolivares = deudaMenosPagadoBolivares;
-			sobranteBolivares = 0;
-		}
-		else if (deudaMenosPagadoBolivares < 0)
-		{
-			porPagarBolivares = 0;
-			if (saldoRepresentanteBolivares < balanceDescuentoBolivares)
-			{
-				sobranteBolivares = dosDecimales(deudaMenosPagadoBolivares * -1);
-			}
-			else
-			{
-				sobranteBolivares = 0;
-			}
-		}
-		else
-		{
-			porPagarBolivares = 0;
-			sobranteBolivares = 0;
-		}
+		porPagarBolivares = dosDecimales(parseFloat(porPagar.toFixed(2)) * dollarExchangeRate);
+		sobranteBolivares = dosDecimales(parseFloat(sobrante.toFixed(2)) * dollarExchangeRate);
 		
 		$('#por-pagar-dolar').html(formatoNumero(porPagar));
 		$('#por-pagar-euro').html(formatoNumero(porPagarEuros));
@@ -2696,7 +2683,9 @@
                     $('#fiscal-address').val(fiscalAddress);
                     $('#tax-phone').val(taxPhone);
                     $('#email').val(customerEmail);
-                        						
+
+					contadorBecaEmpleado = 0;
+
                     $.each(response.data.students, function(key, value) 
                     {
 						julioExonerado = 0;
@@ -2839,6 +2828,19 @@
 										return false;
 									}
 								});
+								
+								if (tipoDescuento == "Empleado")
+								{
+									contadorBecaEmpleado++;
+								}
+
+								if (contadorBecaEmpleado > 1)
+								{
+									indicadorImpresion = 1;
+								}
+
+								console.log('transactionType ' + transactionType + ' tipoDescuento ' + tipoDescuento + ' contadorBecaEmpleado ' + contadorBecaEmpleado + ' indicadorImpresion ' + indicadorImpresion);
+
 							}
 
 							transactionAmount = dosDecimales(value2.amount);
@@ -2872,15 +2874,16 @@
 
 							if (paidOut == true)
 							{
+								/*
 								if (montoDolar === null)
-								{
+								{*/
 									montoDolar = 0;
 									montoPendienteDolar = 0;
 									montoAPagarDolar = 0;
 									montoAPagarEuro = 0;
 									montoAPagarBolivar = 0;
 									indicadorImpresion = 1;
-								}
+								/*}
 								else
 								{						
 									if (transactionType == "Mensualidad")
@@ -2960,7 +2963,7 @@
 											indicadorImpresion = 1;
 										}									
 									}
-								}
+								}*/
 							}
 							else if (transactionType != 'Mensualidad')
 							{
@@ -2970,7 +2973,8 @@
 								montoAPagarBolivar = dosDecimales(montoAPagarDolar * dollarExchangeRate);	
 							}
 							else
-							{								
+							{
+								/*								
 								if (anoEscolarMensualidad == anoEscolarActual)
 								{
 									tarifaDolar = dosDecimales(tarifaDolar * discountFamily);
@@ -2979,7 +2983,8 @@
 								{
 									tarifaDolar = dosDecimales(tarifaDolar * descuentoAnoAnterior);
 								}
-								
+								*/
+
 								montoPendienteDolar = dosDecimales(tarifaDolar - montoDolar);
 								montoAPagarDolar = montoPendienteDolar;
 								montoAPagarEuro = dosDecimales(montoAPagarDolar * tasaDolarEuro);
@@ -3910,6 +3915,19 @@
 			diferenciaBolivares = 22.5;
 			uploadTransactions();
 		});
+
+		$("#imprimir-estado-cuenta").click(function(){
+        
+        $(".estado-cuenta").table2excel({
+    
+            exclude: ".noExl",
+        
+            name: "estado_cuenta",
+        
+            filename: "estado_cuenta" 
+    
+        });
+    });
 		
     }); 
 

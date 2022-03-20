@@ -68,10 +68,9 @@ class Student extends Entity
         'id' => false,
         'profile_photo' => true,
         'profile_photo_dir' => true
-
     ];
     
-        protected function _getFullName()
+    protected function _getFullName()
     {
         return $this->_properties['surname'] . ' ' .
             $this->_properties['second_surname'] . ' ' .

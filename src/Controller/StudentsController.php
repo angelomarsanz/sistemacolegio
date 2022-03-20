@@ -50,47 +50,36 @@ class StudentsController extends AppController
     
     public function testFunction()
     {	
-		/*
-		$this->log("Something didn't work!"); 
-		$mesesTarifas = $this->mesesTarifas(0);
+		// $tablaEstudiante = TableRegistry::get('Students');
 
-		$otrasTarifas = $this->otrasTarifas(0);
+		$tablaEstudiante = TableRegistry::getTableLocator()->get('Students');
 
-		$this->set(compact('mesesTarifas', 'otrasTarifas'));
-        $this->set('_serialize', ['mesesTarifas', 'otrasTarifas']);
+        $estudiante = $tablaEstudiante->get(76);
 		
-		$this->loadModel('Studenttransactions');
-		*/
+		// $estudiante = $tablaEstudiante->newEntity();
 
-		$this->loadModel('Studenttransactions');
+		// $estudiantes = $tablaEstudiante->find('all')->where(['id' => 76]);
 
-		$estudiantes = $this->Students->find('all')->where(['Students.id >' => 1, 'Students.student_condition' => 'Regular', 'Students.balance <' => '2021', 'Students.discount >' => 0]);
+		// $estudiante = $estudiantes->first();
 
-		$contadorEstudiantes = $estudiantes->count();
-
-		$this->Flash->success(__('Estudiantes no inscritos en el 2021 ' . $contadorEstudiantes));
-
-		if ($contadorEstudiantes > 0)
+		/* $estudiante->llamada_emergencia = '76';
+		if ($this->Students->save($estudiante)) 
 		{
-			foreach ($estudiantes as $estudiante)
-			{
-				$transaccionesEstudiante = $this->Studenttransactions->find('all')->where(['student_id' => $estudiante->id, 'transaction_description' => 'Sep 2021', 'amount_dollar >' => 0]);
-
-				$contadorTransacciones = $transaccionesEstudiante->count();
-
-				if ($contadorTransacciones > 0)
-				{
-					foreach ($transaccionesEstudiante as $transaccion)
-					{
-						$this->Flash->success(__('id Estudiante que pagó matrícula 2021 ' . $transaccion->student_id));
-					}
-				}
-			}
+			$this->Flash->success(__('El estudiante fue actualizado'));
+			$estudianteActualizado = $this->Students->get(76);
+			$this->Flash->success(__('Campo llamada de emergencia: después de la actualización' . $estudianteActualizado->llamada_emergencia));
+		} 
+		else 
+		{
+			$this->Flash->error(__('El estudiante no fue actualizdo'));
 		}
+		*/
+		$this->set(compact('estudiante'));
     }
 	
     public function testFunction2()
     {
+		
 		$this->loadModel('Studenttransactions');
 
 		$contadorEstudiantesSinSeptiembre = 0;

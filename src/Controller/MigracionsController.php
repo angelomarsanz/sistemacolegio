@@ -188,8 +188,10 @@ class MigracionsController extends AppController
     public function migracionActualizacionEstudiante()
     {
         $contadorMigracion = 0;
-        $alumnosActualizados = [];
-        $alumnosNoActualizados = [];
+        $contadorActualizados = 0;
+        $estudiantesActualizados = [];
+        $estudiantesNoActualizados = [];
+        $estudiantesDuplicados = [];
 
         $this->loadModel('Students');
 
@@ -197,31 +199,17 @@ class MigracionsController extends AppController
 
         $estudiantes = $this->Students->find('all')->where(['id >' => 1]);
 
-        $alumnoAnterior = '';
-        $alumnosActual = '';
+        $identificacionEstudianteAnterior = '';
+        $identificacionEstudianteActual = '';
         $contadorRegistros = 0;
 
         foreach ($migraciones as $migracion):
-            if ($contadorRegistros == 0):
-                $alumnoActual = $migracion->campo_39;
-            else:
-                $alumnoAnterior = $alumnoActual;
-                $alumnoActual = $migracion->campo_39;
-            endif;
-            $contadorRegistros++;
-            if ($anteriorAnterior != $alumnoActual): 
+            $identificacionEstudianteActual = $migracion->campo_39;
+            if ($identificacionEstudianteActual != $identificacionEstudianteAnterior): 
                 foreach ($estudiantes as $estudiante):
-                    if ($estudiante->identity_card == $numeroIdentificacion):
-                        $representanteGet = $this->Parentsandguardians->get($representante->id);
-                        $representanteGet->second_name = $migracion->campo_4 ? $migracion->campo_4 : '';
-                        $representanteGet->second_surname = $migracion->campo_6 ? $migracion->campo_6: '';
-                        $representanteGet->workplace = $migracion->campo_7 ? $migracion->campo_7 : '';
-                        $representanteGet->address = $migracion->campo_8 ? $migracion->campo_8 : '';
-                        $representanteGet->work_phone = $migracion->campo_9 ? $migracion->campo_9 : '';
-                        $representanteGet->workplace = $migracion->campo_10 ? $migracion->campo_10 : '';
-                        $representanteGet->landline = $migracion->campo_11 ? $migracion->campo_11 : '';
-                        $representanteGet->identidy_card_father = $migracion->campo_12 ? $migracion->campo_12 : '';
-                        $representanteGet->type_of_identification_father = $migracion->campo_13 ? $migracion->campo_13 : '';
+                    if ($estudiante->identity_card == $identificacionEstudianteActual):
+                        $estudianteActualizar = $this->Students->get($estudiante->id);
+                        $estudianteActualizar->family_bond_guardian_student = $migracion->campo_30 ? $migracion->campo_30 : '';
                         if ($migracion->campo_14 != null):
                             $nombrePadre = explode(" ", $migracion->campo_14);
 
@@ -230,38 +218,30 @@ class MigracionsController extends AppController
                             switch ($cantidadElementosPadre) 
                             {
                                 case 1:
-                                    $representanteGet->first_name_father = $nombrePadre[0];
+                                    $estudianteActualizar->first_name_father = $nombrePadre[0];
                                     break;
                                 case 2:
-                                    $representanteGet->first_name_father = $nombrePadre[0];
-                                    $representanteGet->surname_father = $nombrePadre[1];
+                                    $estudianteActualizar->first_name_father = $nombrePadre[0];
+                                    $estudianteActualizar->surname_father = $nombrePadre[1];
                                     break;
                                 case 3:
-                                    $representanteGet->first_name_father = $nombrePadre[0];
-                                    $representanteGet->second_name_father = $nombrePadre[1];
-                                    $representanteGet->surname_father = $nombrePadre[2];
+                                    $estudianteActualizar->first_name_father = $nombrePadre[0];
+                                    $estudianteActualizar->second_name_father = $nombrePadre[1];
+                                    $estudianteActualizar->surname_father = $nombrePadre[2];
                                     break;
                                 case 4:
-                                    $representanteGet->first_name_father = $nombrePadre[0];
-                                    $representanteGet->second_name_father = $nombrePadre[1];
-                                    $representanteGet->surname_father = $nombrePadre[2];
-                                    $representanteGet->second_surname_father = $nombrePadre[3];
+                                    $estudianteActualizar->first_name_father = $nombrePadre[0];
+                                    $estudianteActualizar->second_name_father = $nombrePadre[1];
+                                    $estudianteActualizar->surname_father = $nombrePadre[2];
+                                    $estudianteActualizar->second_surname_father = $nombrePadre[3];
                                     break;
                             }
                         else:
-                            $representanteGet->first_name_father = '';
-                            $representanteGet->second_name_father = '';
-                            $representanteGet->surname_father = '';
-                            $representanteGet->second_surname_father = '';
+                            $estudianteActualizar->first_name_father = '';
+                            $estudianteActualizar->second_name_father = '';
+                            $estudianteActualizar->surname_father = '';
+                            $estudianteActualizar->second_surname_father = '';
                         endif;
-                        $representanteGet->address_father = $migracion->campo_15 ? $migracion->campo_15 : '';
-                        $representanteGet->landline_father = $migracion->campo_16 ? $migracion->campo_16 : '';
-                        $representanteGet->lugar_trabajo_padre = $migracion->campo_17 ? $migracion->campo_17 : '';
-                        $representanteGet->direccion_trabajo_padre = $migracion->campo_18 ? $migracion->campo_18 : '';
-                        $representanteGet->profession_father = $migracion->campo_19 ? $migracion->campo_19 : '';
-                        $representanteGet->work_phone_father = $migracion->campo_20 ? $migracion->campo_20 : '';
-                        $representanteGet->identidy_card_mother = $migracion->campo_21 ? $migracion->campo_21 : '';
-                        $representanteGet->type_of_identification_mother = $migracion->campo_22 ? $migracion->campo_22 : '';
 
                         if ($migracion->campo_23 != null):
                             $nombreMadre = explode(" ", $migracion->campo_23);
@@ -271,81 +251,83 @@ class MigracionsController extends AppController
                             switch ($cantidadElementosMadre) 
                             {
                                 case 1:
-                                    $representanteGet->first_name_mother = $nombreMadre[0];
+                                    $estudianteActualizar->first_name_mother = $nombreMadre[0];
                                     break;
                                 case 2:
-                                    $representanteGet->first_name_mother = $nombreMadre[0];
-                                    $representanteGet->surname_mother = $nombreMadre[1];
+                                    $estudianteActualizar->first_name_mother = $nombreMadre[0];
+                                    $estudianteActualizar->surname_mother = $nombreMadre[1];
                                     break;
                                 case 3:
-                                    $representanteGet->first_name_mother = $nombreMadre[0];
-                                    $representanteGet->second_name_mother = $nombreMadre[1];
-                                    $representanteGet->surname_mother = $nombreMadre[2];
+                                    $estudianteActualizar->first_name_mother = $nombreMadre[0];
+                                    $estudianteActualizar->second_name_mother = $nombreMadre[1];
+                                    $estudianteActualizar->surname_mother = $nombreMadre[2];
                                     break;
                                 case 4:
-                                    $representanteGet->first_name_mother = $nombreMadre[0];
-                                    $representanteGet->second_name_mother = $nombreMadre[1];
-                                    $representanteGet->surname_mother = $nombreMadre[2];
-                                    $representanteGet->second_surname_mother = $nombreMadre[3];
+                                    $estudianteActualizar->first_name_mother = $nombreMadre[0];
+                                    $estudianteActualizar->second_name_mother = $nombreMadre[1];
+                                    $estudianteActualizar->surname_mother = $nombreMadre[2];
+                                    $estudianteActualizar->second_surname_mother = $nombreMadre[3];
                                     break;
                             }
                         else:
-                            $representanteGet->first_name_mother = '';
-                            $representanteGet->second_name_mother = '';
-                            $representanteGet->surname_mother = '';
-                            $representanteGet->second_surname_mother = '';                            
+                            $estudianteActualizar->first_name_mother = '';
+                            $estudianteActualizar->second_name_mother = '';
+                            $estudianteActualizar->surname_mother = '';
+                            $estudianteActualizar->second_surname_mother = '';                            
                         endif;
 
-                        $representanteGet->profession_mother = $migracion->campo_24 ? $migracion->campo_24 : '';
-                        $representanteGet->address_mother = $migracion->campo_25 ? $migracion->campo_25 : '';
-                        $representanteGet->landline_mother = $migracion->campo_26 ? $migracion->campo_26 : '';
-                        $representanteGet->lugar_trabajo_madre = $migracion->campo_27 ? $migracion->campo_27 : '';
-                        $representanteGet->direccion_trabajo_madre = $migracion->campo_28 ? $migracion->campo_28 : '';
-                        $representanteGet->work_phone_mother = $migracion->campo_29 ? $migracion->campo_29 : '';
-                        $representanteGet->family_tie = $migracion->campo_30 ? $migracion->campo_30 : '';
-                        $representanteGet->llamada_emergencia = $migracion->campo_31 ? $migracion->campo_31 : '';
-                        $representanteGet->cell_phone = $migracion->campo_32 ? $migracion->campo_32 : '';
-                        $representanteGet->cell_phone_father = $migracion->campo_33 ? $migracion->campo_33 : '';
-                        $representanteGet->cell_phone_mother = $migracion->campo_34 ? $migracion->campo_34 : '';
-                        $representanteGet->profession = $migracion->campo_35 ? $migracion->campo_35 : '';
-                        if ($migracion->campo_36 != null):
-                            $representanteGet->email = $migracion->campo_36;
-                        endif;
-                        $representanteGet->email_father = $migracion->campo_37 ? $migracion->campo_37 : '';
-                        $representanteGet->email_mother = $migracion->campo_38 ? $migracion->campo_38 : '';
-                        if ($this->Parentsandguardians->save($representanteGet)):
-                            $contadorMigracion++;
-                            $representantesActualizados[] = 
+                        $estudianteActualizar->tipo_identificacion_padre = $migracion->campo_13 ? $migracion->campo_13 : '';
+                        $estudianteActualizar->numero_identificacion_padre = $migracion->campo_12 ? $migracion->campo_12 : '';
+                        $estudianteActualizar->direccion_residencia_padre = $migracion->campo_15 ? $migracion->campo_15 : '';
+                        $estudianteActualizar->email_padre = $migracion->campo_37 ? $migracion->campo_37 : '';
+                        $estudianteActualizar->telefono_fijo_padre = $migracion->campo_16 ? $migracion->campo_16 : '';
+                        $estudianteActualizar->celular_padre = $migracion->campo_33 ? $migracion->campo_33 : '';
+                        $estudianteActualizar->telefono_trabajo_padre = $migracion->campo_20 ? $migracion->campo_20 : '';
+                        $estudianteActualizar->profesion_padre = $migracion->campo_19 ? $migracion->campo_19 : '';
+                        $estudianteActualizar->lugar_trabajo_padre = $migracion->campo_17 ? $migracion->campo_17 : '';
+                        $estudianteActualizar->direccion_trabajo_padre = $migracion->campo_18 ? $migracion->campo_18 : '';
+                        $estudianteActualizar->tipo_identificacion_madre = $migracion->campo_22 ? $migracion->campo_22 : '';
+                        $estudianteActualizar->numero_identificacion_madre = $migracion->campo_21 ? $migracion->campo_21 : '';
+                        $estudianteActualizar->direccion_residencia_madre = $migracion->campo_25 ? $migracion->campo_25 : '';
+                        $estudianteActualizar->email_madre = $migracion->campo_38 ? $migracion->campo_38 : '';
+                        $estudianteActualizar->telefono_fijo_madre = $migracion->campo_26 ? $migracion->campo_26 : '';
+                        $estudianteActualizar->celular_madre = $migracion->campo_34 ? $migracion->campo_34 : '';
+                        $estudianteActualizar->telefono_trabajo_madre = $migracion->campo_29 ? $migracion->campo_29 : '';
+                        $estudianteActualizar->profesion_madre = $migracion->campo_24 ? $migracion->campo_24 : '';
+                        $estudianteActualizar->lugar_trabajo_madre = $migracion->campo_27 ? $migracion->campo_27 : '';
+                        $estudianteActualizar->direccion_trabajo_madre = $migracion->campo_28 ? $migracion->campo_28 : '';
+                        $estudianteActualizar->llamada_emergencia = $migracion->campo_31 ? $migracion->campo_31 : '';
+
+                        if ($this->Students->save($estudianteActualizar)):
+                            $estudiantesActualizados[] = 
                                 [
-                                    'cedula'    => $representanteGet->type_of_identification.'-'.$representanteGet->identidy_card,
-                                    'nombre'    => $representanteGet->surname.' '.$representanteGet->first_name,
-                                    'id'        => $representanteGet->id,
+                                    'cedula'    => $estudianteActualizar->identity_card,
+                                    'nombre'    => $estudianteActualizar->surname.' '.$estudianteActualizar->first_name,
+                                    'id'        => $estudianteActualizar->id
                                 ];
+                            $contadorActualizados++;
                         else:
-                            $representantesNoActualizados[] = 
-                                [
-                                    'cedula'    => $representanteGet->type_of_identification.'-'.$representanteGet->identidy_card,
-                                    'nombre'    => $representanteGet->surname.' '.$representanteGet->first_name,
-                                    'id'        => $representanteGet->id,
-                                ];
+                            $estudiantesNoActualizados[] = 
+                            [
+                                'cedula'    => $estudianteActualizar->$estudiante->identity_card,
+                                'nombre'    => $estudianteActualizar->surname.' '.$estudianteActualizar->first_name,
+                                'id'        => $estudianteActualizar->id,
+                            ];
                         endif; 
                         break;  
                     endif;
                 endforeach;
             else:
-                $representantesDuplicados[] = 
-                                [
-                                    'cedula'    => $representanteGet->type_of_identification.'-'.$representanteGet->identidy_card,
-                                    'nombre'    => $representanteGet->surname.' '.$representanteGet->first_name,
-                                    'id'        => $representanteGet->id,
-                                ];
+                $estudiantesDuplicados[] = $identificacionEstudianteActual;
             endif;
+            $identificacionEstudianteAnterior = $identificacionEstudianteActual;
             /*
-            if ($contadorMigracion == 1):
+            if ($contadorActualizados == 1):
                 break;
             endif;
             */
+            $contadorMigracion++;
         endforeach;
-        $this->set(compact('representantesActualizados', 'representantesNoActualizados'));
+        $this->set(compact('estudiantesActualizados', 'estudiantesNoActualizados', 'estudiantesDuplicados', 'estudianteActualizar'));
     }
 }

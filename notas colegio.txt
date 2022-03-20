@@ -1,3 +1,13 @@
+En el create invoice a la tabla transacciones se van a agregar las columnas: porcentaje de descuento, monto descuento, cuota menos descuento
+
+Al final al imprimir el total balance se recorre la tabla se suma la columna monto descuento y se muestra
+
+Cuando el usuario hace un ajuste recorro la tabla de acuerdo con la columna "monto menos descuento" y descuento el faltante de la última cuota 
+
+---
+
+Respecto a las facturas anuladas, deben visualizarse el día que se anula. No el día de la fecha de la emisión de la factura
+
 La factura Nro. 41719 (id 216), tiene un error: En el item exonerado se refleja 0,01 y debería ser 0,00. Es un niño nuevo Sanabria Andrés, que se le exoneró Septiembre, porque se inscribió tarde
 
 Videos Enzo Mollericona

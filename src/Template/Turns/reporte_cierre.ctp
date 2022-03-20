@@ -18,6 +18,7 @@
 	}
 }
 </style>
+<?php $contadorLineasCuotas = 1; ?>
 <div name="reporte_cierre" id="reporte-cierre" class="container" style="font-size: 12px; line-height: 14px;">
 	<br />
     <div class="row">
@@ -393,6 +394,7 @@
 						</div>
 					</div>
 				</div>
+				<?php $contadorLineasCuotas++; ?>
 				<div>
 					<div class="row">
 						<div class="col-md-12">					
@@ -409,12 +411,13 @@
 										<th style="text-align: center;"><b>Observación</b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 								<tbody>				
 									<?php $contadorMatriculaActual = 0;
 									$totalMatriculaActual = 0; 
 									$actualAnoEscolar = $schools->current_school_year;
 									foreach ($soloFacturas as $factura):
-										if (substr($factura->school_year, 12, 4) == $actualAnoEscolar):
+										if (substr($factura->school_year, 13, 4) == $actualAnoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
 													if ($concepto['concepto'] == 'Matrícula '.$actualAnoEscolar): 
@@ -429,6 +432,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
+														<?php $contadorLineasCuotas++; ?>
 														<?php $totalMatriculaActual = $totalMatriculaActual + $concepto['monto'];
 													endif;
 												endif;
@@ -445,13 +449,22 @@
 										<td style="text-align: center;"><?= number_format($totalMatriculaActual, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
+									<?php $contadorLineasCuotas++; ?>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 
-				<div>
+				<?php
+				if ($contadorLineasCuotas >= 30):
+					$contadorLineasCuotas = 1 ?>
+					<div class="saltopagina">
+				<?php
+				else: ?>		
+					<div>
+				<?php
+				endif; ?>
 					<div class="row">
 						<div class="col-md-12">					
 							<table>
@@ -464,6 +477,7 @@
 									</tr>
 								</thead>
 							</table>
+							<?php $contadorLineasCuotas++; ?>
 						</div>
 					</div>
 				</div>
@@ -483,12 +497,13 @@
 										<th style="text-align: center;"><b>Observación</b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 								<tbody>				
 									<?php $contadorMensualidadesActual = 0;
 									$totalMensualidadesActual = 0; 
 									$actualAnoEscolar = $schools->current_school_year;
 									foreach ($soloFacturas as $factura):
-										if (substr($factura->school_year, 12, 4) == $actualAnoEscolar):
+										if (substr($factura->school_year, 13, 4) == $actualAnoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
 													if ($concepto['concepto'] != 'Matrícula '.$actualAnoEscolar): 
@@ -503,6 +518,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
+														<?php $contadorLineasCuotas++; ?>
 														<?php $totalMensualidadesActual = $totalMensualidadesActual + $concepto['monto'];
 													endif;
 												endif;
@@ -519,13 +535,22 @@
 										<td style="text-align: center;"><?= number_format($totalMensualidadesActual, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
+									<?php $contadorLineasCuotas++; ?>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 
-				<div class="saltopagina">
+				<?php
+				if ($contadorLineasCuotas >= 30):
+					$contadorLineasCuotas = 1 ?>
+					<div class="saltopagina">
+				<?php
+				else: ?>		
+					<div>
+				<?php
+				endif; ?>
 					<div class="row">
 						<div class="col-md-12">					
 							<table>
@@ -537,6 +562,7 @@
 										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Matrícula Próximo Año Escolar' ?></b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 							</table>
 						</div>
 					</div>
@@ -557,12 +583,13 @@
 										<th style="text-align: center;"><b>Observación</b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 								<tbody>				
 									<?php $contadorMatriculaProximo = 0;
 									$totalMatriculaProximo = 0; 
 									$proximoAñoEscolar = $schools->current_school_year + 1;
 									foreach ($soloFacturas as $factura):
-										if (substr($factura->school_year, 12, 4) == $proximoAñoEscolar):
+										if (substr($factura->school_year, 13, 4) == $proximoAñoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
 													if ($concepto['concepto'] == 'Matrícula '.$proximoAñoEscolar): 
@@ -577,6 +604,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
+														<?php $contadorLineasCuotas++; ?>
 														<?php $totalMatriculaProximo = $totalMatriculaProximo + $concepto['monto'];
 													endif;
 												endif;
@@ -593,13 +621,22 @@
 										<td style="text-align: center;"><?= number_format($totalMatriculaProximo, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
+									<?php $contadorLineasCuotas++; ?>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 
-				<div>
+				<?php
+				if ($contadorLineasCuotas >= 30):
+					$contadorLineasCuotas = 1 ?>
+					<div class="saltopagina">
+				<?php
+				else: ?>		
+					<div>
+				<?php
+				endif; ?>
 					<div class="row">
 						<div class="col-md-12">					
 							<table>
@@ -611,6 +648,7 @@
 										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Mensualidades Próximo Año Escolar' ?></b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 							</table>
 						</div>
 					</div>
@@ -631,12 +669,13 @@
 										<th style="text-align: center;"><b>Observación</b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 								<tbody>				
 									<?php $contadorMensualidadesProximo = 0;
 									$totalMensualidadesProximo = 0;
 									$proximoAñoEscolar = $schools->current_school_year + 1; 
 									foreach ($soloFacturas as $factura):
-										if (substr($factura->school_year, 12, 4) == $proximoAñoEscolar):
+										if (substr($factura->school_year, 13, 4) == $proximoAñoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
 													if ($concepto['concepto'] != 'Matrícula '.$proximoAñoEscolar): 
@@ -651,6 +690,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
+														<?php $contadorLineasCuotas++; ?>
 														<?php $totalMensualidadesProximo = $totalMensualidadesProximo + $concepto['monto'];
 													endif;
 												endif;
@@ -667,13 +707,22 @@
 										<td style="text-align: center;"><?= number_format($totalMensualidadesProximo, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
+									<?php $contadorLineasCuotas++; ?>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 
-				<div class="saltopagina">
+				<?php
+				if ($contadorLineasCuotas >= 30):
+					$contadorLineasCuotas = 1 ?>
+					<div class="saltopagina">
+				<?php
+				else: ?>		
+					<div>
+				<?php
+				endif; ?>					
 					<div class="row">
 						<div class="col-md-12">					
 							<table>
@@ -682,9 +731,10 @@
 										<th>&nbsp;</th>
 									</tr>	
 									<tr>
-										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Matrícula Años Anteriores' ?></b></th>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Matrícula Años Escolares Anteriores' ?></b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 							</table>
 						</div>
 					</div>
@@ -705,12 +755,13 @@
 										<th style="text-align: center;"><b>Observación</b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 								<tbody>				
 									<?php $contadorMatriculaAnterior = 0;
 									$totalMatriculaAnterior = 0; 
 									$actualAñoEscolar = $schools->current_school_year;
 									foreach ($soloFacturas as $factura):
-										if (substr($factura->school_year, 12, 4) < $actualAñoEscolar):
+										if (substr($factura->school_year, 13, 4) < $actualAñoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
 													if (substr($concepto['concepto'], 0, 8) == 'Matrícul'): 
@@ -725,6 +776,7 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
+														<?php $contadorLineasCuotas++; ?>
 														<?php $totalMatriculaAnterior = $totalMatriculaAnterior + $concepto['monto'];
 													endif;
 												endif;
@@ -741,13 +793,22 @@
 										<td style="text-align: center;"><?= number_format($totalMatriculaAnterior, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
+									<?php $contadorLineasCuotas++; ?>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 
-				<div>
+				<?php
+				if ($contadorLineasCuotas >= 30):
+					$contadorLineasCuotas = 1 ?>
+					<div class="saltopagina">
+				<?php
+				else: ?>		
+					<div>
+				<?php
+				endif; ?>
 					<div class="row">
 						<div class="col-md-12">					
 							<table>
@@ -756,9 +817,10 @@
 										<th>&nbsp;</th>
 									</tr>	
 									<tr>
-										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Mensualidades Años Anteriores' ?></b></th>
+										<th style="font-size: 14px; line-height: 16px;"><b><?= 'Pago de Mensualidades Años Escolares Anteriores' ?></b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 							</table>
 						</div>
 					</div>
@@ -779,6 +841,7 @@
 										<th style="text-align: center;"><b>Observación</b></th>
 									</tr>
 								</thead>
+								<?php $contadorLineasCuotas++; ?>
 								<tbody>				
 									<?php $contadorMensualidadesAnterior = 0;
 									$totalMensualidadesAnterior = 0;
@@ -787,7 +850,7 @@
 										if (substr($factura->school_year, 13, 4) < $actualAñoEscolar):
 											foreach ($vectorConceptos as $concepto):
 												if ($concepto['idFactura'] == $factura->id):
-													// if (substr($concepto['concepto'], 0, 8) != 'Matrícul'):
+													if (substr($concepto['concepto'], 0, 8) != 'Matrícul'):
 														$contadorMensualidadesAnterior++; ?>
 														<tr>
 															<td style="text-align: center;"><?= $contadorMensualidadesAnterior; ?></td>
@@ -799,8 +862,9 @@
 															<td style="text-align: center;"><?= number_format($concepto['monto'], 2, ",", "."); ?></td>
 															<td style="text-align: center;"><?= $concepto['observacion']; ?></td>
 														</tr>
+														<?php $contadorLineasCuotas++; ?>
 														<?php $totalMensualidadesAnterior = $totalMensualidadesAnterior + $concepto['monto'];
-													// endif;
+													endif;
 												endif;
 											endforeach;
 										endif;
@@ -815,6 +879,7 @@
 										<td style="text-align: center;"><?= number_format($totalMensualidadesAnterior, 2, ",", "."); ?></td>
 										<td></td>
 									</tr>
+									<?php $contadorLineasCuotas++; ?>
 								</tbody>
 							</table>
 						</div>
